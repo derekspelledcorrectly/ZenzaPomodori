@@ -1,0 +1,38 @@
+name: ZenzaPomodori
+options:
+  bundleIdPrefix: dev.zenzapomodori
+  deploymentTarget:
+    macOS: "15.0"
+  minimumXcodeGenVersion: "2.38"
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "15.0"
+targets:
+  ZenzaPomodori:
+    type: application
+    platform: macOS
+    sources:
+      - ZenzaPomodori
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: false
+        INFOPLIST_FILE: ZenzaPomodori/Resources/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: dev.zenzapomodori.ZenzaPomodori
+        PRODUCT_NAME: Zenza Pomodori
+        CODE_SIGNING_ALLOWED: false
+        ENABLE_USER_SCRIPT_SANDBOXING: false
+    scheme:
+      testTargets:
+        - ZenzaPomodoriTests
+  ZenzaPomodoriTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - ZenzaPomodoriTests
+    dependencies:
+      - target: ZenzaPomodori
+    settings:
+      base:
+        BUNDLE_LOADER: $(TEST_HOST)
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/Zenza Pomodori.app/Contents/MacOS/Zenza Pomodori
