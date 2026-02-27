@@ -20,7 +20,9 @@ targets:
         INFOPLIST_FILE: ZenzaPomodori/Resources/Info.plist
         PRODUCT_BUNDLE_IDENTIFIER: dev.zenzapomodori.ZenzaPomodori
         PRODUCT_NAME: Zenza Pomodori
-        CODE_SIGNING_ALLOWED: false
+        PRODUCT_MODULE_NAME: ZenzaPomodori
+        CODE_SIGNING_ALLOWED: true
+        CODE_SIGN_IDENTITY: "-"
         ENABLE_USER_SCRIPT_SANDBOXING: false
     scheme:
       testTargets:
@@ -34,5 +36,8 @@ targets:
       - target: ZenzaPomodori
     settings:
       base:
+        GENERATE_INFOPLIST_FILE: true
+        CODE_SIGNING_ALLOWED: true
+        CODE_SIGN_IDENTITY: "-"
         BUNDLE_LOADER: $(TEST_HOST)
         TEST_HOST: $(BUILT_PRODUCTS_DIR)/Zenza Pomodori.app/Contents/MacOS/Zenza Pomodori
