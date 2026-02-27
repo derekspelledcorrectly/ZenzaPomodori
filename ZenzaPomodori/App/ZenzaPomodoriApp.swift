@@ -2,21 +2,24 @@ import SwiftUI
 
 @main
 struct ZenzaPomodoriApp: App {
+    @State private var timer = PomodoroTimer()
+
     var body: some Scene {
-        MenuBarExtra("Zenza Pomodori", systemImage: "timer") {
-            Text("Zenza Pomodori")
-                .font(.headline)
-                .padding(.horizontal)
-                .padding(.top, 8)
-
-            Divider()
-
-            Button("Quit") {
-                NSApplication.shared.terminate(nil)
-            }
-            .keyboardShortcut("q")
-            .padding(.bottom, 4)
+        MenuBarExtra(menuBarTitle, systemImage: menuBarIcon) {
+            MenuBarView(timer: timer)
         }
         .menuBarExtraStyle(.window)
+    }
+
+    private var menuBarTitle: String {
+        timer.phase == .idle ? "Zenza Pomodori" : timer.formattedTime
+    }
+
+    private var menuBarIcon: String {
+        switch timer.phase {
+        case .idle: "timer"
+        case .focus: "circle.fill"
+        case .shortBreak, .longBreak: "leaf.fill"
+        }
     }
 }
