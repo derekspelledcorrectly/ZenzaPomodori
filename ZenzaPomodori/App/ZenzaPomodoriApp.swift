@@ -33,6 +33,7 @@ final class PopoverManager {
     let timer: PomodoroTimer
     private var statusItem: NSStatusItem?
     private let popover = NSPopover()
+    private let notificationService = NotificationService()
 
     init(timer: PomodoroTimer) {
         self.timer = timer
@@ -53,7 +54,18 @@ final class PopoverManager {
             updateStatusItem()
         }
 
+        setupNotifications()
         startObservingTimer()
+    }
+
+    private func setupNotifications() {
+        notificationService.requestPermission()
+        notificationService.onNotificationTapped = { [weak self] in
+            self?.showPopover()
+        }
+        timer.onPhaseChange = { [weak self] _, newPhase in
+            self?.notificationService.sendPhaseNotification(to: newPhase)
+        }
     }
 
     func showPopover() {
