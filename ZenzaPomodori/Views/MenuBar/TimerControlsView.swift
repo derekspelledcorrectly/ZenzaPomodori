@@ -13,23 +13,23 @@ struct TimerControlsView: View {
         HStack(spacing: 16) {
             if phase == .idle {
                 Button(action: onStart) {
-                    Label("Start", systemImage: "play.fill")
+                    Image(systemName: "play.fill")
                 }
                 .controlSize(.large)
             } else {
                 Button(action: isRunning ? onPause : onResume) {
-                    Label(
-                        isRunning ? "Pause" : "Resume",
-                        systemImage: isRunning ? "pause.fill" : "play.fill"
-                    )
+                    Image(systemName: isRunning ? "pause.fill" : "play.fill")
+                        .frame(width: 20)
                 }
 
                 Button(action: onSkip) {
-                    Label("Skip", systemImage: "forward.fill")
+                    Image(systemName: "forward.fill")
+                        .frame(width: 20)
                 }
 
                 Button(action: onReset) {
-                    Label("Reset", systemImage: "arrow.counterclockwise")
+                    Image(systemName: "arrow.counterclockwise")
+                        .frame(width: 20)
                 }
             }
         }
