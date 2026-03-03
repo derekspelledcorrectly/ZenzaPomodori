@@ -6,7 +6,7 @@ struct TimerControlsView: View {
     let onStart: () -> Void
     let onPause: () -> Void
     let onResume: () -> Void
-    let onSkip: () -> Void
+    let onNext: () -> Void
     let onReset: () -> Void
 
     var body: some View {
@@ -22,8 +22,8 @@ struct TimerControlsView: View {
                         .frame(width: 20)
                 }
 
-                Button(action: onSkip) {
-                    Image(systemName: "forward.fill")
+                Button(action: onNext) {
+                    Image(systemName: "forward.end.fill")
                         .frame(width: 20)
                 }
 
@@ -42,7 +42,7 @@ struct TimerControlsView: View {
         phase: .idle,
         isRunning: false,
         onStart: {}, onPause: {}, onResume: {},
-        onSkip: {}, onReset: {}
+        onNext: {}, onReset: {}
     )
     .padding()
 }
@@ -52,7 +52,7 @@ struct TimerControlsView: View {
         phase: .focus(block: 1),
         isRunning: true,
         onStart: {}, onPause: {}, onResume: {},
-        onSkip: {}, onReset: {}
+        onNext: {}, onReset: {}
     )
     .padding()
 }
