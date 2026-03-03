@@ -19,17 +19,17 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         }
     }
 
-    func sendPhaseNotification(to newPhase: TimerPhase) {
+    func sendOvertimeNotification(for phase: TimerPhase) {
         guard isAuthorized else { return }
-        guard newPhase != .idle else { return }
+        guard phase != .idle else { return }
 
         let content = UNMutableNotificationContent()
-        content.title = newPhase.label
-        content.body = notificationBody(for: newPhase)
+        content.title = "\(phase.label) Complete"
+        content.body = overtimeBody(for: phase)
         content.sound = .default
 
         let request = UNNotificationRequest(
-            identifier: "phaseChange-\(UUID().uuidString)",
+            identifier: "overtime-\(UUID().uuidString)",
             content: content,
             trigger: nil
         )
@@ -53,14 +53,12 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         }
     }
 
-    private func notificationBody(for phase: TimerPhase) -> String {
+    private func overtimeBody(for phase: TimerPhase) -> String {
         switch phase {
         case .focus:
-            "Time to focus!"
-        case .shortBreak:
-            "Take a short break."
-        case .longBreak:
-            "Great work! Enjoy a long break."
+            "Time for a break!"
+        case .shortBreak, .longBreak:
+            "Break's over. Ready to focus?"
         case .idle:
             ""
         }

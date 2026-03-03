@@ -63,8 +63,8 @@ final class PopoverManager {
         notificationService.onNotificationTapped = { [weak self] in
             self?.showPopover()
         }
-        timer.onPhaseChange = { [weak self] _, newPhase in
-            self?.notificationService.sendPhaseNotification(to: newPhase)
+        timer.onOvertimeStart = { [weak self] phase in
+            self?.notificationService.sendOvertimeNotification(for: phase)
         }
     }
 
