@@ -8,14 +8,20 @@ final class PomodoroTimer {
     private(set) var secondsRemaining: Int = 0
     private(set) var isRunning: Bool = false
     private(set) var completedBlocks: Int = 0
+    private(set) var isOvertime: Bool = false
+    private(set) var overtimeSeconds: Int = 0
 
     var progress: Double {
         guard totalSeconds > 0 else { return 0 }
+        if isOvertime { return 1.0 }
         return 1.0 - Double(secondsRemaining) / Double(totalSeconds)
     }
 
     var formattedTime: String {
-        TimeFormatting.formatted(seconds: secondsRemaining)
+        if isOvertime {
+            return "+\(TimeFormatting.formatted(seconds: overtimeSeconds))"
+        }
+        return TimeFormatting.formatted(seconds: secondsRemaining)
     }
 
     var totalSeconds: Int {
@@ -34,6 +40,7 @@ final class PomodoroTimer {
     // MARK: - Callbacks
 
     var onPhaseChange: ((TimerPhase, TimerPhase) -> Void)?
+    var onOvertimeStart: ((TimerPhase) -> Void)?
 
     // MARK: - Actions
 
@@ -62,7 +69,7 @@ final class PomodoroTimer {
         }
     }
 
-    func skip() {
+    func next() {
         guard phase != .idle else { return }
         pause()
         advancePhase()
@@ -75,18 +82,24 @@ final class PomodoroTimer {
         phase = .idle
         secondsRemaining = 0
         completedBlocks = 0
+        isOvertime = false
+        overtimeSeconds = 0
         onPhaseChange?(oldPhase, .idle)
     }
 
     // MARK: - Internal
 
     private func tick() {
+        if isOvertime {
+            overtimeSeconds += 1
+            return
+        }
         guard secondsRemaining > 0 else { return }
         secondsRemaining -= 1
         if secondsRemaining == 0 {
-            pause()
-            advancePhase()
-            resume()
+            isOvertime = true
+            overtimeSeconds = 0
+            onOvertimeStart?(phase)
         }
     }
 
@@ -112,6 +125,8 @@ final class PomodoroTimer {
         let oldPhase = phase
         phase = newPhase
         secondsRemaining = duration(for: newPhase)
+        isOvertime = false
+        overtimeSeconds = 0
         onPhaseChange?(oldPhase, newPhase)
     }
 
