@@ -4,11 +4,12 @@ struct MenuBarView: View {
     @Bindable var timer: PomodoroTimer
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 16) {
             TimerDisplayView(
                 phase: timer.phase,
                 progress: timer.progress,
-                formattedTime: timer.formattedTime
+                formattedTime: timer.formattedTime,
+                isOvertime: timer.isOvertime
             )
 
             TimerControlsView(
@@ -17,7 +18,7 @@ struct MenuBarView: View {
                 onStart: timer.start,
                 onPause: timer.pause,
                 onResume: timer.resume,
-                onSkip: timer.skip,
+                onNext: timer.next,
                 onReset: timer.reset
             )
 
@@ -29,6 +30,6 @@ struct MenuBarView: View {
             .keyboardShortcut("q")
         }
         .padding()
-        .frame(width: 200)
+        .frame(width: 240)
     }
 }
