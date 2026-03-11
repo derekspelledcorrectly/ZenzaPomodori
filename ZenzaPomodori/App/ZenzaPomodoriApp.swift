@@ -35,10 +35,12 @@ final class PopoverManager {
     private var statusItem: NSStatusItem?
     private let popover = NSPopover()
     private let notificationService: NotificationService
+    private let settingsWindowManager: SettingsWindowManager
 
     init(timer: PomodoroTimer, settings: SettingsStore) {
         self.timer = timer
         self.notificationService = NotificationService(settings: settings)
+        self.settingsWindowManager = SettingsWindowManager(settings: settings)
     }
 
     func setup() {
@@ -46,7 +48,10 @@ final class PopoverManager {
         statusItem = item
 
         popover.contentViewController = NSHostingController(
-            rootView: MenuBarView(timer: timer)
+            rootView: MenuBarView(timer: timer, onOpenSettings: { [weak self] in
+                self?.popover.performClose(nil)
+                self?.settingsWindowManager.showSettings()
+            })
         )
         popover.behavior = .transient
 
