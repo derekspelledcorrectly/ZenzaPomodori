@@ -4,7 +4,7 @@ import Testing
 @Suite("TimerPhase")
 struct TimerPhaseTests {
     @Test func idleLabel() {
-        #expect(TimerPhase.idle.label(totalBlocks: 4) == "Idle")
+        #expect(TimerPhase.idle.label(totalBlocks: 4) == "Ready")
     }
 
     @Test func focusLabel() {
