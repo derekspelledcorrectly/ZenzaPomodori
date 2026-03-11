@@ -141,6 +141,9 @@ final class PomodoroTimer {
 
     private func transitionTo(_ newPhase: TimerPhase) {
         let oldPhase = phase
+        focusDuration = settings.focusDuration
+        shortBreakDuration = settings.shortBreakDuration
+        longBreakDuration = settings.longBreakDuration
         phase = newPhase
         secondsRemaining = duration(for: newPhase)
         isOvertime = false
