@@ -48,18 +48,18 @@ final class PopoverManager {
         statusItem = item
 
         popover.contentViewController = NSHostingController(
-            rootView: MenuBarView(timer: timer, onOpenSettings: { [weak self] in
-                self?.popover.performClose(nil)
-                self?.settingsWindowManager.showSettings()
-            })
+            rootView: MenuBarView(timer: timer)
         )
         popover.behavior = .transient
 
         if let button = item.button {
             button.target = self
-            button.action = #selector(togglePopover)
+            button.action = #selector(handleStatusItemClick)
+            button.sendAction(on: [.leftMouseUp, .rightMouseUp])
             updateStatusItem()
         }
+
+        item.menu = nil
 
         setupNotifications()
         startObservingTimer()
@@ -81,12 +81,46 @@ final class PopoverManager {
         NSApp.activate()
     }
 
-    @objc private func togglePopover() {
-        if popover.isShown {
+    @objc private func handleStatusItemClick() {
+        guard let event = NSApp.currentEvent else { return }
+
+        if event.type == .rightMouseUp {
             popover.performClose(nil)
+            showContextMenu()
         } else {
-            showPopover()
+            if popover.isShown {
+                popover.performClose(nil)
+            } else {
+                showPopover()
+            }
         }
+    }
+
+    private func showContextMenu() {
+        let menu = NSMenu()
+        menu.autoenablesItems = false
+
+        let settingsItem = NSMenuItem(title: "Settings...", action: #selector(openSettings), keyEquivalent: ",")
+        settingsItem.target = self
+        menu.addItem(settingsItem)
+
+        menu.addItem(.separator())
+
+        let quitItem = NSMenuItem(title: "Quit", action: #selector(quit), keyEquivalent: "q")
+        quitItem.target = self
+        menu.addItem(quitItem)
+
+        statusItem?.menu = menu
+        statusItem?.button?.performClick(nil)
+        statusItem?.menu = nil
+    }
+
+    @objc private func openSettings() {
+        settingsWindowManager.showSettings(anchorTo: statusItem?.button)
+    }
+
+    @objc private func quit() {
+        NSApp.terminate(nil)
     }
 
     private func updateStatusItem() {

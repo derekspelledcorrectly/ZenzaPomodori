@@ -14,7 +14,7 @@ final class SettingsWindowManager {
         window?.isVisible ?? false
     }
 
-    func showSettings() {
+    func showSettings(anchorTo button: NSStatusBarButton? = nil) {
         if let window, window.isVisible {
             window.makeKeyAndOrderFront(nil)
             NSApp.activate()
@@ -28,7 +28,18 @@ final class SettingsWindowManager {
         let window = NSWindow(contentViewController: hostingController)
         window.title = "Settings"
         window.styleMask = [.titled, .closable]
-        window.center()
+
+        if let button, let buttonWindow = button.window {
+            let buttonRect = button.convert(button.bounds, to: nil)
+            let screenRect = buttonWindow.convertToScreen(buttonRect)
+            let windowSize = window.frame.size
+            let x = screenRect.midX - windowSize.width / 2
+            let y = screenRect.minY - windowSize.height
+            window.setFrameOrigin(NSPoint(x: x, y: y))
+        } else {
+            window.center()
+        }
+
         window.makeKeyAndOrderFront(nil)
         NSApp.activate()
         self.window = window
