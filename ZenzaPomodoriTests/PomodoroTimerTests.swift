@@ -215,6 +215,39 @@ struct PomodoroTimerTests {
         timer.reset()
     }
 
+    @Test func settingsApplyOnNextSession() {
+        let defaults = UserDefaults(suiteName: "test-\(UUID().uuidString)")!
+        let store = SettingsStore(defaults: defaults)
+        let timer = PomodoroTimer(settings: store)
+
+        // Start with defaults (25 min focus)
+        timer.start()
+        #expect(timer.focusDuration == Defaults.focusDuration)
+        timer.reset()
+
+        // Change settings, start new session
+        store.focusDuration = 10 * 60
+        timer.start()
+        #expect(timer.focusDuration == 600)
+        #expect(timer.secondsRemaining == 600)
+        timer.reset()
+    }
+
+    @Test func settingsApplyOnNextPhase() {
+        let defaults = UserDefaults(suiteName: "test-\(UUID().uuidString)")!
+        let store = SettingsStore(defaults: defaults)
+        let timer = PomodoroTimer(settings: store)
+
+        timer.start() // focus block 1, 25 min
+        #expect(timer.secondsRemaining == Defaults.focusDuration)
+
+        // Change short break duration mid-session
+        store.shortBreakDuration = 10 * 60
+        timer.next() // -> short break
+        #expect(timer.secondsRemaining == 600)
+        timer.reset()
+    }
+
     // MARK: - Auto-advance
 
     @Test func autoAdvanceTransitionsToNextPhase() {
