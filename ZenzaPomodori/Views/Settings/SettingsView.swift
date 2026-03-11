@@ -28,14 +28,25 @@ struct SettingsView: View {
                     }
                 }
 
-                Stepper(
-                    "Blocks before long break: \(settings.blocksBeforeLongBreak)",
-                    value: Binding(
-                        get: { settings.blocksBeforeLongBreak },
-                        set: { settings.blocksBeforeLongBreak = $0 }
-                    ),
-                    in: 1...10
-                )
+                HStack {
+                    Text("Blocks before long break")
+                    Spacer()
+                    HStack(spacing: 4) {
+                        Button(action: { settings.blocksBeforeLongBreak -= 1 }) {
+                            Image(systemName: "minus")
+                        }
+                        .disabled(settings.blocksBeforeLongBreak <= 1)
+
+                        Text("\(settings.blocksBeforeLongBreak)")
+                            .monospacedDigit()
+                            .frame(minWidth: 20, alignment: .center)
+
+                        Button(action: { settings.blocksBeforeLongBreak += 1 }) {
+                            Image(systemName: "plus")
+                        }
+                        .disabled(settings.blocksBeforeLongBreak >= 10)
+                    }
+                }
             }
 
             Section("Behavior") {
