@@ -14,6 +14,10 @@ test: generate
 run: build
 	open "$(DERIVED_DATA)/Build/Products/Debug/Zenza Pomodori.app"
 
+rerun: build
+	-pkill -x "Zenza Pomodori"
+	open "$(DERIVED_DATA)/Build/Products/Debug/Zenza Pomodori.app"
+
 clean:
 	rm -rf $(DERIVED_DATA)
 	xcodebuild -scheme ZenzaPomodori clean 2>/dev/null || true
