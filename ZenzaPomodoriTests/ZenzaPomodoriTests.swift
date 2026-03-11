@@ -4,19 +4,20 @@ import Testing
 @Suite("TimerPhase")
 struct TimerPhaseTests {
     @Test func idleLabel() {
-        #expect(TimerPhase.idle.label == "Idle")
+        #expect(TimerPhase.idle.label(totalBlocks: 4) == "Idle")
     }
 
     @Test func focusLabel() {
-        #expect(TimerPhase.focus(block: 2).label == "Focus 2/4")
+        #expect(TimerPhase.focus(block: 2).label(totalBlocks: 4) == "Focus 2/4")
+        #expect(TimerPhase.focus(block: 2).label(totalBlocks: 6) == "Focus 2/6")
     }
 
     @Test func shortBreakLabel() {
-        #expect(TimerPhase.shortBreak(afterBlock: 1).label == "Short Break")
+        #expect(TimerPhase.shortBreak(afterBlock: 1).label(totalBlocks: 4) == "Short Break")
     }
 
     @Test func longBreakLabel() {
-        #expect(TimerPhase.longBreak.label == "Long Break")
+        #expect(TimerPhase.longBreak.label(totalBlocks: 4) == "Long Break")
     }
 
     @Test func isFocus() {

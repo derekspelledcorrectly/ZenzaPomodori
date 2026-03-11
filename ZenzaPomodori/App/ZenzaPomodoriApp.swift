@@ -4,7 +4,8 @@ import SwiftUI
 @main
 @MainActor
 struct ZenzaPomodoriApp {
-    static let timer = PomodoroTimer()
+    static let settings = SettingsStore()
+    static let timer = PomodoroTimer(settings: settings)
     static let popoverManager = PopoverManager(timer: timer)
 
     static func main() {

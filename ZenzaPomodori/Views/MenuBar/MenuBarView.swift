@@ -7,6 +7,7 @@ struct MenuBarView: View {
         VStack(spacing: 16) {
             TimerDisplayView(
                 phase: timer.phase,
+                totalBlocks: timer.blocksBeforeLongBreak,
                 progress: timer.progress,
                 formattedTime: timer.formattedTime,
                 isOvertime: timer.isOvertime

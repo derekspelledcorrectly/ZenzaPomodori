@@ -32,10 +32,15 @@ final class PomodoroTimer {
 
     // MARK: - Configuration
 
-    var focusDuration: Int = Defaults.focusDuration
-    var shortBreakDuration: Int = Defaults.shortBreakDuration
-    var longBreakDuration: Int = Defaults.longBreakDuration
-    var blocksBeforeLongBreak: Int = Defaults.blocksBeforeLongBreak
+    let settings: SettingsStore
+    private(set) var focusDuration: Int = Defaults.focusDuration
+    private(set) var shortBreakDuration: Int = Defaults.shortBreakDuration
+    private(set) var longBreakDuration: Int = Defaults.longBreakDuration
+    private(set) var blocksBeforeLongBreak: Int = Defaults.blocksBeforeLongBreak
+
+    init(settings: SettingsStore = SettingsStore()) {
+        self.settings = settings
+    }
 
     // MARK: - Callbacks
 
@@ -46,6 +51,10 @@ final class PomodoroTimer {
 
     func start() {
         guard phase == .idle else { return }
+        focusDuration = settings.focusDuration
+        shortBreakDuration = settings.shortBreakDuration
+        longBreakDuration = settings.longBreakDuration
+        blocksBeforeLongBreak = settings.blocksBeforeLongBreak
         completedBlocks = 0
         transitionTo(.focus(block: 1))
         resume()

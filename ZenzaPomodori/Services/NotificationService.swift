@@ -24,7 +24,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         guard phase != .idle else { return }
 
         let content = UNMutableNotificationContent()
-        content.title = "\(phase.label) Complete"
+        content.title = "\(phase.label(totalBlocks: Defaults.blocksBeforeLongBreak)) Complete"
         content.body = overtimeBody(for: phase)
         content.sound = .default
 

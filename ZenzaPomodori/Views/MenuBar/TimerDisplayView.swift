@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TimerDisplayView: View {
     let phase: TimerPhase
+    let totalBlocks: Int
     let progress: Double
     let formattedTime: String
     let isOvertime: Bool
@@ -28,7 +29,7 @@ struct TimerDisplayView: View {
                         .font(.system(size: 32, weight: .medium, design: .monospaced))
                         .foregroundStyle(isOvertime ? .orange : .primary)
 
-                    Text(phase.label)
+                    Text(phase.label(totalBlocks: totalBlocks))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -50,6 +51,7 @@ struct TimerDisplayView: View {
 #Preview("Focus") {
     TimerDisplayView(
         phase: .focus(block: 2),
+        totalBlocks: 4,
         progress: 0.4,
         formattedTime: "15:00",
         isOvertime: false
@@ -60,6 +62,7 @@ struct TimerDisplayView: View {
 #Preview("Overtime") {
     TimerDisplayView(
         phase: .focus(block: 1),
+        totalBlocks: 4,
         progress: 1.0,
         formattedTime: "+02:30",
         isOvertime: true
@@ -70,6 +73,7 @@ struct TimerDisplayView: View {
 #Preview("Break") {
     TimerDisplayView(
         phase: .shortBreak(afterBlock: 1),
+        totalBlocks: 4,
         progress: 0.7,
         formattedTime: "01:30",
         isOvertime: false
