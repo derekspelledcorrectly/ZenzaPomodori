@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MenuBarView: View {
     @Bindable var timer: PomodoroTimer
+    var onOpenSettings: () -> Void
 
     var body: some View {
         VStack(spacing: 16) {
@@ -25,10 +26,18 @@ struct MenuBarView: View {
 
             Divider()
 
-            Button("Quit") {
-                NSApplication.shared.terminate(nil)
+            HStack {
+                Button(action: onOpenSettings) {
+                    Image(systemName: "gear")
+                }
+
+                Spacer()
+
+                Button("Quit") {
+                    NSApplication.shared.terminate(nil)
+                }
+                .keyboardShortcut("q")
             }
-            .keyboardShortcut("q")
         }
         .padding()
         .frame(width: 240)
