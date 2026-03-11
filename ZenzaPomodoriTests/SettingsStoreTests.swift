@@ -2,6 +2,11 @@ import Foundation
 import Testing
 @testable import ZenzaPomodori
 
+private final class MutableBox<T>: @unchecked Sendable {
+    var value: T
+    init(_ value: T) { self.value = value }
+}
+
 @Suite("SettingsStore")
 struct SettingsStoreTests {
     private func makeStore() -> SettingsStore {
@@ -107,5 +112,21 @@ struct SettingsStoreTests {
         let store = makeStore()
         store.blocksBeforeLongBreak = 0
         #expect(store.blocksBeforeLongBreak == 1)
+    }
+
+    // MARK: - Observation
+
+    @Test func observationTracksChanges() {
+        let store = makeStore()
+        let changed = MutableBox(false)
+
+        withObservationTracking {
+            _ = store.focusDuration
+        } onChange: {
+            changed.value = true
+        }
+
+        store.focusDuration = 30 * 60
+        #expect(changed.value == true)
     }
 }

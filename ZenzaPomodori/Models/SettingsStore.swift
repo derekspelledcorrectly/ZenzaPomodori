@@ -5,71 +5,71 @@ import Observation
 final class SettingsStore {
     private let defaults: UserDefaults
 
-    init(defaults: UserDefaults = .standard) {
-        self.defaults = defaults
-    }
-
     var focusDuration: Int {
-        get {
-            let value = defaults.integer(forKey: SettingsKeys.focusDuration)
-            return value > 0 ? value : Defaults.focusDuration
-        }
-        set {
-            defaults.set(max(60, newValue), forKey: SettingsKeys.focusDuration)
+        didSet {
+            let validated = max(60, focusDuration)
+            defaults.set(validated, forKey: SettingsKeys.focusDuration)
+            if focusDuration != validated { focusDuration = validated }
         }
     }
 
     var shortBreakDuration: Int {
-        get {
-            let value = defaults.integer(forKey: SettingsKeys.shortBreakDuration)
-            return value > 0 ? value : Defaults.shortBreakDuration
-        }
-        set {
-            defaults.set(max(60, newValue), forKey: SettingsKeys.shortBreakDuration)
+        didSet {
+            let validated = max(60, shortBreakDuration)
+            defaults.set(validated, forKey: SettingsKeys.shortBreakDuration)
+            if shortBreakDuration != validated { shortBreakDuration = validated }
         }
     }
 
     var longBreakDuration: Int {
-        get {
-            let value = defaults.integer(forKey: SettingsKeys.longBreakDuration)
-            return value > 0 ? value : Defaults.longBreakDuration
-        }
-        set {
-            defaults.set(max(60, newValue), forKey: SettingsKeys.longBreakDuration)
+        didSet {
+            let validated = max(60, longBreakDuration)
+            defaults.set(validated, forKey: SettingsKeys.longBreakDuration)
+            if longBreakDuration != validated { longBreakDuration = validated }
         }
     }
 
     var blocksBeforeLongBreak: Int {
-        get {
-            let value = defaults.integer(forKey: SettingsKeys.blocksBeforeLongBreak)
-            return value > 0 ? value : Defaults.blocksBeforeLongBreak
-        }
-        set {
-            defaults.set(max(1, newValue), forKey: SettingsKeys.blocksBeforeLongBreak)
+        didSet {
+            let validated = max(1, blocksBeforeLongBreak)
+            defaults.set(validated, forKey: SettingsKeys.blocksBeforeLongBreak)
+            if blocksBeforeLongBreak != validated { blocksBeforeLongBreak = validated }
         }
     }
 
     var autoAdvance: Bool {
-        get {
-            if defaults.object(forKey: SettingsKeys.autoAdvance) == nil {
-                return Defaults.autoAdvance
-            }
-            return defaults.bool(forKey: SettingsKeys.autoAdvance)
-        }
-        set {
-            defaults.set(newValue, forKey: SettingsKeys.autoAdvance)
-        }
+        didSet { defaults.set(autoAdvance, forKey: SettingsKeys.autoAdvance) }
     }
 
     var soundEnabled: Bool {
-        get {
-            if defaults.object(forKey: SettingsKeys.soundEnabled) == nil {
-                return Defaults.soundEnabled
-            }
-            return defaults.bool(forKey: SettingsKeys.soundEnabled)
+        didSet { defaults.set(soundEnabled, forKey: SettingsKeys.soundEnabled) }
+    }
+
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+
+        let focus = defaults.integer(forKey: SettingsKeys.focusDuration)
+        self.focusDuration = focus > 0 ? focus : Defaults.focusDuration
+
+        let shortBreak = defaults.integer(forKey: SettingsKeys.shortBreakDuration)
+        self.shortBreakDuration = shortBreak > 0 ? shortBreak : Defaults.shortBreakDuration
+
+        let longBreak = defaults.integer(forKey: SettingsKeys.longBreakDuration)
+        self.longBreakDuration = longBreak > 0 ? longBreak : Defaults.longBreakDuration
+
+        let blocks = defaults.integer(forKey: SettingsKeys.blocksBeforeLongBreak)
+        self.blocksBeforeLongBreak = blocks > 0 ? blocks : Defaults.blocksBeforeLongBreak
+
+        if defaults.object(forKey: SettingsKeys.autoAdvance) != nil {
+            self.autoAdvance = defaults.bool(forKey: SettingsKeys.autoAdvance)
+        } else {
+            self.autoAdvance = Defaults.autoAdvance
         }
-        set {
-            defaults.set(newValue, forKey: SettingsKeys.soundEnabled)
+
+        if defaults.object(forKey: SettingsKeys.soundEnabled) != nil {
+            self.soundEnabled = defaults.bool(forKey: SettingsKeys.soundEnabled)
+        } else {
+            self.soundEnabled = Defaults.soundEnabled
         }
     }
 }
