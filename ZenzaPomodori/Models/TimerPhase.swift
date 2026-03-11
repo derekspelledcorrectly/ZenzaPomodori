@@ -9,7 +9,7 @@ enum TimerPhase: Equatable, Sendable {
     func label(totalBlocks: Int) -> String {
         switch self {
         case .idle:
-            "Idle"
+            "Ready"
         case .focus(let block):
             "Focus \(block)/\(totalBlocks)"
         case .shortBreak:

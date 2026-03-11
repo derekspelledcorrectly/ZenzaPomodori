@@ -9,19 +9,20 @@ struct TimerControlsView: View {
     let onNext: () -> Void
     let onReset: () -> Void
 
+    private var playPauseAction: () -> Void {
+        if phase == .idle { return onStart }
+        return isRunning ? onPause : onResume
+    }
+
     var body: some View {
         HStack(spacing: 16) {
-            if phase == .idle {
-                Button(action: onStart) {
-                    Image(systemName: "play.fill")
-                }
-                .controlSize(.large)
-            } else {
-                Button(action: isRunning ? onPause : onResume) {
-                    Image(systemName: isRunning ? "pause.fill" : "play.fill")
-                        .frame(width: 20)
-                }
+            Button(action: playPauseAction) {
+                Image(systemName: isRunning ? "pause.fill" : "play.fill")
+                    .frame(width: 20)
+            }
+            .controlSize(phase == .idle ? .large : .regular)
 
+            if phase != .idle {
                 Button(action: onNext) {
                     Image(systemName: "forward.end.fill")
                         .frame(width: 20)

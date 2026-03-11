@@ -21,6 +21,9 @@ final class PomodoroTimer {
         if isOvertime {
             return "+\(TimeFormatting.formatted(seconds: overtimeSeconds))"
         }
+        if phase == .idle {
+            return TimeFormatting.formatted(seconds: settings.focusDuration)
+        }
         return TimeFormatting.formatted(seconds: secondsRemaining)
     }
 
