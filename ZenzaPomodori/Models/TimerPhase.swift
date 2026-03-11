@@ -6,12 +6,12 @@ enum TimerPhase: Equatable, Sendable {
     case shortBreak(afterBlock: Int)
     case longBreak
 
-    var label: String {
+    func label(totalBlocks: Int) -> String {
         switch self {
         case .idle:
             "Idle"
         case .focus(let block):
-            "Focus \(block)/\(Defaults.blocksBeforeLongBreak)"
+            "Focus \(block)/\(totalBlocks)"
         case .shortBreak:
             "Short Break"
         case .longBreak:

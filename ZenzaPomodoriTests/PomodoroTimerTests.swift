@@ -1,11 +1,21 @@
+import Foundation
 import Testing
 @testable import ZenzaPomodori
 
 @Suite("PomodoroTimer")
 @MainActor
 struct PomodoroTimerTests {
+    private func makeTimer(
+        configure: ((SettingsStore) -> Void)? = nil
+    ) -> PomodoroTimer {
+        let defaults = UserDefaults(suiteName: "test-\(UUID().uuidString)")!
+        let store = SettingsStore(defaults: defaults)
+        configure?(store)
+        return PomodoroTimer(settings: store)
+    }
+
     @Test func startsIdle() {
-        let timer = PomodoroTimer()
+        let timer = makeTimer()
         #expect(timer.phase == .idle)
         #expect(timer.isRunning == false)
         #expect(timer.secondsRemaining == 0)
@@ -13,7 +23,7 @@ struct PomodoroTimerTests {
     }
 
     @Test func startBeginsFirstFocusBlock() {
-        let timer = PomodoroTimer()
+        let timer = makeTimer()
         timer.start()
         #expect(timer.phase == .focus(block: 1))
         #expect(timer.secondsRemaining == Defaults.focusDuration)
@@ -22,7 +32,7 @@ struct PomodoroTimerTests {
     }
 
     @Test func startWhileRunningIsNoOp() {
-        let timer = PomodoroTimer()
+        let timer = makeTimer()
         timer.start()
         timer.start() // should not restart
         #expect(timer.phase == .focus(block: 1))
@@ -30,7 +40,7 @@ struct PomodoroTimerTests {
     }
 
     @Test func pauseStopsRunning() {
-        let timer = PomodoroTimer()
+        let timer = makeTimer()
         timer.start()
         timer.pause()
         #expect(timer.isRunning == false)
@@ -38,7 +48,7 @@ struct PomodoroTimerTests {
     }
 
     @Test func resumeAfterPause() {
-        let timer = PomodoroTimer()
+        let timer = makeTimer()
         timer.start()
         timer.pause()
         timer.resume()
@@ -47,7 +57,7 @@ struct PomodoroTimerTests {
     }
 
     @Test func nextFromFocusToShortBreak() {
-        let timer = PomodoroTimer()
+        let timer = makeTimer()
         timer.start()
         timer.next()
         #expect(timer.phase == .shortBreak(afterBlock: 1))
@@ -57,7 +67,7 @@ struct PomodoroTimerTests {
     }
 
     @Test func nextFromShortBreakToNextFocus() {
-        let timer = PomodoroTimer()
+        let timer = makeTimer()
         timer.start()
         timer.next() // focus 1 -> short break
         timer.next() // short break -> focus 2
@@ -67,7 +77,7 @@ struct PomodoroTimerTests {
     }
 
     @Test func nextToLongBreakAfterAllBlocks() {
-        let timer = PomodoroTimer()
+        let timer = makeTimer()
         timer.start()
         // Complete all 4 focus blocks
         for _ in 1..<Defaults.blocksBeforeLongBreak {
@@ -84,7 +94,7 @@ struct PomodoroTimerTests {
     }
 
     @Test func nextFromLongBreakResetsToIdle() {
-        let timer = PomodoroTimer()
+        let timer = makeTimer()
         timer.start()
         for _ in 1..<Defaults.blocksBeforeLongBreak {
             timer.next()
@@ -97,7 +107,7 @@ struct PomodoroTimerTests {
     }
 
     @Test func resetClearsEverything() {
-        let timer = PomodoroTimer()
+        let timer = makeTimer()
         timer.start()
         timer.next()
         timer.reset()
@@ -110,7 +120,7 @@ struct PomodoroTimerTests {
     }
 
     @Test func progressCalculation() {
-        let timer = PomodoroTimer()
+        let timer = makeTimer()
         #expect(timer.progress == 0)
 
         timer.start()
@@ -119,18 +129,19 @@ struct PomodoroTimerTests {
     }
 
     @Test func formattedTimeDisplay() {
-        let timer = PomodoroTimer()
+        let timer = makeTimer()
         timer.start()
         #expect(timer.formattedTime == "25:00")
         timer.reset()
     }
 
     @Test func customDurations() {
-        let timer = PomodoroTimer()
-        timer.focusDuration = 10 * 60
-        timer.shortBreakDuration = 2 * 60
-        timer.longBreakDuration = 20 * 60
-        timer.blocksBeforeLongBreak = 2
+        let timer = makeTimer { store in
+            store.focusDuration = 10 * 60
+            store.shortBreakDuration = 2 * 60
+            store.longBreakDuration = 20 * 60
+            store.blocksBeforeLongBreak = 2
+        }
 
         timer.start()
         #expect(timer.secondsRemaining == 600)
@@ -144,7 +155,7 @@ struct PomodoroTimerTests {
     }
 
     @Test func onPhaseChangeCallback() {
-        let timer = PomodoroTimer()
+        let timer = makeTimer()
         var transitions: [(TimerPhase, TimerPhase)] = []
         timer.onPhaseChange = { old, new in
             transitions.append((old, new))
@@ -165,13 +176,13 @@ struct PomodoroTimerTests {
     }
 
     @Test func startsWithNoOvertime() {
-        let timer = PomodoroTimer()
+        let timer = makeTimer()
         #expect(timer.isOvertime == false)
         #expect(timer.overtimeSeconds == 0)
     }
 
     @Test func nextFromOvertimeClearsOvertime() {
-        let timer = PomodoroTimer()
+        let timer = makeTimer()
         timer.start()
         timer.next() // focus -> short break
         #expect(timer.isOvertime == false)
@@ -180,8 +191,7 @@ struct PomodoroTimerTests {
     }
 
     @Test func progressClampsDuringOvertime() {
-        let timer = PomodoroTimer()
-        timer.focusDuration = 2
+        let timer = makeTimer { $0.focusDuration = 60 }
         timer.start()
         timer.pause()
         // Simulate reaching zero by setting secondsRemaining
@@ -190,8 +200,23 @@ struct PomodoroTimerTests {
         timer.reset()
     }
 
+    @Test func settingsSnapshotOnStart() {
+        let defaults = UserDefaults(suiteName: "test-\(UUID().uuidString)")!
+        let store = SettingsStore(defaults: defaults)
+        store.focusDuration = 10 * 60
+        let timer = PomodoroTimer(settings: store)
+
+        timer.start()
+        #expect(timer.focusDuration == 600)
+
+        // Changing settings mid-session should not affect the running timer
+        store.focusDuration = 20 * 60
+        #expect(timer.focusDuration == 600)
+        timer.reset()
+    }
+
     @Test func formattedTimeShowsOvertimePrefix() {
-        let timer = PomodoroTimer()
+        let timer = makeTimer()
         timer.start()
         #expect(timer.formattedTime == "25:00")
         // formattedTime without overtime should not have "+" prefix
