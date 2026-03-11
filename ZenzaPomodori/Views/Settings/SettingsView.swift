@@ -3,35 +3,30 @@ import SwiftUI
 struct SettingsView: View {
     @Bindable var settings: SettingsStore
 
+    private static let focusOptions = [5, 10, 15, 20, 25, 30, 45, 60, 90, 120]
+    private static let shortBreakOptions = [1, 2, 3, 5, 10, 15, 20]
+    private static let longBreakOptions = [5, 10, 15, 20, 25, 30, 45, 60]
+
     var body: some View {
         Form {
             Section("Timer Durations") {
-                Stepper(
-                    "Focus: \(settings.focusDuration / 60) min",
-                    value: Binding(
-                        get: { settings.focusDuration / 60 },
-                        set: { settings.focusDuration = $0 * 60 }
-                    ),
-                    in: 1...120
-                )
+                Picker("Focus", selection: minutesBinding(\.focusDuration)) {
+                    ForEach(Self.focusOptions, id: \.self) { min in
+                        Text("\(min) min").tag(min)
+                    }
+                }
 
-                Stepper(
-                    "Short Break: \(settings.shortBreakDuration / 60) min",
-                    value: Binding(
-                        get: { settings.shortBreakDuration / 60 },
-                        set: { settings.shortBreakDuration = $0 * 60 }
-                    ),
-                    in: 1...60
-                )
+                Picker("Short Break", selection: minutesBinding(\.shortBreakDuration)) {
+                    ForEach(Self.shortBreakOptions, id: \.self) { min in
+                        Text("\(min) min").tag(min)
+                    }
+                }
 
-                Stepper(
-                    "Long Break: \(settings.longBreakDuration / 60) min",
-                    value: Binding(
-                        get: { settings.longBreakDuration / 60 },
-                        set: { settings.longBreakDuration = $0 * 60 }
-                    ),
-                    in: 1...120
-                )
+                Picker("Long Break", selection: minutesBinding(\.longBreakDuration)) {
+                    ForEach(Self.longBreakOptions, id: \.self) { min in
+                        Text("\(min) min").tag(min)
+                    }
+                }
 
                 Stepper(
                     "Blocks before long break: \(settings.blocksBeforeLongBreak)",
@@ -58,6 +53,13 @@ struct SettingsView: View {
         .formStyle(.grouped)
         .frame(width: 320)
         .fixedSize()
+    }
+
+    private func minutesBinding(_ keyPath: ReferenceWritableKeyPath<SettingsStore, Int>) -> Binding<Int> {
+        Binding(
+            get: { settings[keyPath: keyPath] / 60 },
+            set: { settings[keyPath: keyPath] = $0 * 60 }
+        )
     }
 }
 
