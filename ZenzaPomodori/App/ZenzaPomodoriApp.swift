@@ -6,7 +6,7 @@ import SwiftUI
 struct ZenzaPomodoriApp {
     static let settings = SettingsStore()
     static let timer = PomodoroTimer(settings: settings)
-    static let popoverManager = PopoverManager(timer: timer)
+    static let popoverManager = PopoverManager(timer: timer, settings: settings)
 
     static func main() {
         let app = NSApplication.shared
@@ -34,10 +34,11 @@ final class PopoverManager {
     let timer: PomodoroTimer
     private var statusItem: NSStatusItem?
     private let popover = NSPopover()
-    private let notificationService = NotificationService()
+    private let notificationService: NotificationService
 
-    init(timer: PomodoroTimer) {
+    init(timer: PomodoroTimer, settings: SettingsStore) {
         self.timer = timer
+        self.notificationService = NotificationService(settings: settings)
     }
 
     func setup() {
