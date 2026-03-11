@@ -37,6 +37,7 @@ final class PomodoroTimer {
     private(set) var shortBreakDuration: Int = Defaults.shortBreakDuration
     private(set) var longBreakDuration: Int = Defaults.longBreakDuration
     private(set) var blocksBeforeLongBreak: Int = Defaults.blocksBeforeLongBreak
+    private(set) var autoAdvance: Bool = Defaults.autoAdvance
 
     init(settings: SettingsStore = SettingsStore()) {
         self.settings = settings
@@ -55,6 +56,7 @@ final class PomodoroTimer {
         shortBreakDuration = settings.shortBreakDuration
         longBreakDuration = settings.longBreakDuration
         blocksBeforeLongBreak = settings.blocksBeforeLongBreak
+        autoAdvance = settings.autoAdvance
         completedBlocks = 0
         transitionTo(.focus(block: 1))
         resume()
@@ -98,7 +100,7 @@ final class PomodoroTimer {
 
     // MARK: - Internal
 
-    private func tick() {
+    func tick() {
         if isOvertime {
             overtimeSeconds += 1
             return
@@ -106,9 +108,16 @@ final class PomodoroTimer {
         guard secondsRemaining > 0 else { return }
         secondsRemaining -= 1
         if secondsRemaining == 0 {
-            isOvertime = true
-            overtimeSeconds = 0
-            onOvertimeStart?(phase)
+            if autoAdvance {
+                advancePhase()
+                if phase == .idle {
+                    pause()
+                }
+            } else {
+                isOvertime = true
+                overtimeSeconds = 0
+                onOvertimeStart?(phase)
+            }
         }
     }
 

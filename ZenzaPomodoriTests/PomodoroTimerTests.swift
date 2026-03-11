@@ -215,6 +215,87 @@ struct PomodoroTimerTests {
         timer.reset()
     }
 
+    // MARK: - Auto-advance
+
+    @Test func autoAdvanceTransitionsToNextPhase() {
+        let timer = makeTimer { $0.autoAdvance = true; $0.focusDuration = 60 }
+        timer.start()
+        timer.pause()
+        #expect(timer.phase == .focus(block: 1))
+
+        // Simulate ticking down to zero
+        for _ in 0..<60 {
+            timer.tick()
+        }
+
+        // Should auto-advance to short break, not enter overtime
+        #expect(timer.phase == .shortBreak(afterBlock: 1))
+        #expect(timer.isOvertime == false)
+        timer.reset()
+    }
+
+    @Test func autoAdvanceSkipsOvertimeCallback() {
+        let timer = makeTimer { $0.autoAdvance = true; $0.focusDuration = 60 }
+        var overtimeStarted = false
+        timer.onOvertimeStart = { _ in overtimeStarted = true }
+        timer.start()
+        timer.pause()
+
+        for _ in 0..<60 {
+            timer.tick()
+        }
+
+        #expect(overtimeStarted == false)
+        timer.reset()
+    }
+
+    @Test func autoAdvanceFiresPhaseChangeCallback() {
+        let timer = makeTimer { $0.autoAdvance = true; $0.focusDuration = 60 }
+        var transitions: [(TimerPhase, TimerPhase)] = []
+        timer.onPhaseChange = { old, new in transitions.append((old, new)) }
+        timer.start()
+        timer.pause()
+        transitions.removeAll() // clear the start transition
+
+        for _ in 0..<60 {
+            timer.tick()
+        }
+
+        #expect(transitions.count == 1)
+        #expect(transitions[0].0 == .focus(block: 1))
+        #expect(transitions[0].1 == .shortBreak(afterBlock: 1))
+        timer.reset()
+    }
+
+    @Test func autoAdvanceDisabledEntersOvertime() {
+        let timer = makeTimer { $0.autoAdvance = false; $0.focusDuration = 60 }
+        timer.start()
+        timer.pause()
+
+        for _ in 0..<60 {
+            timer.tick()
+        }
+
+        #expect(timer.isOvertime == true)
+        #expect(timer.phase == .focus(block: 1))
+        timer.reset()
+    }
+
+    @Test func autoAdvanceFromLongBreakReturnsToIdle() {
+        let timer = makeTimer { $0.autoAdvance = true; $0.focusDuration = 60; $0.blocksBeforeLongBreak = 1; $0.longBreakDuration = 60 }
+        timer.start()
+        timer.pause()
+
+        // Tick through focus block 1
+        for _ in 0..<60 { timer.tick() }
+        #expect(timer.phase == .longBreak)
+
+        // Tick through long break
+        for _ in 0..<60 { timer.tick() }
+        #expect(timer.phase == .idle)
+        #expect(timer.isRunning == false)
+    }
+
     @Test func formattedTimeShowsOvertimePrefix() {
         let timer = makeTimer()
         timer.start()
