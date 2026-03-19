@@ -5,7 +5,8 @@ import SwiftUI
 @MainActor
 struct ZenzaPomodoriApp {
     static let settings = SettingsStore()
-    static let timer = PomodoroTimer(settings: settings)
+    static let focusNameStore = FocusNameStore()
+    static let timer = PomodoroTimer(settings: settings, focusNameStore: focusNameStore)
     static let popoverManager = PopoverManager(timer: timer, settings: settings)
 
     static func main() {
@@ -135,9 +136,7 @@ final class PopoverManager {
 
         button.image = NSImage(systemSymbolName: iconName, accessibilityDescription: nil)
 
-        if timer.phase == .idle {
-            button.attributedTitle = NSAttributedString()
-        } else {
+        if timer.settings.showTimerInMenuBar {
             let font = NSFont.monospacedDigitSystemFont(
                 ofSize: NSFont.systemFontSize, weight: .regular
             )
@@ -145,6 +144,8 @@ final class PopoverManager {
                 string: " \(timer.formattedTime)",
                 attributes: [.font: font]
             )
+        } else {
+            button.attributedTitle = NSAttributedString()
         }
     }
 

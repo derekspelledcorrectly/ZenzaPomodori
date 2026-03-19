@@ -45,6 +45,10 @@ final class SettingsStore {
         didSet { defaults.set(soundEnabled, forKey: SettingsKeys.soundEnabled) }
     }
 
+    var showTimerInMenuBar: Bool {
+        didSet { defaults.set(showTimerInMenuBar, forKey: SettingsKeys.showTimerInMenuBar) }
+    }
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
 
@@ -70,6 +74,12 @@ final class SettingsStore {
             self.soundEnabled = defaults.bool(forKey: SettingsKeys.soundEnabled)
         } else {
             self.soundEnabled = Defaults.soundEnabled
+        }
+
+        if defaults.object(forKey: SettingsKeys.showTimerInMenuBar) != nil {
+            self.showTimerInMenuBar = defaults.bool(forKey: SettingsKeys.showTimerInMenuBar)
+        } else {
+            self.showTimerInMenuBar = Defaults.showTimerInMenuBar
         }
     }
 }
