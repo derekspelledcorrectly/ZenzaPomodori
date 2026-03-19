@@ -8,6 +8,7 @@ final class PomodoroTimer {
     private(set) var secondsRemaining: Int = 0
     private(set) var isRunning: Bool = false
     private(set) var completedBlocks: Int = 0
+    private(set) var pendingBlock: Int?
     private(set) var isOvertime: Bool = false
     private(set) var overtimeSeconds: Int = 0
 
@@ -36,14 +37,22 @@ final class PomodoroTimer {
     // MARK: - Configuration
 
     let settings: SettingsStore
+    let focusNameStore: FocusNameStore
+    private(set) var activeFocusName: String?
+
+    var focusNameIsLocked: Bool {
+        phase.isFocus
+    }
+
     private(set) var focusDuration: Int = Defaults.focusDuration
     private(set) var shortBreakDuration: Int = Defaults.shortBreakDuration
     private(set) var longBreakDuration: Int = Defaults.longBreakDuration
     private(set) var blocksBeforeLongBreak: Int = Defaults.blocksBeforeLongBreak
     private(set) var autoAdvance: Bool = Defaults.autoAdvance
 
-    init(settings: SettingsStore = SettingsStore()) {
+    init(settings: SettingsStore = SettingsStore(), focusNameStore: FocusNameStore = FocusNameStore()) {
         self.settings = settings
+        self.focusNameStore = focusNameStore
     }
 
     // MARK: - Callbacks
@@ -55,13 +64,19 @@ final class PomodoroTimer {
 
     func start() {
         guard phase == .idle else { return }
-        focusDuration = settings.focusDuration
-        shortBreakDuration = settings.shortBreakDuration
-        longBreakDuration = settings.longBreakDuration
-        blocksBeforeLongBreak = settings.blocksBeforeLongBreak
-        autoAdvance = settings.autoAdvance
-        completedBlocks = 0
-        transitionTo(.focus(block: 1))
+        commitFocusName()
+        if let block = pendingBlock {
+            pendingBlock = nil
+            transitionTo(.focus(block: block))
+        } else {
+            focusDuration = settings.focusDuration
+            shortBreakDuration = settings.shortBreakDuration
+            longBreakDuration = settings.longBreakDuration
+            blocksBeforeLongBreak = settings.blocksBeforeLongBreak
+            autoAdvance = settings.autoAdvance
+            completedBlocks = 0
+            transitionTo(.focus(block: 1))
+        }
         resume()
     }
 
@@ -86,8 +101,17 @@ final class PomodoroTimer {
     func next() {
         guard phase != .idle else { return }
         pause()
-        advancePhase()
-        resume()
+        advancePhase(fromAutoAdvance: false)
+        if phase != .idle {
+            resume()
+        }
+    }
+
+    func restartPhase() {
+        guard phase != .idle else { return }
+        secondsRemaining = duration(for: phase)
+        isOvertime = false
+        overtimeSeconds = 0
     }
 
     func reset() {
@@ -96,8 +120,10 @@ final class PomodoroTimer {
         phase = .idle
         secondsRemaining = 0
         completedBlocks = 0
+        pendingBlock = nil
         isOvertime = false
         overtimeSeconds = 0
+        activeFocusName = nil
         onPhaseChange?(oldPhase, .idle)
     }
 
@@ -112,7 +138,7 @@ final class PomodoroTimer {
         secondsRemaining -= 1
         if secondsRemaining == 0 {
             if autoAdvance {
-                advancePhase()
+                advancePhase(fromAutoAdvance: true)
                 if phase == .idle {
                     pause()
                 }
@@ -124,7 +150,7 @@ final class PomodoroTimer {
         }
     }
 
-    private func advancePhase() {
+    private func advancePhase(fromAutoAdvance: Bool = false) {
         switch phase {
         case .focus(let block):
             completedBlocks = block
@@ -134,7 +160,13 @@ final class PomodoroTimer {
                 transitionTo(.shortBreak(afterBlock: block))
             }
         case .shortBreak(let afterBlock):
-            transitionTo(.focus(block: afterBlock + 1))
+            if fromAutoAdvance {
+                commitFocusName()
+                transitionTo(.focus(block: afterBlock + 1))
+            } else {
+                pendingBlock = afterBlock + 1
+                transitionTo(.idle)
+            }
         case .longBreak:
             transitionTo(.idle)
         case .idle:
@@ -152,6 +184,16 @@ final class PomodoroTimer {
         isOvertime = false
         overtimeSeconds = 0
         onPhaseChange?(oldPhase, newPhase)
+    }
+
+    private func commitFocusName() {
+        let trimmed = focusNameStore.draftName.trimmingCharacters(in: .whitespaces)
+        if !trimmed.isEmpty {
+            focusNameStore.commitCurrentName()
+            activeFocusName = trimmed
+        } else {
+            activeFocusName = nil
+        }
     }
 
     private func duration(for phase: TimerPhase) -> Int {
