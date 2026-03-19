@@ -66,13 +66,26 @@ struct PomodoroTimerTests {
         timer.reset()
     }
 
-    @Test func nextFromShortBreakToNextFocus() {
+    @Test func nextFromShortBreakToReady() {
         let timer = makeTimer()
         timer.start()
         timer.next() // focus 1 -> short break
-        timer.next() // short break -> focus 2
+        timer.next() // short break -> ready (idle with pendingBlock)
+        #expect(timer.phase == .idle)
+        #expect(timer.pendingBlock == 2)
+        #expect(timer.isRunning == false)
+        timer.reset()
+    }
+
+    @Test func startFromReadyContinuesSession() {
+        let timer = makeTimer()
+        timer.start()
+        timer.next() // focus 1 -> short break
+        timer.next() // short break -> ready
+        timer.start() // ready -> focus 2
         #expect(timer.phase == .focus(block: 2))
         #expect(timer.secondsRemaining == Defaults.focusDuration)
+        #expect(timer.pendingBlock == nil)
         timer.reset()
     }
 
@@ -82,7 +95,8 @@ struct PomodoroTimerTests {
         // Complete all 4 focus blocks
         for _ in 1..<Defaults.blocksBeforeLongBreak {
             timer.next() // focus -> short break
-            timer.next() // short break -> next focus
+            timer.next() // short break -> ready
+            timer.start() // ready -> next focus
         }
         // Now on focus block 4
         #expect(timer.phase == .focus(block: 4))
@@ -97,12 +111,39 @@ struct PomodoroTimerTests {
         let timer = makeTimer()
         timer.start()
         for _ in 1..<Defaults.blocksBeforeLongBreak {
-            timer.next()
-            timer.next()
+            timer.next() // focus -> short break
+            timer.next() // short break -> ready
+            timer.start() // ready -> next focus
         }
         timer.next() // -> long break
         timer.next() // -> idle
         #expect(timer.phase == .idle)
+        timer.reset()
+    }
+
+    @Test func restartPhaseResetsFocusTimer() {
+        let timer = makeTimer { $0.focusDuration = 60 }
+        timer.start()
+        timer.pause()
+        for _ in 0..<30 { timer.tick() }
+        #expect(timer.secondsRemaining == 30)
+        timer.restartPhase()
+        #expect(timer.secondsRemaining == 60)
+        #expect(timer.phase == .focus(block: 1))
+        #expect(timer.isOvertime == false)
+        timer.reset()
+    }
+
+    @Test func restartPhaseResetsBreakTimer() {
+        let timer = makeTimer { $0.shortBreakDuration = 60 }
+        timer.start()
+        timer.next() // -> short break
+        timer.pause()
+        for _ in 0..<20 { timer.tick() }
+        #expect(timer.secondsRemaining == 40)
+        timer.restartPhase()
+        #expect(timer.secondsRemaining == 60)
+        #expect(timer.phase == .shortBreak(afterBlock: 1))
         timer.reset()
     }
 
@@ -147,7 +188,8 @@ struct PomodoroTimerTests {
         #expect(timer.secondsRemaining == 600)
         timer.next() // -> short break
         #expect(timer.secondsRemaining == 120)
-        timer.next() // -> focus 2
+        timer.next() // -> ready
+        timer.start() // -> focus 2
         timer.next() // -> long break (after 2 blocks)
         #expect(timer.phase == .longBreak)
         #expect(timer.secondsRemaining == 1200)
