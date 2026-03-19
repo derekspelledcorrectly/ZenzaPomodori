@@ -59,6 +59,11 @@ struct SettingsView: View {
                     get: { settings.soundEnabled },
                     set: { settings.soundEnabled = $0 }
                 ))
+
+                Toggle("Show timer in menu bar", isOn: Binding(
+                    get: { settings.showTimerInMenuBar },
+                    set: { settings.showTimerInMenuBar = $0 }
+                ))
             }
         }
         .formStyle(.grouped)
