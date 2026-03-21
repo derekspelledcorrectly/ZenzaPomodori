@@ -23,15 +23,20 @@ needing to open the popover.
 
 Updated in `PopoverManager.updateStatusItem()`:
 
-- **When to show:** `showFocusInMenuBar` is on AND `timer.phase.isFocus` AND
-  `timer.activeFocusName` is non-nil/non-empty
-- **Truncation:** Cap at 15 characters, append "..." if truncated
+- **When to show:** `showFocusInMenuBar` is on AND `timer.activeFocusName` is
+  non-nil/non-empty. This means the focus name is visible during focus phases
+  AND during the "Ready" idle state (when `pendingBlock != nil` and the user
+  hasn't reset), so they remember what they're coming back to.
+- **Truncation:** Cap at 20 characters, append "..." if truncated
+- **Separator:** A single space between the timer text and the focus name
 - **Format examples:**
   - Timer on + focus on: `[icon] 23:41 API work`
   - Timer off + focus on: `[icon] API work`
   - Timer on + focus off: `[icon] 23:41`
   - Both off: `[icon]`
-- **Font:** Same monospaced digit font used for the timer text
+- **Font:** Two attributed string runs: monospaced digit font for the timer
+  portion, regular system font for the focus name (monospaced digits look
+  wrong on prose text)
 - No new observation wiring needed. The existing `startObservingTimer()` loop
   already picks up changes to `timer.phase`, `timer.activeFocusName`, and
   `timer.settings.*`.
@@ -42,7 +47,7 @@ Extract a static/free function for truncating the focus name so it can be
 unit tested independently of AppKit:
 
 ```swift
-func truncatedFocusName(_ name: String, maxLength: Int = 15) -> String
+func truncatedFocusName(_ name: String, maxLength: Int = 20) -> String
 ```
 
 - Returns `name` unchanged if within limit
@@ -71,7 +76,7 @@ Toggle("Show focus in menu bar", isOn: ...)
 
 - **SettingsStore tests:** default value, persistence round-trip
 - **Truncation helper tests:** short name (no-op), exact boundary, over limit,
-  whitespace handling
+  whitespace handling, all-whitespace input (returns empty string)
 - Integration behavior (menu bar rendering) is covered by manual verification
   since `NSStatusItem` is AppKit glue.
 
