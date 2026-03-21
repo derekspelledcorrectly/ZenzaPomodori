@@ -49,6 +49,10 @@ final class SettingsStore {
         didSet { defaults.set(showTimerInMenuBar, forKey: SettingsKeys.showTimerInMenuBar) }
     }
 
+    var popOnComplete: Bool {
+        didSet { defaults.set(popOnComplete, forKey: SettingsKeys.popOnComplete) }
+    }
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
 
@@ -80,6 +84,12 @@ final class SettingsStore {
             self.showTimerInMenuBar = defaults.bool(forKey: SettingsKeys.showTimerInMenuBar)
         } else {
             self.showTimerInMenuBar = Defaults.showTimerInMenuBar
+        }
+
+        if defaults.object(forKey: SettingsKeys.popOnComplete) != nil {
+            self.popOnComplete = defaults.bool(forKey: SettingsKeys.popOnComplete)
+        } else {
+            self.popOnComplete = Defaults.popOnComplete
         }
     }
 }
