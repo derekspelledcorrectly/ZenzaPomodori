@@ -371,6 +371,67 @@ struct PomodoroTimerTests {
         #expect(timer.isRunning == false)
     }
 
+    // MARK: - onTimerComplete callback
+
+    @Test func onTimerCompleteFiresWhenCountdownExpires() {
+        let timer = makeTimer { $0.autoAdvance = false; $0.focusDuration = 60 }
+        var completedPhases: [TimerPhase] = []
+        timer.onTimerComplete = { phase in completedPhases.append(phase) }
+        timer.start()
+        timer.pause()
+
+        for _ in 0..<60 { timer.tick() }
+
+        #expect(completedPhases.count == 1)
+        #expect(completedPhases[0] == .focus(block: 1))
+        timer.reset()
+    }
+
+    @Test func onTimerCompleteFiresWithAutoAdvance() {
+        let timer = makeTimer { $0.autoAdvance = true; $0.focusDuration = 60 }
+        var completedPhases: [TimerPhase] = []
+        timer.onTimerComplete = { phase in completedPhases.append(phase) }
+        timer.start()
+        timer.pause()
+
+        for _ in 0..<60 { timer.tick() }
+
+        #expect(completedPhases.count == 1)
+        #expect(completedPhases[0] == .focus(block: 1))
+        timer.reset()
+    }
+
+    @Test func onTimerCompleteDoesNotFireOnStart() {
+        let timer = makeTimer()
+        var completedPhases: [TimerPhase] = []
+        timer.onTimerComplete = { phase in completedPhases.append(phase) }
+
+        timer.start()
+        #expect(completedPhases.isEmpty)
+        timer.reset()
+    }
+
+    @Test func onTimerCompleteDoesNotFireOnNext() {
+        let timer = makeTimer()
+        var completedPhases: [TimerPhase] = []
+        timer.onTimerComplete = { phase in completedPhases.append(phase) }
+
+        timer.start()
+        timer.next()
+        #expect(completedPhases.isEmpty)
+        timer.reset()
+    }
+
+    @Test func onTimerCompleteDoesNotFireOnReset() {
+        let timer = makeTimer()
+        var completedPhases: [TimerPhase] = []
+        timer.onTimerComplete = { phase in completedPhases.append(phase) }
+
+        timer.start()
+        timer.reset()
+        #expect(completedPhases.isEmpty)
+    }
+
     @Test func formattedTimeShowsOvertimePrefix() {
         let timer = makeTimer()
         timer.start()

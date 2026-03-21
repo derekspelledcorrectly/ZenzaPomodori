@@ -59,6 +59,7 @@ final class PomodoroTimer {
 
     var onPhaseChange: ((TimerPhase, TimerPhase) -> Void)?
     var onOvertimeStart: ((TimerPhase) -> Void)?
+    var onTimerComplete: ((TimerPhase) -> Void)?
 
     // MARK: - Actions
 
@@ -137,6 +138,7 @@ final class PomodoroTimer {
         guard secondsRemaining > 0 else { return }
         secondsRemaining -= 1
         if secondsRemaining == 0 {
+            onTimerComplete?(phase)
             if autoAdvance {
                 advancePhase(fromAutoAdvance: true)
                 if phase == .idle {
