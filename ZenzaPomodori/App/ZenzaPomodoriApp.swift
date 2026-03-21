@@ -84,7 +84,9 @@ final class PopoverManager {
 
     func showPopover() {
         guard let button = statusItem?.button else { return }
-        popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+        if !popover.isShown {
+            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+        }
         NSApp.activate()
     }
 
