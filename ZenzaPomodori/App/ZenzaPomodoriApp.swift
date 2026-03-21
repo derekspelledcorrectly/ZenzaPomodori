@@ -144,17 +144,31 @@ final class PopoverManager {
 
         button.image = NSImage(systemSymbolName: iconName, accessibilityDescription: nil)
 
+        let title = NSMutableAttributedString()
+
         if timer.settings.showTimerInMenuBar {
-            let font = NSFont.monospacedDigitSystemFont(
+            let monoFont = NSFont.monospacedDigitSystemFont(
                 ofSize: NSFont.systemFontSize, weight: .regular
             )
-            button.attributedTitle = NSAttributedString(
+            title.append(NSAttributedString(
                 string: " \(timer.formattedTime)",
-                attributes: [.font: font]
-            )
-        } else {
-            button.attributedTitle = NSAttributedString()
+                attributes: [.font: monoFont]
+            ))
         }
+
+        if timer.settings.showFocusInMenuBar,
+           let name = timer.activeFocusName,
+           !name.isEmpty {
+            let truncated = MenuBarFormatting.truncatedFocusName(name)
+            let sysFont = NSFont.systemFont(ofSize: NSFont.systemFontSize)
+            let separator = title.length > 0 ? " " : " "
+            title.append(NSAttributedString(
+                string: "\(separator)\(truncated)",
+                attributes: [.font: sysFont]
+            ))
+        }
+
+        button.attributedTitle = title
     }
 
     private func startObservingTimer() {

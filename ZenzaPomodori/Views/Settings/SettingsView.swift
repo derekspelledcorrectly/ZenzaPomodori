@@ -69,6 +69,11 @@ struct SettingsView: View {
                     get: { settings.showTimerInMenuBar },
                     set: { settings.showTimerInMenuBar = $0 }
                 ))
+
+                Toggle("Show focus in menu bar", isOn: Binding(
+                    get: { settings.showFocusInMenuBar },
+                    set: { settings.showFocusInMenuBar = $0 }
+                ))
             }
         }
         .formStyle(.grouped)
