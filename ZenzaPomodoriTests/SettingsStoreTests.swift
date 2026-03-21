@@ -52,6 +52,11 @@ struct SettingsStoreTests {
         #expect(store.popOnComplete == true)
     }
 
+    @Test func defaultShowFocusInMenuBar() {
+        let store = makeStore()
+        #expect(store.showFocusInMenuBar == true)
+    }
+
     // MARK: - Read/Write
 
     @Test func setFocusDuration() {
@@ -96,6 +101,12 @@ struct SettingsStoreTests {
         #expect(store.popOnComplete == false)
     }
 
+    @Test func setShowFocusInMenuBar() {
+        let store = makeStore()
+        store.showFocusInMenuBar = false
+        #expect(store.showFocusInMenuBar == false)
+    }
+
     // MARK: - Persistence
 
     @Test func valuesPersistInUserDefaults() {
@@ -111,6 +122,17 @@ struct SettingsStoreTests {
         #expect(store2.focusDuration == 45 * 60)
         #expect(store2.autoAdvance == true)
         #expect(store2.popOnComplete == false)
+    }
+
+    @Test func showFocusInMenuBarPersists() {
+        let suiteName = "test-settings-persist-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+
+        let store1 = SettingsStore(defaults: defaults)
+        store1.showFocusInMenuBar = false
+
+        let store2 = SettingsStore(defaults: defaults)
+        #expect(store2.showFocusInMenuBar == false)
     }
 
     // MARK: - Validation

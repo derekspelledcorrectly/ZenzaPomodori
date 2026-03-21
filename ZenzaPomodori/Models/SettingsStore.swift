@@ -53,6 +53,10 @@ final class SettingsStore {
         didSet { defaults.set(popOnComplete, forKey: SettingsKeys.popOnComplete) }
     }
 
+    var showFocusInMenuBar: Bool {
+        didSet { defaults.set(showFocusInMenuBar, forKey: SettingsKeys.showFocusInMenuBar) }
+    }
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
 
@@ -90,6 +94,12 @@ final class SettingsStore {
             self.popOnComplete = defaults.bool(forKey: SettingsKeys.popOnComplete)
         } else {
             self.popOnComplete = Defaults.popOnComplete
+        }
+
+        if defaults.object(forKey: SettingsKeys.showFocusInMenuBar) != nil {
+            self.showFocusInMenuBar = defaults.bool(forKey: SettingsKeys.showFocusInMenuBar)
+        } else {
+            self.showFocusInMenuBar = Defaults.showFocusInMenuBar
         }
     }
 }
