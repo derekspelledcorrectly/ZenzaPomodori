@@ -55,6 +55,11 @@ struct SettingsView: View {
                     set: { settings.autoAdvance = $0 }
                 ))
 
+                Toggle("Pop open on complete", isOn: Binding(
+                    get: { settings.popOnComplete },
+                    set: { settings.popOnComplete = $0 }
+                ))
+
                 Toggle("Notification sound", isOn: Binding(
                     get: { settings.soundEnabled },
                     set: { settings.soundEnabled = $0 }
