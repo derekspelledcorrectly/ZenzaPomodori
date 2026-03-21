@@ -9,6 +9,7 @@ enum Defaults {
     static let soundEnabled: Bool = true
     static let showTimerInMenuBar: Bool = true
     static let popOnComplete: Bool = true
+    static let showFocusInMenuBar: Bool = true
     static let focusNameMaxRecents: Int = 25
 }
 
@@ -21,6 +22,7 @@ enum SettingsKeys {
     static let soundEnabled = "soundEnabled"
     static let showTimerInMenuBar = "showTimerInMenuBar"
     static let popOnComplete = "popOnComplete"
+    static let showFocusInMenuBar = "showFocusInMenuBar"
     static let focusNameEntries = "focusNameEntries"
     static let focusNameDraft = "focusNameDraft"
 }
