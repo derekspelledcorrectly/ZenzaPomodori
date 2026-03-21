@@ -33,6 +33,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 @MainActor
 final class PopoverManager {
     let timer: PomodoroTimer
+    private let settings: SettingsStore
     private var statusItem: NSStatusItem?
     private let popover = NSPopover()
     private let notificationService: NotificationService
@@ -40,6 +41,7 @@ final class PopoverManager {
 
     init(timer: PomodoroTimer, settings: SettingsStore) {
         self.timer = timer
+        self.settings = settings
         self.notificationService = NotificationService(settings: settings)
         self.settingsWindowManager = SettingsWindowManager(settings: settings)
     }
@@ -73,6 +75,10 @@ final class PopoverManager {
         }
         timer.onOvertimeStart = { [weak self] phase in
             self?.notificationService.sendOvertimeNotification(for: phase)
+        }
+        timer.onTimerComplete = { [weak self] _ in
+            guard let self, self.settings.popOnComplete else { return }
+            self.showPopover()
         }
     }
 
