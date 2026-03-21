@@ -47,6 +47,11 @@ struct SettingsStoreTests {
         #expect(store.soundEnabled == true)
     }
 
+    @Test func defaultPopOnComplete() {
+        let store = makeStore()
+        #expect(store.popOnComplete == true)
+    }
+
     // MARK: - Read/Write
 
     @Test func setFocusDuration() {
@@ -85,6 +90,12 @@ struct SettingsStoreTests {
         #expect(store.soundEnabled == false)
     }
 
+    @Test func setPopOnComplete() {
+        let store = makeStore()
+        store.popOnComplete = false
+        #expect(store.popOnComplete == false)
+    }
+
     // MARK: - Persistence
 
     @Test func valuesPersistInUserDefaults() {
@@ -94,10 +105,12 @@ struct SettingsStoreTests {
         let store1 = SettingsStore(defaults: defaults)
         store1.focusDuration = 45 * 60
         store1.autoAdvance = true
+        store1.popOnComplete = false
 
         let store2 = SettingsStore(defaults: defaults)
         #expect(store2.focusDuration == 45 * 60)
         #expect(store2.autoAdvance == true)
+        #expect(store2.popOnComplete == false)
     }
 
     // MARK: - Validation
