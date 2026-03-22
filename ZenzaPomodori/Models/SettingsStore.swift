@@ -57,8 +57,12 @@ final class SettingsStore {
         didSet { defaults.set(showFocusInMenuBar, forKey: SettingsKeys.showFocusInMenuBar) }
     }
 
-    var selectedSound: String {
-        didSet { defaults.set(selectedSound, forKey: SettingsKeys.selectedSound) }
+    var focusEndSound: String {
+        didSet { defaults.set(focusEndSound, forKey: SettingsKeys.focusEndSound) }
+    }
+
+    var breakEndSound: String {
+        didSet { defaults.set(breakEndSound, forKey: SettingsKeys.breakEndSound) }
     }
 
     var onNotificationsEnabled: (() -> Void)?
@@ -123,10 +127,16 @@ final class SettingsStore {
             self.showFocusInMenuBar = Defaults.showFocusInMenuBar
         }
 
-        if let sound = defaults.string(forKey: SettingsKeys.selectedSound) {
-            self.selectedSound = sound
+        if let sound = defaults.string(forKey: SettingsKeys.focusEndSound) {
+            self.focusEndSound = sound
         } else {
-            self.selectedSound = Defaults.selectedSound
+            self.focusEndSound = Defaults.focusEndSound
+        }
+
+        if let sound = defaults.string(forKey: SettingsKeys.breakEndSound) {
+            self.breakEndSound = sound
+        } else {
+            self.breakEndSound = Defaults.breakEndSound
         }
 
         if defaults.object(forKey: SettingsKeys.notificationsEnabled) != nil {

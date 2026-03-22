@@ -57,22 +57,14 @@ struct SettingsView: View {
                 ))
 
                 if settings.soundEnabled {
-                    HStack {
-                        Picker("Sound", selection: Binding(
-                            get: { settings.selectedSound },
-                            set: { settings.selectedSound = $0 }
-                        )) {
-                            ForEach(SoundService.availableSounds, id: \.self) { name in
-                                Text(name).tag(name)
-                            }
-                        }
-
-                        Button(action: { soundService.play(settings.selectedSound) }) {
-                            Image(systemName: "play.circle")
-                        }
-                        .buttonStyle(.borderless)
-                        .help("Preview sound")
-                    }
+                    soundPicker("Focus end", sound: Binding(
+                        get: { settings.focusEndSound },
+                        set: { settings.focusEndSound = $0 }
+                    ))
+                    soundPicker("Break end", sound: Binding(
+                        get: { settings.breakEndSound },
+                        set: { settings.breakEndSound = $0 }
+                    ))
                 }
             }
 
@@ -132,6 +124,22 @@ struct SettingsView: View {
         .formStyle(.grouped)
         .frame(width: 320)
         .fixedSize()
+    }
+
+    private func soundPicker(_ label: String, sound: Binding<String>) -> some View {
+        HStack {
+            Picker(label, selection: sound) {
+                ForEach(SoundService.availableSounds, id: \.self) { name in
+                    Text(name).tag(name)
+                }
+            }
+
+            Button(action: { soundService.play(sound.wrappedValue) }) {
+                Image(systemName: "play.circle")
+            }
+            .buttonStyle(.borderless)
+            .help("Preview sound")
+        }
     }
 
     private func minutesBinding(_ keyPath: ReferenceWritableKeyPath<SettingsStore, Int>) -> Binding<Int> {

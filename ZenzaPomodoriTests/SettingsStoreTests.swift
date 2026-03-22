@@ -149,26 +149,48 @@ struct SettingsStoreTests {
         #expect(store.blocksBeforeLongBreak == 1)
     }
 
-    // MARK: - Selected Sound
+    // MARK: - Focus End Sound
 
-    @Test func defaultSelectedSound() {
+    @Test func defaultFocusEndSound() {
         let store = makeStore()
-        #expect(store.selectedSound == "Calm")
+        #expect(store.focusEndSound == "Calm")
     }
 
-    @Test func setSelectedSound() {
+    @Test func setFocusEndSound() {
         let store = makeStore()
-        store.selectedSound = "Glass"
-        #expect(store.selectedSound == "Glass")
+        store.focusEndSound = "Glass"
+        #expect(store.focusEndSound == "Glass")
     }
 
-    @Test func selectedSoundPersists() {
+    @Test func focusEndSoundPersists() {
         let suiteName = "test-settings-persist-\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suiteName)!
         let store1 = SettingsStore(defaults: defaults)
-        store1.selectedSound = "Sharp"
+        store1.focusEndSound = "Sharp"
         let store2 = SettingsStore(defaults: defaults)
-        #expect(store2.selectedSound == "Sharp")
+        #expect(store2.focusEndSound == "Sharp")
+    }
+
+    // MARK: - Break End Sound
+
+    @Test func defaultBreakEndSound() {
+        let store = makeStore()
+        #expect(store.breakEndSound == "Chord")
+    }
+
+    @Test func setBreakEndSound() {
+        let store = makeStore()
+        store.breakEndSound = "Polite"
+        #expect(store.breakEndSound == "Polite")
+    }
+
+    @Test func breakEndSoundPersists() {
+        let suiteName = "test-settings-persist-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        let store1 = SettingsStore(defaults: defaults)
+        store1.breakEndSound = "Reverie"
+        let store2 = SettingsStore(defaults: defaults)
+        #expect(store2.breakEndSound == "Reverie")
     }
 
     // MARK: - Notifications Enabled
