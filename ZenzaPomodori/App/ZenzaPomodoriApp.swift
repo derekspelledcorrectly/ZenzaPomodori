@@ -37,6 +37,7 @@ final class PopoverManager {
     private var statusItem: NSStatusItem?
     private let popover = NSPopover()
     private let notificationService: NotificationService
+    private let soundService = SoundService()
     private let settingsWindowManager: SettingsWindowManager
 
     init(timer: PomodoroTimer, settings: SettingsStore) {
@@ -77,8 +78,13 @@ final class PopoverManager {
             self?.notificationService.sendOvertimeNotification(for: phase)
         }
         timer.onTimerComplete = { [weak self] _ in
-            guard let self, self.settings.popOnComplete else { return }
-            self.showPopover()
+            guard let self else { return }
+            if self.settings.soundEnabled {
+                self.soundService.play(self.settings.selectedSound)
+            }
+            if self.settings.popOnComplete {
+                self.showPopover()
+            }
         }
     }
 
