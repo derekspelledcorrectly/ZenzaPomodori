@@ -70,14 +70,10 @@ final class PopoverManager {
     }
 
     private func setupNotifications() {
-        notificationService.requestPermission()
         notificationService.onNotificationTapped = { [weak self] in
             self?.showPopover()
         }
-        timer.onOvertimeStart = { [weak self] phase in
-            self?.notificationService.sendOvertimeNotification(for: phase)
-        }
-        timer.onTimerComplete = { [weak self] _ in
+        timer.onTimerComplete = { [weak self] phase in
             guard let self else { return }
             if self.settings.soundEnabled {
                 self.soundService.play(self.settings.selectedSound)
@@ -85,6 +81,7 @@ final class PopoverManager {
             if self.settings.popOnComplete {
                 self.showPopover()
             }
+            self.notificationService.sendCompletionNotification(for: phase)
         }
     }
 

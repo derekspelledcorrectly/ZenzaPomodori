@@ -12,11 +12,12 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
     }
 
     func requestPermission() {
+        guard !isAuthorized else { return }
         center.delegate = self
         Task {
             do {
                 isAuthorized = try await center.requestAuthorization(
-                    options: [.alert, .sound]
+                    options: [.alert]
                 )
             } catch {
                 isAuthorized = false
@@ -24,13 +25,17 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         }
     }
 
-    func sendOvertimeNotification(for phase: TimerPhase) {
-        guard isAuthorized else { return }
+    func sendCompletionNotification(for phase: TimerPhase) {
+        guard settings.notificationsEnabled else { return }
         guard phase != .idle else { return }
+        guard isAuthorized else {
+            requestPermission()
+            return
+        }
 
         let content = makeNotificationContent(for: phase)
         let request = UNNotificationRequest(
-            identifier: "overtime-\(UUID().uuidString)",
+            identifier: "completion-\(UUID().uuidString)",
             content: content,
             trigger: nil
         )
@@ -41,10 +46,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
     func makeNotificationContent(for phase: TimerPhase) -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
         content.title = "\(phase.label(totalBlocks: Defaults.blocksBeforeLongBreak)) Complete"
-        content.body = overtimeBody(for: phase)
-        if settings.soundEnabled {
-            content.sound = .default
-        }
+        content.body = completionBody(for: phase)
         return content
     }
 
@@ -52,7 +54,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification
     ) async -> UNNotificationPresentationOptions {
-        [.banner, .sound]
+        [.banner]
     }
 
     nonisolated func userNotificationCenter(
@@ -64,7 +66,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         }
     }
 
-    private func overtimeBody(for phase: TimerPhase) -> String {
+    private func completionBody(for phase: TimerPhase) -> String {
         switch phase {
         case .focus:
             "Time for a break!"
