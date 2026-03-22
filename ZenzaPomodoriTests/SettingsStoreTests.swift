@@ -149,6 +149,84 @@ struct SettingsStoreTests {
         #expect(store.blocksBeforeLongBreak == 1)
     }
 
+    // MARK: - Selected Sound
+
+    @Test func defaultSelectedSound() {
+        let store = makeStore()
+        #expect(store.selectedSound == "Calm")
+    }
+
+    @Test func setSelectedSound() {
+        let store = makeStore()
+        store.selectedSound = "Glass"
+        #expect(store.selectedSound == "Glass")
+    }
+
+    @Test func selectedSoundPersists() {
+        let suiteName = "test-settings-persist-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        let store1 = SettingsStore(defaults: defaults)
+        store1.selectedSound = "Sharp"
+        let store2 = SettingsStore(defaults: defaults)
+        #expect(store2.selectedSound == "Sharp")
+    }
+
+    // MARK: - Notifications Enabled
+
+    @Test func defaultNotificationsEnabled() {
+        let store = makeStore()
+        #expect(store.notificationsEnabled == false)
+    }
+
+    @Test func setNotificationsEnabled() {
+        let store = makeStore()
+        store.notificationsEnabled = true
+        #expect(store.notificationsEnabled == true)
+    }
+
+    @Test func notificationsEnabledPersists() {
+        let suiteName = "test-settings-persist-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        let store1 = SettingsStore(defaults: defaults)
+        store1.notificationsEnabled = true
+        let store2 = SettingsStore(defaults: defaults)
+        #expect(store2.notificationsEnabled == true)
+    }
+
+    // MARK: - Auto-Dismiss Seconds
+
+    @Test func defaultAutoDismissSeconds() {
+        let store = makeStore()
+        #expect(store.autoDismissSeconds == 5)
+    }
+
+    @Test func setAutoDismissSeconds() {
+        let store = makeStore()
+        store.autoDismissSeconds = 10
+        #expect(store.autoDismissSeconds == 10)
+    }
+
+    @Test func autoDismissSecondsClampsToZero() {
+        let store = makeStore()
+        store.autoDismissSeconds = -3
+        #expect(store.autoDismissSeconds == 0)
+    }
+
+    @Test func autoDismissSecondsClampsToThirty() {
+        let store = makeStore()
+        store.autoDismissSeconds = 60
+        #expect(store.autoDismissSeconds == 30)
+    }
+
+    @Test func autoDismissSecondsPersists() {
+        let suiteName = "test-settings-persist-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        let store1 = SettingsStore(defaults: defaults)
+        store1.autoDismissSeconds = 15
+        let store2 = SettingsStore(defaults: defaults)
+        #expect(store2.autoDismissSeconds == 15)
+    }
+
     // MARK: - Observation
 
     @Test func observationTracksChanges() {
