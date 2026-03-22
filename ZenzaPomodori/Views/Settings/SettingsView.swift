@@ -128,7 +128,13 @@ struct SettingsView: View {
 
     private func soundPicker(_ label: String, sound: Binding<String>) -> some View {
         HStack {
-            Picker(label, selection: sound) {
+            Picker(label, selection: Binding(
+                get: { sound.wrappedValue },
+                set: { newValue in
+                    sound.wrappedValue = newValue
+                    soundService.play(newValue)
+                }
+            )) {
                 ForEach(SoundService.availableSounds, id: \.self) { name in
                     Text(name).tag(name)
                 }
