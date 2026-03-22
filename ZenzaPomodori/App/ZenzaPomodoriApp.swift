@@ -86,7 +86,10 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         timer.onTimerComplete = { [weak self] phase in
             guard let self else { return }
             if self.settings.soundEnabled {
-                self.soundService.play(self.settings.selectedSound)
+                let sound = phase.isFocus
+                    ? self.settings.focusEndSound
+                    : self.settings.breakEndSound
+                self.soundService.play(sound)
             }
             if self.settings.popOnComplete {
                 self.showPopover()

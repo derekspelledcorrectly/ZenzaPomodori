@@ -8,8 +8,9 @@ struct SoundServiceTests {
         #expect(!SoundService.availableSounds.isEmpty)
     }
 
-    @Test func availableSoundsContainsDefaultSound() {
-        #expect(SoundService.availableSounds.contains(Defaults.selectedSound))
+    @Test func availableSoundsContainsDefaultSounds() {
+        #expect(SoundService.availableSounds.contains(Defaults.focusEndSound))
+        #expect(SoundService.availableSounds.contains(Defaults.breakEndSound))
     }
 
     @Test func availableSoundsAreSorted() {
