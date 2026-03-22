@@ -8,7 +8,7 @@ struct SettingsWindowManagerTests {
     private func makeManager() -> SettingsWindowManager {
         let defaults = UserDefaults(suiteName: "test-\(UUID().uuidString)")!
         let store = SettingsStore(defaults: defaults)
-        return SettingsWindowManager(settings: store)
+        return SettingsWindowManager(settings: store, soundService: SoundService())
     }
 
     @Test func showSettingsCreatesWindow() {
