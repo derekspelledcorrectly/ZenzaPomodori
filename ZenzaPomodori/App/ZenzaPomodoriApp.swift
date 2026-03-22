@@ -161,9 +161,8 @@ final class PopoverManager {
            !name.isEmpty {
             let truncated = MenuBarFormatting.truncatedFocusName(name)
             let sysFont = NSFont.systemFont(ofSize: NSFont.systemFontSize)
-            let separator = title.length > 0 ? " " : ""
             title.append(NSAttributedString(
-                string: "\(separator)\(truncated)",
+                string: " \(truncated)",
                 attributes: [.font: sysFont]
             ))
         }
