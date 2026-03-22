@@ -52,6 +52,10 @@ Makefile            # Build automation
 - [ ] DND/Focus mode integration via Shortcuts.app
 - [ ] App icon
 
+## Acknowledgments
+
+Notification sounds by [akx/Notifications](https://github.com/akx/Notifications), dual-licensed CC-BY 3.0 / CC0 Public Domain.
+
 ## License
 
 GPL-3.0. See [LICENSE](LICENSE).
