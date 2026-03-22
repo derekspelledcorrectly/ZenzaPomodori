@@ -28,6 +28,7 @@ final class SettingsWindowManager {
         )
 
         let window = NSWindow(contentViewController: hostingController)
+        window.isReleasedWhenClosed = false
         window.title = "Settings"
         window.styleMask = [.titled, .closable]
 
