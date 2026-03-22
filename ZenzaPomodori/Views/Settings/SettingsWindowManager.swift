@@ -4,10 +4,12 @@ import SwiftUI
 @MainActor
 final class SettingsWindowManager {
     private let settings: SettingsStore
+    private let soundService: SoundService
     private var window: NSWindow?
 
-    init(settings: SettingsStore) {
+    init(settings: SettingsStore, soundService: SoundService) {
         self.settings = settings
+        self.soundService = soundService
     }
 
     var isWindowVisible: Bool {
@@ -22,7 +24,7 @@ final class SettingsWindowManager {
         }
 
         let hostingController = NSHostingController(
-            rootView: SettingsView(settings: settings)
+            rootView: SettingsView(settings: settings, soundService: soundService)
         )
 
         let window = NSWindow(contentViewController: hostingController)

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @Bindable var settings: SettingsStore
+    let soundService: SoundService
 
     private static let focusOptions = [5, 10, 15, 20, 25, 30, 45, 60, 90, 120]
     private static let shortBreakOptions = [1, 2, 3, 5, 10, 15, 20]
@@ -49,6 +50,32 @@ struct SettingsView: View {
                 }
             }
 
+            Section("Sound") {
+                Toggle("Play sound on complete", isOn: Binding(
+                    get: { settings.soundEnabled },
+                    set: { settings.soundEnabled = $0 }
+                ))
+
+                if settings.soundEnabled {
+                    HStack {
+                        Picker("Sound", selection: Binding(
+                            get: { settings.selectedSound },
+                            set: { settings.selectedSound = $0 }
+                        )) {
+                            ForEach(SoundService.availableSounds, id: \.self) { name in
+                                Text(name).tag(name)
+                            }
+                        }
+
+                        Button(action: { soundService.play(settings.selectedSound) }) {
+                            Image(systemName: "play.circle")
+                        }
+                        .buttonStyle(.borderless)
+                        .help("Preview sound")
+                    }
+                }
+            }
+
             Section("Behavior") {
                 Toggle("Auto-advance", isOn: Binding(
                     get: { settings.autoAdvance },
@@ -60,10 +87,29 @@ struct SettingsView: View {
                     set: { settings.popOnComplete = $0 }
                 ))
 
-                Toggle("Notification sound", isOn: Binding(
-                    get: { settings.soundEnabled },
-                    set: { settings.soundEnabled = $0 }
-                ))
+                if settings.popOnComplete {
+                    HStack {
+                        Text("Auto-dismiss after")
+                        Spacer()
+                        HStack(spacing: 4) {
+                            Button(action: { settings.autoDismissSeconds -= 1 }) {
+                                Image(systemName: "minus")
+                            }
+                            .disabled(settings.autoDismissSeconds <= 0)
+
+                            Text(settings.autoDismissSeconds == 0
+                                 ? "Off"
+                                 : "\(settings.autoDismissSeconds)s")
+                                .monospacedDigit()
+                                .frame(minWidth: 30, alignment: .center)
+
+                            Button(action: { settings.autoDismissSeconds += 1 }) {
+                                Image(systemName: "plus")
+                            }
+                            .disabled(settings.autoDismissSeconds >= 30)
+                        }
+                    }
+                }
 
                 Toggle("Show timer in menu bar", isOn: Binding(
                     get: { settings.showTimerInMenuBar },
@@ -73,6 +119,13 @@ struct SettingsView: View {
                 Toggle("Show focus in menu bar", isOn: Binding(
                     get: { settings.showFocusInMenuBar },
                     set: { settings.showFocusInMenuBar = $0 }
+                ))
+            }
+
+            Section("Notifications") {
+                Toggle("Send notifications", isOn: Binding(
+                    get: { settings.notificationsEnabled },
+                    set: { settings.notificationsEnabled = $0 }
                 ))
             }
         }
@@ -90,5 +143,5 @@ struct SettingsView: View {
 }
 
 #Preview {
-    SettingsView(settings: SettingsStore())
+    SettingsView(settings: SettingsStore(), soundService: SoundService())
 }

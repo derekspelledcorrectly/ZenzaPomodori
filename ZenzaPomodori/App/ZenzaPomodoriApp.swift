@@ -46,7 +46,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         self.timer = timer
         self.settings = settings
         self.notificationService = NotificationService(settings: settings)
-        self.settingsWindowManager = SettingsWindowManager(settings: settings)
+        self.settingsWindowManager = SettingsWindowManager(settings: settings, soundService: soundService)
         super.init()
         popover.delegate = self
     }
