@@ -1,6 +1,6 @@
 name: ZenzaPomodori
 options:
-  bundleIdPrefix: dev.zenzapomodori
+  bundleIdPrefix: dev.derekspelledcorrectly
   deploymentTarget:
     macOS: "15.0"
   minimumXcodeGenVersion: "2.38"
@@ -18,7 +18,7 @@ targets:
       base:
         GENERATE_INFOPLIST_FILE: false
         INFOPLIST_FILE: ZenzaPomodori/Resources/Info.plist
-        PRODUCT_BUNDLE_IDENTIFIER: dev.zenzapomodori.ZenzaPomodori
+        PRODUCT_BUNDLE_IDENTIFIER: dev.derekspelledcorrectly.ZenzaPomodori
         PRODUCT_NAME: Zenza Pomodori
         PRODUCT_MODULE_NAME: ZenzaPomodori
         CODE_SIGNING_ALLOWED: true
