@@ -57,6 +57,22 @@ final class SettingsStore {
         didSet { defaults.set(showFocusInMenuBar, forKey: SettingsKeys.showFocusInMenuBar) }
     }
 
+    var selectedSound: String {
+        didSet { defaults.set(selectedSound, forKey: SettingsKeys.selectedSound) }
+    }
+
+    var notificationsEnabled: Bool {
+        didSet { defaults.set(notificationsEnabled, forKey: SettingsKeys.notificationsEnabled) }
+    }
+
+    var autoDismissSeconds: Int {
+        didSet {
+            let validated = max(0, min(30, autoDismissSeconds))
+            defaults.set(validated, forKey: SettingsKeys.autoDismissSeconds)
+            if autoDismissSeconds != validated { autoDismissSeconds = validated }
+        }
+    }
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
 
@@ -100,6 +116,25 @@ final class SettingsStore {
             self.showFocusInMenuBar = defaults.bool(forKey: SettingsKeys.showFocusInMenuBar)
         } else {
             self.showFocusInMenuBar = Defaults.showFocusInMenuBar
+        }
+
+        if let sound = defaults.string(forKey: SettingsKeys.selectedSound) {
+            self.selectedSound = sound
+        } else {
+            self.selectedSound = Defaults.selectedSound
+        }
+
+        if defaults.object(forKey: SettingsKeys.notificationsEnabled) != nil {
+            self.notificationsEnabled = defaults.bool(forKey: SettingsKeys.notificationsEnabled)
+        } else {
+            self.notificationsEnabled = Defaults.notificationsEnabled
+        }
+
+        let dismiss = defaults.integer(forKey: SettingsKeys.autoDismissSeconds)
+        if defaults.object(forKey: SettingsKeys.autoDismissSeconds) != nil {
+            self.autoDismissSeconds = max(0, min(30, dismiss))
+        } else {
+            self.autoDismissSeconds = Defaults.autoDismissSeconds
         }
     }
 }
