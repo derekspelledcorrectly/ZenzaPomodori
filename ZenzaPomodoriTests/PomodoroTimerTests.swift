@@ -401,6 +401,50 @@ struct PomodoroTimerTests {
         timer.reset()
     }
 
+    @Test func onTimerCompleteFiresForBreakPhase() {
+        let timer = makeTimer { $0.autoAdvance = false; $0.focusDuration = 60; $0.shortBreakDuration = 60 }
+        var completedPhases: [TimerPhase] = []
+        timer.onTimerComplete = { phase in completedPhases.append(phase) }
+        timer.start()
+        timer.pause()
+
+        // Tick through focus
+        for _ in 0..<60 { timer.tick() }
+        // Manually advance to short break
+        timer.next()
+        timer.pause()
+        // Tick through short break
+        for _ in 0..<60 { timer.tick() }
+
+        #expect(completedPhases.count == 2)
+        #expect(completedPhases[0] == .focus(block: 1))
+        #expect(completedPhases[1] == .shortBreak(afterBlock: 1))
+        timer.reset()
+    }
+
+    @Test func onTimerCompleteFiresOncePerPhaseInAutoAdvance() {
+        let timer = makeTimer {
+            $0.autoAdvance = true
+            $0.focusDuration = 60
+            $0.longBreakDuration = 60
+            $0.blocksBeforeLongBreak = 1
+        }
+        var completedPhases: [TimerPhase] = []
+        timer.onTimerComplete = { phase in completedPhases.append(phase) }
+        timer.start()
+        timer.pause()
+
+        // Tick through focus -> auto-advances to long break
+        for _ in 0..<60 { timer.tick() }
+        // Tick through long break -> auto-advances to idle
+        for _ in 0..<60 { timer.tick() }
+
+        #expect(completedPhases.count == 2)
+        #expect(completedPhases[0] == .focus(block: 1))
+        #expect(completedPhases[1] == .longBreak)
+        timer.reset()
+    }
+
     @Test func onTimerCompleteDoesNotFireOnStart() {
         let timer = makeTimer()
         var completedPhases: [TimerPhase] = []
