@@ -61,8 +61,13 @@ final class SettingsStore {
         didSet { defaults.set(selectedSound, forKey: SettingsKeys.selectedSound) }
     }
 
+    var onNotificationsEnabled: (() -> Void)?
+
     var notificationsEnabled: Bool {
-        didSet { defaults.set(notificationsEnabled, forKey: SettingsKeys.notificationsEnabled) }
+        didSet {
+            defaults.set(notificationsEnabled, forKey: SettingsKeys.notificationsEnabled)
+            if notificationsEnabled { onNotificationsEnabled?() }
+        }
     }
 
     var autoDismissSeconds: Int {
