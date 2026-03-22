@@ -74,6 +74,12 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
     }
 
     private func setupNotifications() {
+        if settings.notificationsEnabled {
+            notificationService.requestPermission()
+        }
+        settings.onNotificationsEnabled = { [weak self] in
+            self?.notificationService.requestPermission()
+        }
         notificationService.onNotificationTapped = { [weak self] in
             self?.showPopover()
         }
@@ -235,13 +241,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
     private func startObservingTimer() {
         Task { @MainActor [weak self] in
             while let self {
-                withObservationTracking {
-                    self.updateStatusItem()
-                } onChange: {
-                    Task { @MainActor [weak self] in
-                        self?.updateStatusItem()
-                    }
-                }
+                self.updateStatusItem()
                 try? await Task.sleep(for: .milliseconds(100))
             }
         }
