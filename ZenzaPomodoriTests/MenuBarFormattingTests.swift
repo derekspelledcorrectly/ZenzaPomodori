@@ -35,4 +35,12 @@ struct MenuBarFormattingTests {
     @Test func emptyStringReturnsEmpty() {
         #expect(MenuBarFormatting.truncatedFocusName("") == "")
     }
+
+    @Test func customMaxLengthTruncates() {
+        #expect(MenuBarFormatting.truncatedFocusName("Hello World", maxLength: 5) == "Hello...")
+    }
+
+    @Test func customMaxLengthUnderLimitUnchanged() {
+        #expect(MenuBarFormatting.truncatedFocusName("Hi", maxLength: 5) == "Hi")
+    }
 }
