@@ -31,7 +31,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 }
 
 @MainActor
-final class PopoverManager {
+final class PopoverManager: NSObject, NSPopoverDelegate {
     let timer: PomodoroTimer
     private let settings: SettingsStore
     private var statusItem: NSStatusItem?
@@ -39,12 +39,16 @@ final class PopoverManager {
     private let notificationService: NotificationService
     private let soundService = SoundService()
     private let settingsWindowManager: SettingsWindowManager
+    private var autoDismissTask: Task<Void, Never>?
+    private var clickMonitor: Any?
 
     init(timer: PomodoroTimer, settings: SettingsStore) {
         self.timer = timer
         self.settings = settings
         self.notificationService = NotificationService(settings: settings)
         self.settingsWindowManager = SettingsWindowManager(settings: settings)
+        super.init()
+        popover.delegate = self
     }
 
     func setup() {
@@ -80,6 +84,7 @@ final class PopoverManager {
             }
             if self.settings.popOnComplete {
                 self.showPopover()
+                self.startAutoDismissTimer()
             }
             self.notificationService.sendCompletionNotification(for: phase)
         }
@@ -172,6 +177,60 @@ final class PopoverManager {
 
         button.attributedTitle = title
     }
+
+    // MARK: - Auto-Dismiss
+
+    private func startAutoDismissTimer() {
+        cancelAutoDismissTimer()
+        let seconds = settings.autoDismissSeconds
+        guard seconds > 0 else { return }
+        installClickMonitor()
+        autoDismissTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(seconds))
+            guard !Task.isCancelled else { return }
+            self?.handleAutoDismiss()
+        }
+    }
+
+    private func cancelAutoDismissTimer() {
+        autoDismissTask?.cancel()
+        autoDismissTask = nil
+        removeClickMonitor()
+    }
+
+    private func handleAutoDismiss() {
+        removeClickMonitor()
+        popover.performClose(nil)
+        if settings.autoAdvance, timer.isOvertime {
+            timer.next()
+        }
+    }
+
+    nonisolated func popoverDidClose(_ notification: Notification) {
+        MainActor.assumeIsolated {
+            cancelAutoDismissTimer()
+        }
+    }
+
+    private func installClickMonitor() {
+        guard clickMonitor == nil else { return }
+        clickMonitor = NSEvent.addLocalMonitorForEvents(matching: .leftMouseDown) { [weak self] event in
+            if let self, let window = self.popover.contentViewController?.view.window,
+               event.window == window {
+                self.cancelAutoDismissTimer()
+            }
+            return event
+        }
+    }
+
+    private func removeClickMonitor() {
+        if let monitor = clickMonitor {
+            NSEvent.removeMonitor(monitor)
+            clickMonitor = nil
+        }
+    }
+
+    // MARK: - Timer Observation
 
     private func startObservingTimer() {
         Task { @MainActor [weak self] in
