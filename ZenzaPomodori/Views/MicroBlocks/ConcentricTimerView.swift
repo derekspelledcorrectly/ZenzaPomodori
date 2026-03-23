@@ -5,42 +5,55 @@ struct ConcentricTimerView: View {
     let outerProgress: Double
     let microTimeFormatted: String
     let outerTimeFormatted: String
+    var size: CGFloat = 140
 
-    private let size: CGFloat = 64
-    private let outerRadius: CGFloat = 29
-    private let innerRadius: CGFloat = 21
-    private let outerStroke: CGFloat = 3
-    private let innerStroke: CGFloat = 4.5
+    private var scale: CGFloat { size / 140 }
+    private var outerRadius: CGFloat { 64 * scale }
+    private var innerRadius: CGFloat { 48 * scale }
+    private var outerStroke: CGFloat { 4 * scale }
+    private var innerStroke: CGFloat { 5 * scale }
+    private var mainFontSize: CGFloat { 26 * scale }
+    private var subFontSize: CGFloat { 11 * scale }
 
     var body: some View {
         ZStack {
+            // Outer ring: pomodoro block
             Circle()
-                .stroke(Color(.sRGB, red: 0.1, green: 0.1, blue: 0.18), lineWidth: outerStroke)
+                .stroke(Color.primary.opacity(0.08), lineWidth: outerStroke)
                 .frame(width: outerRadius * 2, height: outerRadius * 2)
             Circle()
                 .trim(from: 0, to: outerProgress)
                 .stroke(
-                    Color(.sRGB, red: 0.29, green: 0.44, blue: 0.65).opacity(0.7),
+                    Color.blue.opacity(0.4),
                     style: StrokeStyle(lineWidth: outerStroke, lineCap: .round)
                 )
                 .frame(width: outerRadius * 2, height: outerRadius * 2)
                 .rotationEffect(.degrees(-90))
+                .animation(.linear(duration: 0.3), value: outerProgress)
 
+            // Inner ring: micro-rotation
             Circle()
-                .stroke(Color(.sRGB, red: 0.1, green: 0.1, blue: 0.18), lineWidth: innerStroke)
+                .stroke(Color.primary.opacity(0.08), lineWidth: innerStroke)
                 .frame(width: innerRadius * 2, height: innerRadius * 2)
             Circle()
                 .trim(from: 0, to: microProgress)
                 .stroke(
-                    Color(.sRGB, red: 0.91, green: 0.27, blue: 0.38),
+                    Color.red.opacity(0.85),
                     style: StrokeStyle(lineWidth: innerStroke, lineCap: .round)
                 )
                 .frame(width: innerRadius * 2, height: innerRadius * 2)
                 .rotationEffect(.degrees(-90))
+                .animation(.linear(duration: 0.3), value: microProgress)
 
-            Text(microTimeFormatted)
-                .font(.system(size: 13, weight: .bold, design: .monospaced))
-                .foregroundStyle(.primary)
+            // Center text
+            VStack(spacing: 1) {
+                Text(microTimeFormatted)
+                    .font(.system(size: mainFontSize, weight: .medium, design: .monospaced))
+                    .foregroundStyle(.primary)
+                Text(outerTimeFormatted)
+                    .font(.system(size: subFontSize, weight: .medium))
+                    .foregroundStyle(.secondary)
+            }
         }
         .frame(width: size, height: size)
     }
