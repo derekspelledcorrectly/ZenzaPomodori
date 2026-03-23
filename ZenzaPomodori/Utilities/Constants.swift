@@ -47,4 +47,5 @@ enum SettingsKeys {
     static let stealFocusOnRotation = "stealFocusOnRotation"
     static let microBlockMenuBarFormat = "microBlockMenuBarFormat"
     static let lastBlockType = "lastBlockType"
+    static let savedRotations = "savedRotations"
 }
