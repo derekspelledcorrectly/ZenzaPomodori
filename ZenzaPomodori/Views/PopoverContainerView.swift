@@ -21,6 +21,8 @@ struct PopoverContainerView: View {
                     soundService: soundService,
                     onBack: { router.activePanel = .timer }
                 )
+            case .microBlockSetup, .microBlockActive, .microBlockTransition:
+                EmptyView()
             }
         }
         .onChange(of: router.activePanel) { _, panel in

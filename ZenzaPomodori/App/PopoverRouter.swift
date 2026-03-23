@@ -3,6 +3,9 @@ import Foundation
 enum PopoverPanel {
     case timer
     case settings
+    case microBlockSetup
+    case microBlockActive
+    case microBlockTransition
 }
 
 @Observable

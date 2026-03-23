@@ -178,6 +178,10 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
                 if let picker = self.firstPopUpButton(in: contentView) {
                     window.makeFirstResponder(picker)
                 }
+            case .microBlockSetup, .microBlockActive, .microBlockTransition:
+                if let button = self.firstBorderedButton(in: contentView) {
+                    window.makeFirstResponder(button)
+                }
             }
         }
     }
