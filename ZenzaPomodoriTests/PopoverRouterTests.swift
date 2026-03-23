@@ -21,4 +21,22 @@ struct PopoverRouterTests {
         router.activePanel = .timer
         #expect(router.activePanel == .timer)
     }
+
+    @Test func microBlockSetupPanel() {
+        let router = PopoverRouter()
+        router.activePanel = .microBlockSetup
+        #expect(router.activePanel == .microBlockSetup)
+    }
+
+    @Test func microBlockActivePanel() {
+        let router = PopoverRouter()
+        router.activePanel = .microBlockActive
+        #expect(router.activePanel == .microBlockActive)
+    }
+
+    @Test func microBlockTransitionPanel() {
+        let router = PopoverRouter()
+        router.activePanel = .microBlockTransition
+        #expect(router.activePanel == .microBlockTransition)
+    }
 }
