@@ -82,6 +82,42 @@ final class SettingsStore {
         }
     }
 
+    var microBlocksEnabled: Bool {
+        didSet { defaults.set(microBlocksEnabled, forKey: SettingsKeys.microBlocksEnabled) }
+    }
+
+    var microRotationInterval: Int {
+        didSet {
+            let validated = max(60, min(600, microRotationInterval))
+            defaults.set(validated, forKey: SettingsKeys.microRotationInterval)
+            if microRotationInterval != validated { microRotationInterval = validated }
+        }
+    }
+
+    var microBlockSoundEnabled: Bool {
+        didSet { defaults.set(microBlockSoundEnabled, forKey: SettingsKeys.microBlockSoundEnabled) }
+    }
+
+    var microBlockEndSound: String {
+        didSet { defaults.set(microBlockEndSound, forKey: SettingsKeys.microBlockEndSound) }
+    }
+
+    var stealFocusOnRotation: Bool {
+        didSet { defaults.set(stealFocusOnRotation, forKey: SettingsKeys.stealFocusOnRotation) }
+    }
+
+    var microBlockMenuBarFormat: MicroBlockMenuBarFormat {
+        didSet {
+            defaults.set(microBlockMenuBarFormat.rawValue, forKey: SettingsKeys.microBlockMenuBarFormat)
+        }
+    }
+
+    var lastBlockType: BlockType {
+        didSet {
+            defaults.set(lastBlockType.rawValue, forKey: SettingsKeys.lastBlockType)
+        }
+    }
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
 
@@ -150,6 +186,47 @@ final class SettingsStore {
             self.autoDismissSeconds = max(0, min(30, dismiss))
         } else {
             self.autoDismissSeconds = Defaults.autoDismissSeconds
+        }
+
+        if defaults.object(forKey: SettingsKeys.microBlocksEnabled) != nil {
+            self.microBlocksEnabled = defaults.bool(forKey: SettingsKeys.microBlocksEnabled)
+        } else {
+            self.microBlocksEnabled = Defaults.microBlocksEnabled
+        }
+
+        let microInterval = defaults.integer(forKey: SettingsKeys.microRotationInterval)
+        self.microRotationInterval = microInterval > 0 ? microInterval : Defaults.microRotationInterval
+
+        if defaults.object(forKey: SettingsKeys.microBlockSoundEnabled) != nil {
+            self.microBlockSoundEnabled = defaults.bool(forKey: SettingsKeys.microBlockSoundEnabled)
+        } else {
+            self.microBlockSoundEnabled = Defaults.microBlockSoundEnabled
+        }
+
+        if let sound = defaults.string(forKey: SettingsKeys.microBlockEndSound) {
+            self.microBlockEndSound = sound
+        } else {
+            self.microBlockEndSound = Defaults.microBlockEndSound
+        }
+
+        if defaults.object(forKey: SettingsKeys.stealFocusOnRotation) != nil {
+            self.stealFocusOnRotation = defaults.bool(forKey: SettingsKeys.stealFocusOnRotation)
+        } else {
+            self.stealFocusOnRotation = Defaults.stealFocusOnRotation
+        }
+
+        if let raw = defaults.string(forKey: SettingsKeys.microBlockMenuBarFormat),
+           let format = MicroBlockMenuBarFormat(rawValue: raw) {
+            self.microBlockMenuBarFormat = format
+        } else {
+            self.microBlockMenuBarFormat = Defaults.microBlockMenuBarFormat
+        }
+
+        if let raw = defaults.string(forKey: SettingsKeys.lastBlockType),
+           let blockType = BlockType(rawValue: raw) {
+            self.lastBlockType = blockType
+        } else {
+            self.lastBlockType = Defaults.lastBlockType
         }
     }
 }
