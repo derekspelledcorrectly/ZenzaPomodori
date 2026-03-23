@@ -6,57 +6,51 @@ struct ActiveRotationView: View {
     var onSkip: () -> Void
     var onEditList: () -> Void
     var onPause: () -> Void
+    var onEndBlock: () -> Void
 
     var body: some View {
-        VStack(spacing: 12) {
-            HStack {
-                Text("MicroBlocks")
-                    .font(.caption.bold())
-                    .textCase(.uppercase)
-                    .foregroundStyle(.red)
-                Text(timer.phase.label(totalBlocks: timer.blocksBeforeLongBreak))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Text(timer.formattedTime)
-                    .font(.callout.bold())
-                    .foregroundStyle(.secondary)
-            }
+        VStack(spacing: 16) {
+            // Concentric timer rings (centered, like TimerDisplayView)
+            ConcentricTimerView(
+                microProgress: engine.progress,
+                outerProgress: timer.progress,
+                microTimeFormatted: TimeFormatting.formatted(seconds: engine.microSecondsRemaining),
+                outerTimeFormatted: timer.formattedTime
+            )
 
-            HStack(spacing: 14) {
-                ConcentricTimerView(
-                    microProgress: engine.progress,
-                    outerProgress: timer.progress,
-                    microTimeFormatted: TimeFormatting.formatted(seconds: engine.microSecondsRemaining),
-                    outerTimeFormatted: timer.formattedTime
-                )
+            // Focus name + position
+            VStack(spacing: 4) {
+                Text(engine.currentItemName ?? "")
+                    .font(.title3.bold())
+                    .lineLimit(1)
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(engine.currentItemName ?? "")
-                        .font(.callout.bold())
-                        .lineLimit(1)
-
-                    Text("\(engine.currentIndex + 1) of \(engine.rotationItems.count)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    +
-                    Text(" \u{00B7} Next: \(engine.nextItemName ?? "start")")
+                HStack(spacing: 6) {
+                    Text(timer.phase.label(totalBlocks: timer.blocksBeforeLongBreak))
                         .font(.caption)
                         .foregroundStyle(.secondary)
 
-                    HStack(spacing: 4) {
-                        Circle()
-                            .fill(Color(.sRGB, red: 0.29, green: 0.44, blue: 0.65).opacity(0.7))
-                            .frame(width: 6, height: 6)
-                        Text("\(timer.formattedTime) remaining")
-                            .font(.caption2)
-                            .foregroundStyle(Color(.sRGB, red: 0.29, green: 0.44, blue: 0.65).opacity(0.7))
+                    if engine.rotationItems.count > 1 {
+                        Text("\u{00B7}")
+                            .foregroundStyle(.tertiary)
+                        Text("\(engine.currentIndex + 1) of \(engine.rotationItems.count)")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    if let next = engine.nextItemName {
+                        Text("\u{00B7}")
+                            .foregroundStyle(.tertiary)
+                        Text("Next: \(next)")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
                 }
             }
 
+            // Collapsed list preview
             CollapsedListPreview(items: engine.rotationItems, currentIndex: engine.currentIndex)
 
+            // Controls
             HStack(spacing: 8) {
                 Button("Skip") { onSkip() }
                     .buttonStyle(.borderedProminent)
@@ -68,6 +62,10 @@ struct ActiveRotationView: View {
                     .controlSize(.small)
 
                 Button(engine.isPaused ? "Resume" : "Pause") { onPause() }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+
+                Button("End Block") { onEndBlock() }
                     .buttonStyle(.bordered)
                     .controlSize(.small)
             }

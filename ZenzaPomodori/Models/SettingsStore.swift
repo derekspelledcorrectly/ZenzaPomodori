@@ -118,16 +118,27 @@ final class SettingsStore {
         }
     }
 
+    var onHotkeySettingsChanged: (() -> Void)?
+
     var globalHotkeyEnabled: Bool {
-        didSet { defaults.set(globalHotkeyEnabled, forKey: SettingsKeys.globalHotkeyEnabled) }
+        didSet {
+            defaults.set(globalHotkeyEnabled, forKey: SettingsKeys.globalHotkeyEnabled)
+            onHotkeySettingsChanged?()
+        }
     }
 
     var globalHotkeyKeyCode: UInt32 {
-        didSet { defaults.set(globalHotkeyKeyCode, forKey: SettingsKeys.globalHotkeyKeyCode) }
+        didSet {
+            defaults.set(globalHotkeyKeyCode, forKey: SettingsKeys.globalHotkeyKeyCode)
+            onHotkeySettingsChanged?()
+        }
     }
 
     var globalHotkeyModifiers: UInt32 {
-        didSet { defaults.set(globalHotkeyModifiers, forKey: SettingsKeys.globalHotkeyModifiers) }
+        didSet {
+            defaults.set(globalHotkeyModifiers, forKey: SettingsKeys.globalHotkeyModifiers)
+            onHotkeySettingsChanged?()
+        }
     }
 
     init(defaults: UserDefaults = .standard) {

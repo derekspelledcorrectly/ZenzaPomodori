@@ -149,11 +149,27 @@ struct SettingsView: View {
                 ))
             }
 
+            Section("Global Hotkey") {
+                Toggle("Enable global hotkey", isOn: $settings.globalHotkeyEnabled)
+
+                if settings.globalHotkeyEnabled {
+                    HStack {
+                        Text("Shortcut")
+                        Spacer()
+                        HotkeyRecorderView(
+                            keyCode: $settings.globalHotkeyKeyCode,
+                            modifiers: $settings.globalHotkeyModifiers
+                        )
+                        .frame(width: 120, height: 24)
+                    }
+                }
+            }
+
             Section("MicroBlocks") {
                 Toggle("Enable MicroBlocks mode", isOn: $settings.microBlocksEnabled)
 
                 if settings.microBlocksEnabled {
-                    Picker("Rotation interval", selection: microIntervalBinding) {
+                    Picker("Max rotation interval", selection: microIntervalBinding) {
                         ForEach([1, 2, 3, 4, 5, 7, 10], id: \.self) { min in
                             Text("\(min) min").tag(min)
                         }
