@@ -52,7 +52,7 @@ struct MenuBarView: View {
             )
         }
         .padding()
-        .frame(width: 240)
+        .frame(width: 320)
         .overlay(alignment: .topTrailing) {
             Button(action: onOpenSettings) {
                 Image(systemName: "gearshape")

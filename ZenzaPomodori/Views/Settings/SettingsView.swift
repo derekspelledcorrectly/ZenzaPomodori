@@ -26,6 +26,11 @@ struct SettingsView: View {
                 .padding(.bottom, 4)
             }
             settingsForm
+            if let onBack {
+                Button("Done", action: onBack)
+                    .keyboardShortcut(.defaultAction)
+                    .padding(.bottom, 12)
+            }
         }
         .frame(width: 320)
         .fixedSize()
