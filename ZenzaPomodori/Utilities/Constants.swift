@@ -15,6 +15,13 @@ enum Defaults {
     static let notificationsEnabled: Bool = false
     static let autoDismissSeconds: Int = 5
     static let focusNameMaxRecents: Int = 25
+    static let microBlocksEnabled: Bool = false
+    static let microRotationInterval: Int = 180
+    static let microBlockSoundEnabled: Bool = true
+    static let microBlockEndSound: String = "Taptap"
+    static let stealFocusOnRotation: Bool = false
+    static let microBlockMenuBarFormat: MicroBlockMenuBarFormat = .dualTimer
+    static let lastBlockType: BlockType = .regular
 }
 
 enum SettingsKeys {
@@ -33,4 +40,11 @@ enum SettingsKeys {
     static let autoDismissSeconds = "autoDismissSeconds"
     static let focusNameEntries = "focusNameEntries"
     static let focusNameDraft = "focusNameDraft"
+    static let microBlocksEnabled = "microBlocksEnabled"
+    static let microRotationInterval = "microRotationInterval"
+    static let microBlockSoundEnabled = "microBlockSoundEnabled"
+    static let microBlockEndSound = "microBlockEndSound"
+    static let stealFocusOnRotation = "stealFocusOnRotation"
+    static let microBlockMenuBarFormat = "microBlockMenuBarFormat"
+    static let lastBlockType = "lastBlockType"
 }
