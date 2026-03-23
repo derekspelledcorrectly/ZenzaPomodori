@@ -38,7 +38,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
     private let popover = NSPopover()
     private let notificationService: NotificationService
     private let soundService = SoundService()
-    private let settingsWindowManager: SettingsWindowManager
+    private let router = PopoverRouter()
     private var autoDismissTask: Task<Void, Never>?
     private var clickMonitor: Any?
 
@@ -46,7 +46,6 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         self.timer = timer
         self.settings = settings
         self.notificationService = NotificationService(settings: settings)
-        self.settingsWindowManager = SettingsWindowManager(settings: settings, soundService: soundService)
         super.init()
         popover.delegate = self
     }
@@ -56,7 +55,15 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         statusItem = item
 
         popover.contentViewController = NSHostingController(
-            rootView: MenuBarView(timer: timer)
+            rootView: PopoverContainerView(
+                router: router,
+                timer: timer,
+                settings: settings,
+                soundService: soundService,
+                onPanelChange: { [weak self] panel in
+                    self?.handlePanelChange(panel)
+                }
+            )
         )
         popover.behavior = .transient
 
@@ -142,7 +149,18 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
     }
 
     @objc private func openSettings() {
-        settingsWindowManager.showSettings(anchorTo: statusItem?.button)
+        router.activePanel = .settings
+        handlePanelChange(.settings)
+        showPopover()
+    }
+
+    private func handlePanelChange(_ panel: PopoverPanel) {
+        popover.behavior = panel == .settings ? .applicationDefined : .transient
+        DispatchQueue.main.async { [weak self] in
+            guard let self, let vc = self.popover.contentViewController else { return }
+            let size = vc.view.fittingSize
+            self.popover.contentSize = size
+        }
     }
 
     @objc private func quit() {
@@ -218,6 +236,10 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
     nonisolated func popoverDidClose(_ notification: Notification) {
         MainActor.assumeIsolated {
             cancelAutoDismissTimer()
+            if router.activePanel != .timer {
+                router.activePanel = .timer
+                handlePanelChange(.timer)
+            }
         }
     }
 
