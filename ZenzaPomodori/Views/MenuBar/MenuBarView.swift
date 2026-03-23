@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MenuBarView: View {
     @Bindable var timer: PomodoroTimer
+    var onOpenSettings: () -> Void = {}
 
     var body: some View {
         VStack(spacing: 16) {
@@ -52,6 +53,14 @@ struct MenuBarView: View {
         }
         .padding()
         .frame(width: 240)
+        .overlay(alignment: .topTrailing) {
+            Button(action: onOpenSettings) {
+                Image(systemName: "gearshape")
+                    .foregroundStyle(.secondary)
+            }
+            .buttonStyle(.borderless)
+            .padding(8)
+        }
         .background { keyboardShortcuts }
     }
 

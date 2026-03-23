@@ -3,12 +3,35 @@ import SwiftUI
 struct SettingsView: View {
     @Bindable var settings: SettingsStore
     let soundService: SoundService
+    var onBack: (() -> Void)?
 
     private static let focusOptions = [5, 10, 15, 20, 25, 30, 45, 60, 90, 120]
     private static let shortBreakOptions = [1, 2, 3, 5, 10, 15, 20]
     private static let longBreakOptions = [5, 10, 15, 20, 25, 30, 45, 60]
 
     var body: some View {
+        VStack(spacing: 0) {
+            if let onBack {
+                HStack {
+                    Button(action: onBack) {
+                        Image(systemName: "chevron.left")
+                    }
+                    .buttonStyle(.borderless)
+                    Text("Settings")
+                        .font(.headline)
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .padding(.bottom, 4)
+            }
+            settingsForm
+        }
+        .frame(width: 320)
+        .fixedSize()
+    }
+
+    private var settingsForm: some View {
         Form {
             Section("Timer Durations") {
                 Picker("Focus", selection: minutesBinding(\.focusDuration)) {
@@ -122,8 +145,6 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 320)
-        .fixedSize()
     }
 
     private func soundPicker(_ label: String, sound: Binding<String>) -> some View {
