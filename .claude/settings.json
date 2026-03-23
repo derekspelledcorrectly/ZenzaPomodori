@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(make build)",
+      "Bash(make test)",
+      "Bash(make generate)",
+      "Bash(make run)",
+      "Bash(make rerun)",
+      "Bash(make clean)",
+      "Bash(make release)",
+      "Bash(xcodebuild *)",
+      "Bash(xcodegen *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git fetch *)",
+      "Bash(git pull *)",
+      "Bash(git branch*)",
+      "Bash(git checkout *)",
+      "Bash(git switch *)",
+      "Bash(git stash*)",
+      "Bash(git rebase *)",
+      "Bash(git merge *)",
+      "Bash(git show*)",
+      "Bash(git rev-parse *)",
+      "Bash(open *)"
+    ],
+    "deny": [
+      "Bash(git push *)",
+      "Bash(git push)",
+      "Bash(git reset --hard*)",
+      "Bash(rm -rf /*)"
+    ]
+  }
+}
