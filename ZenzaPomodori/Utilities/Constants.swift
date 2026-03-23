@@ -22,6 +22,9 @@ enum Defaults {
     static let stealFocusOnRotation: Bool = false
     static let microBlockMenuBarFormat: MicroBlockMenuBarFormat = .dualTimer
     static let lastBlockType: BlockType = .regular
+    static let globalHotkeyEnabled: Bool = true
+    static let globalHotkeyKeyCode: UInt32 = 35 // P
+    static let globalHotkeyModifiers: UInt32 = 4608 // controlKey + shiftKey
 }
 
 enum SettingsKeys {
@@ -48,4 +51,7 @@ enum SettingsKeys {
     static let microBlockMenuBarFormat = "microBlockMenuBarFormat"
     static let lastBlockType = "lastBlockType"
     static let savedRotations = "savedRotations"
+    static let globalHotkeyEnabled = "globalHotkeyEnabled"
+    static let globalHotkeyKeyCode = "globalHotkeyKeyCode"
+    static let globalHotkeyModifiers = "globalHotkeyModifiers"
 }
