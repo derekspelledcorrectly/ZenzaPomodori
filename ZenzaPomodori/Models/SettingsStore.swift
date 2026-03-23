@@ -118,6 +118,18 @@ final class SettingsStore {
         }
     }
 
+    var globalHotkeyEnabled: Bool {
+        didSet { defaults.set(globalHotkeyEnabled, forKey: SettingsKeys.globalHotkeyEnabled) }
+    }
+
+    var globalHotkeyKeyCode: UInt32 {
+        didSet { defaults.set(globalHotkeyKeyCode, forKey: SettingsKeys.globalHotkeyKeyCode) }
+    }
+
+    var globalHotkeyModifiers: UInt32 {
+        didSet { defaults.set(globalHotkeyModifiers, forKey: SettingsKeys.globalHotkeyModifiers) }
+    }
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
 
@@ -227,6 +239,26 @@ final class SettingsStore {
             self.lastBlockType = blockType
         } else {
             self.lastBlockType = Defaults.lastBlockType
+        }
+
+        if defaults.object(forKey: SettingsKeys.globalHotkeyEnabled) != nil {
+            self.globalHotkeyEnabled = defaults.bool(forKey: SettingsKeys.globalHotkeyEnabled)
+        } else {
+            self.globalHotkeyEnabled = Defaults.globalHotkeyEnabled
+        }
+
+        let keyCode = defaults.object(forKey: SettingsKeys.globalHotkeyKeyCode)
+        if keyCode != nil {
+            self.globalHotkeyKeyCode = UInt32(defaults.integer(forKey: SettingsKeys.globalHotkeyKeyCode))
+        } else {
+            self.globalHotkeyKeyCode = Defaults.globalHotkeyKeyCode
+        }
+
+        let modifiers = defaults.object(forKey: SettingsKeys.globalHotkeyModifiers)
+        if modifiers != nil {
+            self.globalHotkeyModifiers = UInt32(defaults.integer(forKey: SettingsKeys.globalHotkeyModifiers))
+        } else {
+            self.globalHotkeyModifiers = Defaults.globalHotkeyModifiers
         }
     }
 }
