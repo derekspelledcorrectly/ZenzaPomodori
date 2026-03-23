@@ -158,13 +158,39 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
 
     private func handlePanelChange(_ panel: PopoverPanel) {
         popover.behavior = panel == .settings ? .applicationDefined : .transient
+        DispatchQueue.main.async { [weak self] in
+            guard let self,
+                  let contentView = self.popover.contentViewController?.view,
+                  let window = contentView.window else { return }
+            window.recalculateKeyViewLoop()
+            switch panel {
+            case .timer:
+                if self.timer.phase == .idle,
+                   let textField = self.firstTextField(in: contentView) {
+                    window.makeFirstResponder(textField)
+                    textField.selectText(nil)
+                } else if let button = self.firstBorderedButton(in: contentView) {
+                    window.makeFirstResponder(button)
+                }
+            case .settings:
+                if let picker = self.firstPopUpButton(in: contentView) {
+                    window.makeFirstResponder(picker)
+                }
+            }
+        }
     }
 
     private func focusDefaultButton() {
         guard let contentView = popover.contentViewController?.view,
-              let window = contentView.window,
-              let button = firstBorderedButton(in: contentView) else { return }
-        window.makeFirstResponder(button)
+              let window = contentView.window else { return }
+        window.autorecalculatesKeyViewLoop = true
+        window.recalculateKeyViewLoop()
+        if timer.phase == .idle, let textField = firstTextField(in: contentView) {
+            window.makeFirstResponder(textField)
+            textField.selectText(nil)
+        } else if let button = firstBorderedButton(in: contentView) {
+            window.makeFirstResponder(button)
+        }
     }
 
     private func firstBorderedButton(in view: NSView) -> NSButton? {
@@ -173,6 +199,30 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         }
         for subview in view.subviews {
             if let found = firstBorderedButton(in: subview) {
+                return found
+            }
+        }
+        return nil
+    }
+
+    private func firstTextField(in view: NSView) -> NSTextField? {
+        if let field = view as? NSTextField, field.isEditable {
+            return field
+        }
+        for subview in view.subviews {
+            if let found = firstTextField(in: subview) {
+                return found
+            }
+        }
+        return nil
+    }
+
+    private func firstPopUpButton(in view: NSView) -> NSPopUpButton? {
+        if let popup = view as? NSPopUpButton {
+            return popup
+        }
+        for subview in view.subviews {
+            if let found = firstPopUpButton(in: subview) {
                 return found
             }
         }

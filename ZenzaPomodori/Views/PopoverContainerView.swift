@@ -26,5 +26,15 @@ struct PopoverContainerView: View {
         .onChange(of: router.activePanel) { _, panel in
             onPanelChange(panel)
         }
+        .onChange(of: timer.isRunning) { _, _ in
+            if router.activePanel == .timer {
+                onPanelChange(.timer)
+            }
+        }
+        .onChange(of: timer.phase) { _, _ in
+            if router.activePanel == .timer {
+                onPanelChange(.timer)
+            }
+        }
     }
 }
