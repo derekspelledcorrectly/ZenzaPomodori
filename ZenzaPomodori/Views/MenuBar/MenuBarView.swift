@@ -14,6 +14,15 @@ struct MenuBarView: View {
                 isOvertime: timer.isOvertime
             )
 
+            if timer.phase == .idle && timer.settings.microBlocksEnabled {
+                BlockTypePickerView(
+                    blockType: Binding(
+                        get: { timer.settings.lastBlockType },
+                        set: { timer.settings.lastBlockType = $0 }
+                    )
+                )
+            }
+
             if !timer.phase.isBreak {
                 FocusNameInputView(
                     draftName: Binding(
