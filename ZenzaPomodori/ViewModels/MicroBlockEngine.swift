@@ -1,0 +1,101 @@
+import Foundation
+import Observation
+
+@Observable
+@MainActor
+final class MicroBlockEngine {
+    let rotationItems: [RotationItem]
+    let interval: Int
+
+    private(set) var currentIndex: Int = 0
+    private(set) var microSecondsRemaining: Int = 0
+    private(set) var isActive: Bool = false
+    private(set) var isPaused: Bool = false
+
+    private var timerTask: Task<Void, Never>?
+
+    var currentItemName: String? {
+        guard !rotationItems.isEmpty, currentIndex < rotationItems.count else { return nil }
+        return rotationItems[currentIndex].name
+    }
+
+    var nextItemName: String? {
+        guard rotationItems.count > 1 else { return nil }
+        let nextIndex = (currentIndex + 1) % rotationItems.count
+        return rotationItems[nextIndex].name
+    }
+
+    var progress: Double {
+        guard interval > 0 else { return 0 }
+        return 1.0 - Double(microSecondsRemaining) / Double(interval)
+    }
+
+    var onRotationChange: ((Int, String) -> Void)?
+    var onRotationComplete: (() -> Void)?
+
+    init(items: [RotationItem], interval: Int) {
+        self.rotationItems = items
+        self.interval = interval
+    }
+
+    func activate() {
+        guard !isActive else { return }
+        isActive = true
+        currentIndex = 0
+        microSecondsRemaining = interval
+        startTickLoop()
+    }
+
+    func deactivate() {
+        timerTask?.cancel()
+        timerTask = nil
+        isActive = false
+        isPaused = false
+        currentIndex = 0
+        microSecondsRemaining = 0
+    }
+
+    func tick() {
+        guard isActive, !isPaused, microSecondsRemaining > 0 else { return }
+        microSecondsRemaining -= 1
+        if microSecondsRemaining == 0 {
+            onRotationComplete?()
+            advanceToNext()
+        }
+    }
+
+    func skip() {
+        guard isActive else { return }
+        advanceToNext()
+    }
+
+    func pause() {
+        guard isActive else { return }
+        isPaused = true
+    }
+
+    func resume() {
+        guard isActive, isPaused else { return }
+        isPaused = false
+    }
+
+    private func advanceToNext() {
+        guard !rotationItems.isEmpty else { return }
+        currentIndex = (currentIndex + 1) % rotationItems.count
+        microSecondsRemaining = interval
+        if let name = currentItemName {
+            onRotationChange?(currentIndex, name)
+        }
+    }
+
+    private func startTickLoop() {
+        timerTask?.cancel()
+        timerTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(1))
+                guard !Task.isCancelled else { break }
+                self?.tick()
+            }
+        }
+    }
+}
