@@ -20,6 +20,7 @@ struct TimerControlsView: View {
                 Image(systemName: isRunning ? "pause.fill" : "play.fill")
                     .frame(width: 20)
             }
+            .keyboardShortcut(.defaultAction)
             .controlSize(phase == .idle ? .large : .regular)
 
             if phase != .idle {

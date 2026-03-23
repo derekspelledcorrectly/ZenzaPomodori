@@ -110,6 +110,9 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         guard let button = statusItem?.button else { return }
         if !popover.isShown {
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            DispatchQueue.main.async { [weak self] in
+                self?.focusDefaultButton()
+            }
         }
         NSApp.activate()
     }
@@ -150,17 +153,30 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
 
     @objc private func openSettings() {
         router.activePanel = .settings
-        handlePanelChange(.settings)
         showPopover()
     }
 
     private func handlePanelChange(_ panel: PopoverPanel) {
         popover.behavior = panel == .settings ? .applicationDefined : .transient
-        DispatchQueue.main.async { [weak self] in
-            guard let self, let vc = self.popover.contentViewController else { return }
-            let size = vc.view.fittingSize
-            self.popover.contentSize = size
+    }
+
+    private func focusDefaultButton() {
+        guard let contentView = popover.contentViewController?.view,
+              let window = contentView.window,
+              let button = firstBorderedButton(in: contentView) else { return }
+        window.makeFirstResponder(button)
+    }
+
+    private func firstBorderedButton(in view: NSView) -> NSButton? {
+        if let button = view as? NSButton, button.isBordered {
+            return button
         }
+        for subview in view.subviews {
+            if let found = firstBorderedButton(in: subview) {
+                return found
+            }
+        }
+        return nil
     }
 
     @objc private func quit() {
@@ -227,6 +243,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
 
     private func handleAutoDismiss() {
         removeClickMonitor()
+        guard router.activePanel == .timer else { return }
         popover.performClose(nil)
         if settings.autoAdvance, timer.isOvertime {
             timer.next()
@@ -238,7 +255,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
             cancelAutoDismissTimer()
             if router.activePanel != .timer {
                 router.activePanel = .timer
-                handlePanelChange(.timer)
+                popover.behavior = .transient
             }
         }
     }
