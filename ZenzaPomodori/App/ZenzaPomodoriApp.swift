@@ -370,7 +370,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         showPopover()
 
         if settings.stealFocusOnRotation {
-            NSApp.activate(ignoringOtherApps: true)
+            NSApp.activate()
         }
 
         startAutoDismissTimer()

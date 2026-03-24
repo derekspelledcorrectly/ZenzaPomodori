@@ -7,7 +7,6 @@ struct RotationTransitionCard: View {
     let outerTimeRemaining: String
     let rotationProgress: Double
     var onDismiss: () -> Void
-    var onAutoDismiss: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {

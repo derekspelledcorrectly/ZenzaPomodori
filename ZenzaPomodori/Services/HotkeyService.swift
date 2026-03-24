@@ -8,7 +8,10 @@ final class HotkeyService {
     let settings: SettingsStore
 
     private(set) var isRegistered: Bool = false
+    private(set) var registrationError: String?
     private var hotkeyRef: EventHotKeyRef?
+    private var eventHandlerRef: EventHandlerRef?
+    private var notificationObserver: Any?
 
     var onHotkeyPressed: (() -> Void)?
 
@@ -18,19 +21,19 @@ final class HotkeyService {
 
     func register() {
         unregister()
+        registrationError = nil
         guard settings.globalHotkeyEnabled else { return }
+
+        guard installHandlerIfNeeded() else { return }
 
         var hotKeyID = EventHotKeyID()
         hotKeyID.signature = OSType(0x5A50_4D42) // "ZPMB"
         hotKeyID.id = 1
 
-        let modifiers = settings.globalHotkeyModifiers
-        let keyCode = settings.globalHotkeyKeyCode
-
         var ref: EventHotKeyRef?
         let status = RegisterEventHotKey(
-            keyCode,
-            modifiers,
+            settings.globalHotkeyKeyCode,
+            settings.globalHotkeyModifiers,
             hotKeyID,
             GetEventDispatcherTarget(),
             0,
@@ -40,7 +43,10 @@ final class HotkeyService {
         if status == noErr, let ref {
             hotkeyRef = ref
             isRegistered = true
-            installHandler()
+        } else {
+            isRegistered = false
+            registrationError = "Hotkey registration failed (status \(status)). "
+                + "Check System Settings > Privacy & Security > Accessibility."
         }
     }
 
@@ -52,13 +58,36 @@ final class HotkeyService {
         isRegistered = false
     }
 
-    private func installHandler() {
+    func startListening() {
+        if let existing = notificationObserver {
+            NotificationCenter.default.removeObserver(existing)
+        }
+        notificationObserver = NotificationCenter.default.addObserver(
+            forName: .hotkeyPressed,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.onHotkeyPressed?()
+            }
+        }
+    }
+
+    // MARK: - Private
+
+    /// Install the Carbon event handler once. Subsequent register/unregister
+    /// cycles only add/remove the hotkey ref, not the handler.
+    @discardableResult
+    private func installHandlerIfNeeded() -> Bool {
+        guard eventHandlerRef == nil else { return true }
+
         var eventType = EventTypeSpec(
             eventClass: OSType(kEventClassKeyboard),
             eventKind: UInt32(kEventHotKeyPressed)
         )
 
-        InstallEventHandler(
+        var handlerRef: EventHandlerRef?
+        let status = InstallEventHandler(
             GetEventDispatcherTarget(),
             { _, event, _ -> OSStatus in
                 guard let event else { return OSStatus(eventNotHandledErr) }
@@ -83,24 +112,16 @@ final class HotkeyService {
             1,
             &eventType,
             nil,
-            nil
+            &handlerRef
         )
-    }
 
-    func startListening() {
-        NotificationCenter.default.addObserver(
-            forName: .hotkeyPressed,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            Task { @MainActor in
-                self?.onHotkeyPressed?()
-            }
+        if status == noErr {
+            eventHandlerRef = handlerRef
+            return true
+        } else {
+            registrationError = "Could not install hotkey handler (status \(status))."
+            return false
         }
-    }
-
-    deinit {
-        NotificationCenter.default.removeObserver(self)
     }
 }
 

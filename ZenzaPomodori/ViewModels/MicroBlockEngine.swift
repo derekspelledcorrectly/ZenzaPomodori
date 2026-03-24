@@ -39,7 +39,7 @@ final class MicroBlockEngine {
     }
 
     func activate() {
-        guard !isActive else { return }
+        guard !isActive, !rotationItems.isEmpty else { return }
         isActive = true
         currentIndex = 0
         microSecondsRemaining = interval
