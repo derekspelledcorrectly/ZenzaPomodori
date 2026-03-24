@@ -42,7 +42,6 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
     private var autoDismissTask: Task<Void, Never>?
     private var clickMonitor: Any?
     private let rotationStore = RotationStore()
-    private var microBlockEngine: MicroBlockEngine?
     private let hotkeyService: HotkeyService
 
     init(timer: PomodoroTimer, settings: SettingsStore) {
@@ -55,12 +54,28 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
     }
 
     func setup() {
+        settings.lastBlockType = .regular
         installEditMenu()
 
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         statusItem = item
 
-        rebuildContentView()
+        popover.contentViewController = NSHostingController(
+            rootView: PopoverContainerView(
+                router: router,
+                timer: timer,
+                settings: settings,
+                soundService: soundService,
+                onPanelChange: { [weak self] panel in
+                    self?.handlePanelChange(panel)
+                },
+                rotationStore: rotationStore,
+                focusNameStore: timer.focusNameStore,
+                onMicroBlockStart: { [weak self] items in
+                    self?.startMicroBlocks(with: items)
+                }
+            )
+        )
         popover.behavior = .transient
 
         if let button = item.button {
@@ -90,9 +105,8 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         timer.onPhaseChange = { [weak self] _, newPhase in
             guard let self else { return }
             if !newPhase.isFocus {
-                self.microBlockEngine?.deactivate()
-                self.microBlockEngine = nil
-                self.rebuildContentView()
+                self.router.microBlockEngine?.deactivate()
+                self.router.microBlockEngine = nil
             }
         }
         timer.onTimerComplete = { [weak self] phase in
@@ -114,6 +128,12 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
     func showPopover(activate: Bool = false) {
         guard let button = statusItem?.button else { return }
         if !popover.isShown {
+            // Sync contentSize to actual view size before showing,
+            // otherwise NSPopover uses a stale cached size for positioning.
+            if let fittingSize = popover.contentViewController?.view.fittingSize,
+               fittingSize.width > 0, fittingSize.height > 0 {
+                popover.contentSize = fittingSize
+            }
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
             DispatchQueue.main.async { [weak self] in
                 self?.focusDefaultButton()
@@ -165,6 +185,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
 
     private func handlePanelChange(_ panel: PopoverPanel) {
         popover.behavior = panel == .settings ? .applicationDefined : .transient
+
         DispatchQueue.main.async { [weak self] in
             guard let self,
                   let contentView = self.popover.contentViewController?.view,
@@ -274,7 +295,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
 
         let title = NSMutableAttributedString()
 
-        if let engine = microBlockEngine, engine.isActive {
+        if let engine = router.microBlockEngine, engine.isActive {
             let formatted = MenuBarFormatting.microBlockFormatted(
                 microSeconds: engine.microSecondsRemaining,
                 outerFormattedTime: timer.formattedTime,
@@ -321,34 +342,6 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         button.attributedTitle = title
     }
 
-    // MARK: - Content View
-
-    private func rebuildContentView() {
-        let hostingController = NSHostingController(
-            rootView: PopoverContainerView(
-                router: router,
-                timer: timer,
-                settings: settings,
-                soundService: soundService,
-                onPanelChange: { [weak self] panel in
-                    self?.handlePanelChange(panel)
-                },
-                microBlockEngine: microBlockEngine,
-                rotationStore: rotationStore,
-                focusNameStore: timer.focusNameStore,
-                onMicroBlockStart: { [weak self] items in
-                    self?.startMicroBlocks(with: items)
-                }
-            )
-        )
-        // Let the hosting controller size itself to fit the SwiftUI content,
-        // then set that as the preferred size so NSPopover anchors correctly.
-        let fittingSize = hostingController.sizeThatFits(in: NSSize(width: 320, height: 600))
-        hostingController.preferredContentSize = fittingSize
-        popover.contentSize = fittingSize
-        popover.contentViewController = hostingController
-    }
-
     // MARK: - MicroBlocks
 
     private func startMicroBlocks(with items: [RotationItem]) {
@@ -359,16 +352,15 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         engine.onRotationComplete = { [weak self] in
             self?.handleMicroRotation()
         }
-        microBlockEngine = engine
+        router.microBlockEngine = engine
         settings.lastBlockType = .microBlocks
         timer.start()
         engine.activate()
         router.activePanel = .microBlockActive
-        rebuildContentView()
     }
 
     private func handleMicroRotation() {
-        guard microBlockEngine != nil else { return }
+        guard router.microBlockEngine != nil else { return }
 
         if settings.microBlockSoundEnabled {
             soundService.play(settings.microBlockEndSound)
@@ -398,7 +390,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
     }
 
     private func handleHotkey() {
-        if let engine = microBlockEngine, engine.isActive {
+        if let engine = router.microBlockEngine, engine.isActive {
             if router.activePanel == .microBlockTransition {
                 engine.skip()
                 router.activePanel = .microBlockActive
@@ -453,12 +445,11 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         MainActor.assumeIsolated {
             cancelAutoDismissTimer()
             switch router.activePanel {
-            case .microBlockActive, .microBlockTransition:
-                // Preserve micro block panel state when popover closes
+            case .microBlockActive, .microBlockTransition, .microBlockSetup:
                 popover.behavior = .transient
             case .timer:
                 break
-            default:
+            case .settings:
                 router.activePanel = .timer
                 popover.behavior = .transient
             }

@@ -6,18 +6,19 @@ struct PopoverContainerView: View {
     let settings: SettingsStore
     let soundService: SoundService
     let onPanelChange: (PopoverPanel) -> Void
-    let microBlockEngine: MicroBlockEngine?
     let rotationStore: RotationStore
     let focusNameStore: FocusNameStore
     @State private var workingItems: [RotationItem] = []
     var onMicroBlockStart: (([RotationItem]) -> Void)?
-    var onContentSizeChanged: (() -> Void)?
 
     var body: some View {
         Group {
             switch router.activePanel {
             case .timer:
-                timerPanel
+                MenuBarView(
+                    timer: timer,
+                    onOpenSettings: { router.activePanel = .settings }
+                )
 
             case .settings:
                 SettingsView(
@@ -27,7 +28,7 @@ struct PopoverContainerView: View {
                 )
 
             case .microBlockSetup:
-                microBlockSetupPanel
+                microBlockIdlePanel
 
             case .microBlockActive:
                 microBlockActivePanel
@@ -49,40 +50,33 @@ struct PopoverContainerView: View {
                 onPanelChange(.timer)
             }
         }
-        .onChange(of: settings.microBlocksEnabled) { _, _ in
-            onPanelChange(router.activePanel)
+        .onChange(of: settings.microBlocksEnabled) { _, enabled in
+            if !enabled && router.activePanel == .microBlockSetup {
+                router.activePanel = .timer
+            }
         }
-        .onChange(of: settings.lastBlockType) { _, _ in
-            onPanelChange(router.activePanel)
+        .onChange(of: settings.lastBlockType) { _, newType in
+            if timer.phase == .idle {
+                router.activePanel = newType == .microBlocks ? .microBlockSetup : .timer
+            }
         }
     }
 
     // MARK: - Panels
 
-    @ViewBuilder
-    private var timerPanel: some View {
-        if timer.phase == .idle
-            && settings.microBlocksEnabled
-            && settings.lastBlockType == .microBlocks {
-            microBlockIdlePanel
-        } else {
-            MenuBarView(
-                timer: timer,
-                onOpenSettings: { router.activePanel = .settings }
-            )
-            .fixedSize(horizontal: false, vertical: true)
-        }
-    }
-
     private var microBlockIdlePanel: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 16) {
+            // Match TimerDisplayView's 140px frame so the picker stays
+            // at the same Y position in both Regular and MicroBlocks panels.
+            // This means NSPopover only grows/shrinks at the bottom (no reposition needed).
             ConcentricTimerView(
                 microProgress: Double(settings.microRotationInterval) / Double(max(1, settings.focusDuration)),
                 outerProgress: 1.0,
                 microTimeFormatted: timer.formattedTime,
                 outerTimeFormatted: "\(settings.microRotationInterval / 60) min each",
-                size: 80
+                size: 120
             )
+            .frame(height: 140)
 
             BlockTypePickerView(
                 blockType: Binding(
@@ -110,20 +104,9 @@ struct PopoverContainerView: View {
         }
     }
 
-    private var microBlockSetupPanel: some View {
-        MicroBlockSetupView(
-            rotationStore: rotationStore,
-            focusNameStore: focusNameStore,
-            workingItems: $workingItems,
-            onStart: { onMicroBlockStart?(workingItems) }
-        )
-        .padding()
-        .frame(width: 320)
-    }
-
     @ViewBuilder
     private var microBlockActivePanel: some View {
-        if let engine = microBlockEngine {
+        if let engine = router.microBlockEngine {
             ActiveRotationView(
                 engine: engine,
                 timer: timer,
@@ -142,7 +125,7 @@ struct PopoverContainerView: View {
 
     @ViewBuilder
     private var microBlockTransitionPanel: some View {
-        if let engine = microBlockEngine {
+        if let engine = router.microBlockEngine {
             RotationTransitionCard(
                 currentName: engine.currentItemName ?? "",
                 nextName: engine.nextItemName,

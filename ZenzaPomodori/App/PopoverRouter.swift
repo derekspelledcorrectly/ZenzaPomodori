@@ -12,4 +12,5 @@ enum PopoverPanel {
 @MainActor
 final class PopoverRouter {
     var activePanel: PopoverPanel = .timer
+    var microBlockEngine: MicroBlockEngine?
 }
