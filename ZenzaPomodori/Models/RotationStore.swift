@@ -30,15 +30,23 @@ final class RotationStore {
     }
 
     private func persist() {
-        guard let data = try? JSONEncoder().encode(savedRotations) else { return }
-        defaults.set(data, forKey: SettingsKeys.savedRotations)
+        do {
+            let data = try JSONEncoder().encode(savedRotations)
+            defaults.set(data, forKey: SettingsKeys.savedRotations)
+        } catch {
+            assertionFailure("[RotationStore] Failed to encode rotations: \(error)")
+        }
     }
 
     private static func load(from defaults: UserDefaults) -> [SavedRotation] {
-        guard let data = defaults.data(forKey: SettingsKeys.savedRotations),
-              let rotations = try? JSONDecoder().decode([SavedRotation].self, from: data) else {
+        guard let data = defaults.data(forKey: SettingsKeys.savedRotations) else {
+            return [] // No data yet, legitimate empty state
+        }
+        do {
+            return try JSONDecoder().decode([SavedRotation].self, from: data)
+        } catch {
+            assertionFailure("[RotationStore] Failed to decode saved rotations: \(error)")
             return []
         }
-        return rotations
     }
 }

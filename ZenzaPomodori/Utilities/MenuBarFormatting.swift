@@ -27,9 +27,12 @@ enum MenuBarFormatting {
         }
 
         let micro = TimeFormatting.formatted(seconds: microSeconds)
-        let name = (showFocus && focusName != nil)
-            ? " \(truncatedFocusName(focusName!, maxLength: 15))"
-            : ""
+        let name: String
+        if showFocus, let focusName {
+            name = " \(truncatedFocusName(focusName, maxLength: 15))"
+        } else {
+            name = ""
+        }
 
         switch format {
         case .microOnly:

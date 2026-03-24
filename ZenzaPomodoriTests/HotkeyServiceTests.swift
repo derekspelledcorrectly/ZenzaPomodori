@@ -34,5 +34,30 @@ struct HotkeyServiceTests {
         let settings = makeSettings()
         let service = HotkeyService(settings: settings)
         #expect(service.isRegistered == false)
+        #expect(service.registrationError == nil)
+    }
+
+    @Test func onHotkeySettingsChangedFiresOnEnabledChange() {
+        let settings = makeSettings()
+        var callCount = 0
+        settings.onHotkeySettingsChanged = { callCount += 1 }
+        settings.globalHotkeyEnabled = false
+        #expect(callCount == 1)
+    }
+
+    @Test func onHotkeySettingsChangedFiresOnKeyCodeChange() {
+        let settings = makeSettings()
+        var callCount = 0
+        settings.onHotkeySettingsChanged = { callCount += 1 }
+        settings.globalHotkeyKeyCode = 0
+        #expect(callCount == 1)
+    }
+
+    @Test func onHotkeySettingsChangedFiresOnModifiersChange() {
+        let settings = makeSettings()
+        var callCount = 0
+        settings.onHotkeySettingsChanged = { callCount += 1 }
+        settings.globalHotkeyModifiers = 256
+        #expect(callCount == 1)
     }
 }

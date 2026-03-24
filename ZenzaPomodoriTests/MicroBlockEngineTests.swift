@@ -174,7 +174,18 @@ struct MicroBlockEngineTests {
     @Test func emptyItemsActivateIsNoOp() {
         let engine = MicroBlockEngine(items: [], interval: 180)
         engine.activate()
+        #expect(engine.isActive == false)
         #expect(engine.currentItemName == nil)
+    }
+
+    @Test func skipFiresRotationChangeCallback() {
+        let engine = makeEngine(interval: 180)
+        var changes: [(Int, String)] = []
+        engine.onRotationChange = { index, name in changes.append((index, name)) }
+        engine.activate()
+        engine.skip()
+        #expect(changes.count == 1)
+        #expect(changes[0].1 == "CI")
         engine.deactivate()
     }
 

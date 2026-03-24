@@ -120,6 +120,8 @@ struct PopoverContainerView: View {
                     timer.next()
                 }
             )
+        } else {
+            Color.clear.onAppear { router.activePanel = .timer }
         }
     }
 
@@ -135,11 +137,10 @@ struct PopoverContainerView: View {
                 onDismiss: {
                     engine.skip()
                     router.activePanel = .microBlockActive
-                },
-                onAutoDismiss: {
-                    router.activePanel = .microBlockActive
                 }
             )
+        } else {
+            Color.clear.onAppear { router.activePanel = .timer }
         }
     }
 }
