@@ -81,6 +81,11 @@ final class SliceEngine {
         }
     }
 
+    func restartSlice() {
+        guard isActive else { return }
+        sliceSecondsRemaining = interval
+    }
+
     func pause() {
         guard isActive else { return }
         isPaused = true

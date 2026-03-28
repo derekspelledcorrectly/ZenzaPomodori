@@ -246,6 +246,25 @@ struct SliceEngineTests {
         #expect(engine.currentItemName == "API")
     }
 
+    // MARK: - Restart Slice
+
+    @Test func restartSliceResetsCountdown() {
+        let engine = makeEngine(interval: 180)
+        engine.activate()
+        for _ in 0..<50 { engine.tick() }
+        #expect(engine.sliceSecondsRemaining == 130)
+        engine.restartSlice()
+        #expect(engine.sliceSecondsRemaining == 180)
+        #expect(engine.currentIndex == 0)
+        engine.deactivate()
+    }
+
+    @Test func restartSliceWhileInactiveIsNoOp() {
+        let engine = makeEngine(interval: 180)
+        engine.restartSlice()
+        #expect(engine.sliceSecondsRemaining == 0)
+    }
+
     @Test func updateItemsWhileInactiveIsNoOp() {
         let engine = makeEngine()
         engine.updateItems([RotationItem(name: "New")])

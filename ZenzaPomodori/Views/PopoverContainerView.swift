@@ -106,12 +106,28 @@ struct PopoverContainerView: View {
                 }
                 .keyboardShortcut(.return, modifiers: .command)
 
-                Button(action: {
-                    timer.restartPhase()
-                }) {
-                    Label("Restart Timer", systemImage: "arrow.counterclockwise")
+                if router.activePanel == .sliceActive, let engine = router.sliceEngine {
+                    Button(action: {
+                        engine.restartSlice()
+                    }) {
+                        Label("Restart Slice", systemImage: "arrow.counterclockwise")
+                    }
+                    .keyboardShortcut("r", modifiers: .command)
+
+                    Button(action: {
+                        timer.restartPhase()
+                    }) {
+                        Label("Restart Block Timer", systemImage: "arrow.counterclockwise.circle")
+                    }
+                    .keyboardShortcut("r", modifiers: [.command, .shift])
+                } else {
+                    Button(action: {
+                        timer.restartPhase()
+                    }) {
+                        Label("Restart Timer", systemImage: "arrow.counterclockwise")
+                    }
+                    .keyboardShortcut("r", modifiers: .command)
                 }
-                .keyboardShortcut("r", modifiers: .command)
 
                 if timer.phase.isFocus {
                     Divider()
@@ -163,15 +179,22 @@ struct PopoverContainerView: View {
             hiddenShortcut(.return, modifiers: .command) {
                 timer.next()
             }
-            hiddenShortcut("r", modifiers: .command) {
-                timer.restartPhase()
-            }
             if router.activePanel == .sliceActive, let engine = router.sliceEngine {
+                hiddenShortcut("r", modifiers: .command) {
+                    engine.restartSlice()
+                }
+                hiddenShortcut("r", modifiers: [.command, .shift]) {
+                    timer.restartPhase()
+                }
                 hiddenShortcut("e", modifiers: .command) {
                     engine.pause()
                     timer.pause()
                     workingItems = engine.rotationItems
                     router.activePanel = .sliceSetup
+                }
+            } else {
+                hiddenShortcut("r", modifiers: .command) {
+                    timer.restartPhase()
                 }
             }
             if timer.phase.isFocus {
