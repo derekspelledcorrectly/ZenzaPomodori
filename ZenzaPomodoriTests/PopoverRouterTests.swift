@@ -34,9 +34,4 @@ struct PopoverRouterTests {
         #expect(router.activePanel == .sliceActive)
     }
 
-    @Test func sliceTransitionPanel() {
-        let router = PopoverRouter()
-        router.activePanel = .sliceTransition
-        #expect(router.activePanel == .sliceTransition)
-    }
 }

@@ -10,7 +10,6 @@ struct PopoverContainerView: View {
     let focusNameStore: FocusNameStore
     @State private var workingItems: [RotationItem] = []
     var onSliceStart: (([RotationItem]) -> Void)?
-    var onClosePopover: (() -> Void)?
 
     var body: some View {
         Group {
@@ -40,9 +39,6 @@ struct PopoverContainerView: View {
 
             case .sliceActive:
                 sliceActivePanel
-
-            case .sliceTransition:
-                sliceTransitionPanel
             }
         }
         .onChange(of: router.activePanel) { _, panel in
@@ -296,26 +292,4 @@ struct PopoverContainerView: View {
         }
     }
 
-    @ViewBuilder
-    private var sliceTransitionPanel: some View {
-        if let engine = router.sliceEngine {
-            RotationTransitionCard(
-                currentName: engine.currentItemName ?? "",
-                nextName: engine.nextItemName,
-                positionText: "\(engine.currentIndex + 1)/\(engine.rotationItems.count)",
-                outerTimeRemaining: timer.formattedTime,
-                rotationProgress: Double(engine.currentIndex + 1) / Double(max(1, engine.rotationItems.count)),
-                onDismiss: {
-                    router.activePanel = .sliceActive
-                },
-                onClose: {
-                    router.transitionDismissed = true
-                    router.activePanel = .sliceActive
-                    onClosePopover?()
-                }
-            )
-        } else {
-            Color.clear.onAppear { router.activePanel = .timer }
-        }
-    }
 }
