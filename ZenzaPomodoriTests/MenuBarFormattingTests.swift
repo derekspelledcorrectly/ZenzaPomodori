@@ -69,15 +69,15 @@ struct MenuBarFormattingTests {
     }
 
     @Test func microOnlyFormat() {
-        #expect(microFormatted(format: .microOnly) == "01:47 API Refactor")
+        #expect(microFormatted(format: .microOnly) == "01:47 [API Refactor]")
     }
 
     @Test func dualTimerFormat() {
-        #expect(microFormatted(format: .dualTimer) == "01:47/18:42 API Refactor")
+        #expect(microFormatted(format: .dualTimer) == "01:47/18:42 [API Refactor]")
     }
 
     @Test func microPositionFormat() {
-        #expect(microFormatted(format: .microPosition) == "01:47 [3/5] API Refactor")
+        #expect(microFormatted(format: .microPosition) == "01:47 3/5 [API Refactor]")
     }
 
     @Test func compactFormat() {

@@ -29,7 +29,7 @@ enum MenuBarFormatting {
         let micro = TimeFormatting.formatted(seconds: microSeconds)
         let name: String
         if showFocus, let focusName {
-            name = " \(truncatedFocusName(focusName, maxLength: 15))"
+            name = " [\(truncatedFocusName(focusName, maxLength: 15))]"
         } else {
             name = ""
         }
@@ -40,7 +40,7 @@ enum MenuBarFormatting {
         case .dualTimer:
             return "\(micro)/\(outerFormattedTime)\(name)"
         case .microPosition:
-            return "\(micro) [\(position)/\(total)]\(name)"
+            return "\(micro) \(position)/\(total)\(name)"
         case .compact:
             return micro
         }
