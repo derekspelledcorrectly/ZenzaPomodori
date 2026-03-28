@@ -61,9 +61,7 @@ struct MenuBarView<GearContent: View>: View {
                 onStart: timer.start,
                 onPause: timer.pause,
                 onResume: timer.resume,
-                onNext: timer.next,
-                onReset: timer.restartPhase,
-                onAbandon: timer.abandonBlock
+                onNext: timer.next
             )
         }
         .padding()
