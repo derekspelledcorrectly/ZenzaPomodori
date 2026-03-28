@@ -10,10 +10,13 @@ final class HotkeyService {
     private(set) var isRegistered: Bool = false
     private(set) var registrationError: String?
     private var hotkeyRef: EventHotKeyRef?
+    private var rotationHotkeyRef: EventHotKeyRef?
     private var eventHandlerRef: EventHandlerRef?
     private var notificationObserver: Any?
+    private var rotationNotificationObserver: Any?
 
     var onHotkeyPressed: (() -> Void)?
+    var onRotationHotkeyPressed: (() -> Void)?
 
     init(settings: SettingsStore) {
         self.settings = settings
@@ -22,31 +25,51 @@ final class HotkeyService {
     func register() {
         unregister()
         registrationError = nil
-        guard settings.globalHotkeyEnabled else { return }
 
         guard installHandlerIfNeeded() else { return }
 
-        var hotKeyID = EventHotKeyID()
-        hotKeyID.signature = OSType(0x5A50_4D42) // "ZPMB"
-        hotKeyID.id = 1
+        if settings.globalHotkeyEnabled {
+            var hotKeyID = EventHotKeyID()
+            hotKeyID.signature = OSType(0x5A50_4D42) // "ZPMB"
+            hotKeyID.id = 1
 
-        var ref: EventHotKeyRef?
-        let status = RegisterEventHotKey(
-            settings.globalHotkeyKeyCode,
-            settings.globalHotkeyModifiers,
-            hotKeyID,
-            GetEventDispatcherTarget(),
-            0,
-            &ref
-        )
+            var ref: EventHotKeyRef?
+            let status = RegisterEventHotKey(
+                settings.globalHotkeyKeyCode,
+                settings.globalHotkeyModifiers,
+                hotKeyID,
+                GetEventDispatcherTarget(),
+                0,
+                &ref
+            )
 
-        if status == noErr, let ref {
-            hotkeyRef = ref
-            isRegistered = true
-        } else {
-            isRegistered = false
-            registrationError = "Hotkey registration failed (status \(status)). "
-                + "Check System Settings > Privacy & Security > Accessibility."
+            if status == noErr, let ref {
+                hotkeyRef = ref
+                isRegistered = true
+            } else {
+                registrationError = "Hotkey registration failed (status \(status)). "
+                    + "Check System Settings > Privacy & Security > Accessibility."
+            }
+        }
+
+        if settings.rotationHotkeyEnabled {
+            var rotKeyID = EventHotKeyID()
+            rotKeyID.signature = OSType(0x5A50_4D42) // "ZPMB"
+            rotKeyID.id = 2
+
+            var ref: EventHotKeyRef?
+            let status = RegisterEventHotKey(
+                settings.rotationHotkeyKeyCode,
+                settings.rotationHotkeyModifiers,
+                rotKeyID,
+                GetEventDispatcherTarget(),
+                0,
+                &ref
+            )
+
+            if status == noErr, let ref {
+                rotationHotkeyRef = ref
+            }
         }
     }
 
@@ -54,6 +77,10 @@ final class HotkeyService {
         if let ref = hotkeyRef {
             UnregisterEventHotKey(ref)
             hotkeyRef = nil
+        }
+        if let ref = rotationHotkeyRef {
+            UnregisterEventHotKey(ref)
+            rotationHotkeyRef = nil
         }
         isRegistered = false
     }
@@ -69,6 +96,19 @@ final class HotkeyService {
         ) { [weak self] _ in
             Task { @MainActor in
                 self?.onHotkeyPressed?()
+            }
+        }
+
+        if let existing = rotationNotificationObserver {
+            NotificationCenter.default.removeObserver(existing)
+        }
+        rotationNotificationObserver = NotificationCenter.default.addObserver(
+            forName: .rotationHotkeyPressed,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.onRotationHotkeyPressed?()
             }
         }
     }
@@ -102,10 +142,9 @@ final class HotkeyService {
                     &hotKeyID
                 )
                 if hotKeyID.signature == OSType(0x5A50_4D42) {
-                    NotificationCenter.default.post(
-                        name: .hotkeyPressed,
-                        object: nil
-                    )
+                    let name: Notification.Name = hotKeyID.id == 2
+                        ? .rotationHotkeyPressed : .hotkeyPressed
+                    NotificationCenter.default.post(name: name, object: nil)
                 }
                 return noErr
             },
@@ -127,4 +166,5 @@ final class HotkeyService {
 
 extension Notification.Name {
     static let hotkeyPressed = Notification.Name("ZenzaPomodoriHotkeyPressed")
+    static let rotationHotkeyPressed = Notification.Name("ZenzaPomodoriRotationHotkeyPressed")
 }

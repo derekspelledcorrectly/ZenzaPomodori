@@ -25,6 +25,9 @@ enum Defaults {
     static let globalHotkeyEnabled: Bool = true
     static let globalHotkeyKeyCode: UInt32 = 35 // P
     static let globalHotkeyModifiers: UInt32 = 4608 // controlKey + shiftKey
+    static let rotationHotkeyEnabled: Bool = true
+    static let rotationHotkeyKeyCode: UInt32 = 36 // Return
+    static let rotationHotkeyModifiers: UInt32 = 4608 // controlKey + shiftKey
 }
 
 enum SettingsKeys {
@@ -54,4 +57,7 @@ enum SettingsKeys {
     static let globalHotkeyEnabled = "globalHotkeyEnabled"
     static let globalHotkeyKeyCode = "globalHotkeyKeyCode"
     static let globalHotkeyModifiers = "globalHotkeyModifiers"
+    static let rotationHotkeyEnabled = "rotationHotkeyEnabled"
+    static let rotationHotkeyKeyCode = "rotationHotkeyKeyCode"
+    static let rotationHotkeyModifiers = "rotationHotkeyModifiers"
 }
