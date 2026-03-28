@@ -85,46 +85,44 @@ struct PopoverContainerView: View {
         Menu {
             if timer.phase != .idle {
                 if router.activePanel == .sliceActive, let engine = router.sliceEngine {
-                    Button("Edit Rotation List", systemImage: "list.bullet") {
+                    Button(action: {
                         engine.pause()
                         timer.pause()
                         workingItems = engine.rotationItems
                         router.activePanel = .sliceSetup
+                    }) {
+                        Label("Edit Rotation List", systemImage: "list.bullet")
                     }
                 }
-
-                Button("Restart Timer", systemImage: "arrow.counterclockwise") {
-                    timer.restartPhase()
-                }
-
-                Divider()
 
                 Button(action: {
-                    if let engine = router.sliceEngine, engine.isActive {
-                        engine.deactivate()
-                    }
-                    timer.next()
+                    timer.restartPhase()
                 }) {
-                    Label("Finish Block Early", systemImage: "checkmark.circle")
-                        .foregroundStyle(.orange)
+                    Label("Restart Timer", systemImage: "arrow.counterclockwise")
                 }
 
-                Button(role: .destructive, action: {
-                    if let engine = router.sliceEngine, engine.isActive {
-                        engine.deactivate()
-                        router.activePanel = .sliceSetup
-                    } else {
-                        timer.abandonBlock()
+                if timer.phase.isFocus {
+                    Divider()
+
+                    Button(role: .destructive, action: {
+                        if let engine = router.sliceEngine, engine.isActive {
+                            engine.deactivate()
+                            router.activePanel = .sliceSetup
+                        } else {
+                            timer.abandonBlock()
+                        }
+                    }) {
+                        Label("Abandon Block", systemImage: "xmark.circle")
                     }
-                }) {
-                    Label("Abandon Block", systemImage: "xmark.circle")
                 }
 
                 Divider()
             }
 
-            Button("Settings...", systemImage: "gearshape") {
+            Button(action: {
                 router.activePanel = .settings
+            }) {
+                Label("Settings...", systemImage: "gearshape")
             }
         } label: {
             Image(systemName: "gearshape")
@@ -140,6 +138,7 @@ struct PopoverContainerView: View {
         }
         .menuStyle(.borderlessButton)
         .menuIndicator(.hidden)
+        .fixedSize()
         .padding(8)
     }
 
