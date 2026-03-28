@@ -68,6 +68,12 @@ struct PopoverContainerView: View {
                 router.activePanel = newType == .slices ? .sliceSetup : .timer
             }
         }
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
+        )
     }
 
     private var isEditingActiveRotation: Bool {
@@ -226,7 +232,6 @@ struct PopoverContainerView: View {
         VStack(spacing: 12) {
             // Match TimerDisplayView's 140px frame so the picker stays
             // at the same Y position in both Focus and Slices panels.
-            // This means NSPopover only grows/shrinks at the bottom (no reposition needed).
             ConcentricTimerView(
                 sliceProgress: Double(settings.sliceRotationInterval) / Double(max(1, settings.focusDuration)),
                 outerProgress: 1.0,

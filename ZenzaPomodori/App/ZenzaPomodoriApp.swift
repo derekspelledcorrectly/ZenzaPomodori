@@ -31,11 +31,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 }
 
 @MainActor
-final class PopoverManager: NSObject, NSPopoverDelegate {
+final class PopoverManager: NSObject {
     let timer: PomodoroTimer
     private let settings: SettingsStore
     private var statusItem: NSStatusItem?
-    private let popover = NSPopover()
+    private let panel = FloatingPanel()
+    private var hostingView: NSHostingView<PopoverContainerView>?
+    private var localDismissMonitor: Any?
+    private var globalDismissMonitor: Any?
     private let notificationService: NotificationService
     private let soundService = SoundService()
     private let router = PopoverRouter()
@@ -50,7 +53,9 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         self.notificationService = NotificationService(settings: settings)
         self.hotkeyService = HotkeyService(settings: settings)
         super.init()
-        popover.delegate = self
+        panel.onClose = { [weak self] in
+            self?.hidePanel()
+        }
     }
 
     func setup() {
@@ -60,23 +65,23 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         statusItem = item
 
-        popover.contentViewController = NSHostingController(
-            rootView: PopoverContainerView(
-                router: router,
-                timer: timer,
-                settings: settings,
-                soundService: soundService,
-                onPanelChange: { [weak self] panel in
-                    self?.handlePanelChange(panel)
-                },
-                rotationStore: rotationStore,
-                focusNameStore: timer.focusNameStore,
-                onSliceStart: { [weak self] items in
-                    self?.startSlices(with: items)
-                }
-            )
+        let contentView = PopoverContainerView(
+            router: router,
+            timer: timer,
+            settings: settings,
+            soundService: soundService,
+            onPanelChange: { [weak self] panel in
+                self?.handlePanelChange(panel)
+            },
+            rotationStore: rotationStore,
+            focusNameStore: timer.focusNameStore,
+            onSliceStart: { [weak self] items in
+                self?.startSlices(with: items)
+            }
         )
-        popover.behavior = .transient
+        let hosting = NSHostingView(rootView: contentView)
+        hostingView = hosting
+        panel.contentView = hosting
 
         if let button = item.button {
             button.target = self
@@ -100,7 +105,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
             self?.notificationService.requestPermission()
         }
         notificationService.onNotificationTapped = { [weak self] in
-            self?.showPopover(activate: true)
+            self?.showPanel(activate: true)
         }
         timer.onPhaseChange = { [weak self] _, newPhase in
             guard let self else { return }
@@ -118,43 +123,84 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
                 self.soundService.play(sound)
             }
             if self.settings.popOnComplete {
-                self.showPopover()
+                self.showPanel()
                 self.startAutoDismissTimer()
             }
             self.notificationService.sendCompletionNotification(for: phase)
         }
     }
 
-    func showPopover(activate: Bool = false) {
-        guard let button = statusItem?.button else { return }
-        if !popover.isShown {
-            // Sync contentSize to actual view size before showing,
-            // otherwise NSPopover uses a stale cached size for positioning.
-            if let fittingSize = popover.contentViewController?.view.fittingSize,
-               fittingSize.width > 0, fittingSize.height > 0 {
-                popover.contentSize = fittingSize
+    func showPanel(activate: Bool = false) {
+        guard let button = statusItem?.button,
+              let buttonWindow = button.window else { return }
+
+        if !panel.isVisible {
+            let buttonRect = buttonWindow.convertToScreen(
+                button.convert(button.bounds, to: nil)
+            )
+
+            if let hosting = hostingView {
+                let fittingSize = hosting.fittingSize
+                if fittingSize.width > 0, fittingSize.height > 0 {
+                    panel.setContentSize(fittingSize)
+                }
             }
-            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+
+            let panelSize = panel.frame.size
+            let x = buttonRect.maxX - panelSize.width
+            let y = buttonRect.minY - 6 - panelSize.height
+
+            panel.setFrameOrigin(NSPoint(x: x, y: y))
+            panel.orderFront(nil)
+            installDismissMonitors()
+
             DispatchQueue.main.async { [weak self] in
                 self?.focusDefaultButton()
             }
         }
+
         if activate {
             NSApp.activate()
+            panel.makeKey()
         }
+    }
+
+    func hidePanel() {
+        panel.orderOut(nil)
+        removeDismissMonitors()
+        handlePanelClose()
+    }
+
+    private func handlePanelClose() {
+        cancelAutoDismissTimer()
+        if router.activePanel == .settings {
+            router.activePanel = .timer
+        }
+    }
+
+    private func repositionPanel() {
+        guard let button = statusItem?.button,
+              let buttonWindow = button.window else { return }
+        let buttonRect = buttonWindow.convertToScreen(
+            button.convert(button.bounds, to: nil)
+        )
+        let panelSize = panel.frame.size
+        let x = buttonRect.maxX - panelSize.width
+        let y = buttonRect.minY - 6 - panelSize.height
+        panel.setFrameOrigin(NSPoint(x: x, y: y))
     }
 
     @objc private func handleStatusItemClick() {
         guard let event = NSApp.currentEvent else { return }
 
         if event.type == .rightMouseUp {
-            popover.performClose(nil)
+            hidePanel()
             showContextMenu()
         } else {
-            if popover.isShown {
-                popover.performClose(nil)
+            if panel.isVisible {
+                hidePanel()
             } else {
-                showPopover(activate: true)
+                showPanel(activate: true)
             }
         }
     }
@@ -180,48 +226,50 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
 
     @objc private func openSettings() {
         router.activePanel = .settings
-        showPopover(activate: true)
+        showPanel(activate: true)
     }
 
-    private func handlePanelChange(_ panel: PopoverPanel) {
-        popover.behavior = panel == .settings ? .applicationDefined : .transient
-
+    private func handlePanelChange(_ popoverPanel: PopoverPanel) {
         DispatchQueue.main.async { [weak self] in
             guard let self,
-                  let contentView = self.popover.contentViewController?.view,
-                  let window = contentView.window else { return }
-            window.recalculateKeyViewLoop()
-            switch panel {
+                  let contentView = self.hostingView else { return }
+            self.panel.recalculateKeyViewLoop()
+            switch popoverPanel {
             case .timer:
                 if self.timer.phase == .idle,
                    let textField = self.firstTextField(in: contentView) {
-                    window.makeFirstResponder(textField)
+                    self.panel.makeFirstResponder(textField)
                     textField.selectText(nil)
                 } else if let button = self.firstBorderedButton(in: contentView) {
-                    window.makeFirstResponder(button)
+                    self.panel.makeFirstResponder(button)
                 }
             case .settings:
                 if let picker = self.firstPopUpButton(in: contentView) {
-                    window.makeFirstResponder(picker)
+                    self.panel.makeFirstResponder(picker)
                 }
             case .sliceSetup, .sliceActive:
                 if let button = self.firstBorderedButton(in: contentView) {
-                    window.makeFirstResponder(button)
+                    self.panel.makeFirstResponder(button)
                 }
+            }
+
+            let fittingSize = contentView.fittingSize
+            if fittingSize.width > 0, fittingSize.height > 0 {
+                self.panel.setContentSize(fittingSize)
+                self.repositionPanel()
             }
         }
     }
 
     private func focusDefaultButton() {
-        guard let contentView = popover.contentViewController?.view,
-              let window = contentView.window else { return }
-        window.autorecalculatesKeyViewLoop = true
-        window.recalculateKeyViewLoop()
+        guard let contentView = hostingView else { return }
+        panel.autorecalculatesKeyViewLoop = true
+        panel.recalculateKeyViewLoop()
         if timer.phase == .idle, let textField = firstTextField(in: contentView) {
-            window.makeFirstResponder(textField)
+            panel.makeFirstResponder(textField)
             textField.selectText(nil)
         } else if let button = firstBorderedButton(in: contentView) {
-            window.makeFirstResponder(button)
+            panel.makeFirstResponder(button)
         }
     }
 
@@ -367,11 +415,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         }
 
         router.activePanel = .sliceActive
-        showPopover()
-
-        if settings.stealFocusOnRotation {
-            NSApp.activate()
-        }
+        showPanel(activate: settings.stealFocusOnRotation)
 
         startAutoDismissTimer()
     }
@@ -398,10 +442,10 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
     }
 
     private func handleHotkey() {
-        if popover.isShown {
-            popover.performClose(nil)
+        if panel.isVisible {
+            hidePanel()
         } else {
-            showPopover(activate: true)
+            showPanel(activate: true)
         }
     }
 
@@ -428,37 +472,67 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
     private func handleAutoDismiss() {
         removeClickMonitor()
         if router.activePanel == .sliceActive {
-            popover.performClose(nil)
+            hidePanel()
             return
         }
         guard router.activePanel == .timer else { return }
-        popover.performClose(nil)
+        hidePanel()
         if settings.autoAdvance, timer.isOvertime {
             timer.next()
         }
     }
 
-    nonisolated func popoverDidClose(_ notification: Notification) {
-        MainActor.assumeIsolated {
-            cancelAutoDismissTimer()
-            switch router.activePanel {
-            case .sliceActive, .sliceSetup:
-                popover.behavior = .transient
-            case .timer:
-                break
-            case .settings:
-                router.activePanel = .timer
-                popover.behavior = .transient
+    // MARK: - Dismiss Monitors
+
+    private func installDismissMonitors() {
+        removeDismissMonitors()
+
+        globalDismissMonitor = NSEvent.addGlobalMonitorForEvents(
+            matching: [.leftMouseDown, .rightMouseDown]
+        ) { [weak self] _ in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                if self.router.activePanel != .settings {
+                    self.hidePanel()
+                }
             }
+        }
+
+        localDismissMonitor = NSEvent.addLocalMonitorForEvents(
+            matching: [.leftMouseDown, .rightMouseDown]
+        ) { [weak self] event in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                if event.window !== self.panel,
+                   event.window !== self.statusItem?.button?.window {
+                    if self.router.activePanel != .settings {
+                        self.hidePanel()
+                    }
+                }
+            }
+            return event
+        }
+    }
+
+    private func removeDismissMonitors() {
+        if let monitor = globalDismissMonitor {
+            NSEvent.removeMonitor(monitor)
+            globalDismissMonitor = nil
+        }
+        if let monitor = localDismissMonitor {
+            NSEvent.removeMonitor(monitor)
+            localDismissMonitor = nil
         }
     }
 
     private func installClickMonitor() {
         guard clickMonitor == nil else { return }
         clickMonitor = NSEvent.addLocalMonitorForEvents(matching: .leftMouseDown) { [weak self] event in
-            if let self, let window = self.popover.contentViewController?.view.window,
-               event.window == window {
-                self.cancelAutoDismissTimer()
+            DispatchQueue.main.async {
+                guard let self else { return }
+                if event.window === self.panel {
+                    self.cancelAutoDismissTimer()
+                }
             }
             return event
         }
