@@ -11,11 +11,11 @@ struct ActiveRotationView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            // Concentric rings: outer = micro (hero), inner = block (context)
+            // Concentric rings: outer = slice (hero), inner = block (context)
             ConcentricTimerView(
-                microProgress: timer.progress,
+                sliceProgress: timer.progress,
                 outerProgress: engine.progress,
-                microTimeFormatted: TimeFormatting.formatted(seconds: engine.microSecondsRemaining),
+                sliceTimeFormatted: TimeFormatting.formatted(seconds: engine.sliceSecondsRemaining),
                 outerTimeFormatted: engine.currentItemName ?? "",
                 outerColor: .orange,
                 innerColor: phaseColor

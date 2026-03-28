@@ -238,8 +238,8 @@ final class SettingsStore {
             self.slicesEnabled = Defaults.slicesEnabled
         }
 
-        let microInterval = defaults.integer(forKey: SettingsKeys.sliceRotationInterval)
-        self.sliceRotationInterval = microInterval > 0 ? microInterval : Defaults.sliceRotationInterval
+        let sliceInterval = defaults.integer(forKey: SettingsKeys.sliceRotationInterval)
+        self.sliceRotationInterval = sliceInterval > 0 ? sliceInterval : Defaults.sliceRotationInterval
 
         if defaults.object(forKey: SettingsKeys.sliceSoundEnabled) != nil {
             self.sliceSoundEnabled = defaults.bool(forKey: SettingsKeys.sliceSoundEnabled)

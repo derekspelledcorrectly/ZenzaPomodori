@@ -10,7 +10,7 @@ enum MenuBarFormatting {
     }
 
     static func sliceFormatted(
-        microSeconds: Int,
+        sliceSeconds: Int,
         outerFormattedTime: String,
         focusName: String?,
         position: Int,
@@ -26,7 +26,7 @@ enum MenuBarFormatting {
             return ""
         }
 
-        let micro = TimeFormatting.formatted(seconds: microSeconds)
+        let slice = TimeFormatting.formatted(seconds: sliceSeconds)
         let name: String
         if showFocus, let focusName {
             name = " [\(truncatedFocusName(focusName, maxLength: 15))]"
@@ -35,14 +35,14 @@ enum MenuBarFormatting {
         }
 
         switch format {
-        case .microOnly:
-            return "\(micro)\(name)"
+        case .sliceOnly:
+            return "\(slice)\(name)"
         case .dualTimer:
-            return "\(micro)/\(outerFormattedTime)\(name)"
-        case .microPosition:
-            return "\(micro) \(position)/\(total)\(name)"
+            return "\(slice)/\(outerFormattedTime)\(name)"
+        case .slicePosition:
+            return "\(slice) \(position)/\(total)\(name)"
         case .compact:
-            return micro
+            return slice
         }
     }
 }

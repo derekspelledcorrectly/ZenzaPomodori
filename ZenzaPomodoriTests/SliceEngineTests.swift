@@ -37,7 +37,7 @@ struct SliceEngineTests {
         engine.activate()
         #expect(engine.isActive == true)
         #expect(engine.currentIndex == 0)
-        #expect(engine.microSecondsRemaining == 180)
+        #expect(engine.sliceSecondsRemaining == 180)
         #expect(engine.currentItemName == "API")
         engine.deactivate()
     }
@@ -47,7 +47,7 @@ struct SliceEngineTests {
         engine.activate()
         engine.tick()
         engine.activate()
-        #expect(engine.microSecondsRemaining == 179)
+        #expect(engine.sliceSecondsRemaining == 179)
         engine.deactivate()
     }
 
@@ -58,7 +58,7 @@ struct SliceEngineTests {
         engine.deactivate()
         #expect(engine.isActive == false)
         #expect(engine.currentIndex == 0)
-        #expect(engine.microSecondsRemaining == 0)
+        #expect(engine.sliceSecondsRemaining == 0)
     }
 
     // MARK: - Tick
@@ -66,14 +66,14 @@ struct SliceEngineTests {
         let engine = makeEngine(interval: 180)
         engine.activate()
         engine.tick()
-        #expect(engine.microSecondsRemaining == 179)
+        #expect(engine.sliceSecondsRemaining == 179)
         engine.deactivate()
     }
 
     @Test func tickWhileInactiveIsNoOp() {
         let engine = makeEngine()
         engine.tick()
-        #expect(engine.microSecondsRemaining == 0)
+        #expect(engine.sliceSecondsRemaining == 0)
     }
 
     @Test func tickWhilePausedIsNoOp() {
@@ -81,7 +81,7 @@ struct SliceEngineTests {
         engine.activate()
         engine.pause()
         engine.tick()
-        #expect(engine.microSecondsRemaining == 180)
+        #expect(engine.sliceSecondsRemaining == 180)
         engine.deactivate()
     }
 
@@ -92,7 +92,7 @@ struct SliceEngineTests {
         for _ in 0..<3 { engine.tick() }
         #expect(engine.currentIndex == 1)
         #expect(engine.currentItemName == "CI")
-        #expect(engine.microSecondsRemaining == 3)
+        #expect(engine.sliceSecondsRemaining == 3)
         engine.deactivate()
     }
 
@@ -135,7 +135,7 @@ struct SliceEngineTests {
         engine.skip()
         #expect(engine.currentIndex == 1)
         #expect(engine.currentItemName == "CI")
-        #expect(engine.microSecondsRemaining == 180)
+        #expect(engine.sliceSecondsRemaining == 180)
         engine.deactivate()
     }
 
@@ -153,11 +153,11 @@ struct SliceEngineTests {
         engine.pause()
         #expect(engine.isPaused == true)
         engine.tick()
-        #expect(engine.microSecondsRemaining == 179)
+        #expect(engine.sliceSecondsRemaining == 179)
         engine.resume()
         #expect(engine.isPaused == false)
         engine.tick()
-        #expect(engine.microSecondsRemaining == 178)
+        #expect(engine.sliceSecondsRemaining == 178)
         engine.deactivate()
     }
 

@@ -1,8 +1,8 @@
 import Foundation
 
 enum SliceMenuBarFormat: String, Codable, CaseIterable, Sendable {
-    case microOnly
+    case sliceOnly
     case dualTimer
-    case microPosition
+    case slicePosition
     case compact
 }

@@ -300,7 +300,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
 
         if let engine = router.sliceEngine, engine.isActive {
             let formatted = MenuBarFormatting.sliceFormatted(
-                microSeconds: engine.microSecondsRemaining,
+                sliceSeconds: engine.sliceSecondsRemaining,
                 outerFormattedTime: timer.formattedTime,
                 focusName: engine.currentItemName,
                 position: engine.currentIndex + 1,
@@ -353,7 +353,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
             interval: settings.sliceRotationInterval
         )
         engine.onRotationComplete = { [weak self] in
-            self?.handleMicroRotation()
+            self?.handleSliceRotation()
         }
         router.sliceEngine = engine
         settings.lastBlockType = .slices
@@ -362,7 +362,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         router.activePanel = .sliceActive
     }
 
-    private func handleMicroRotation() {
+    private func handleSliceRotation() {
         guard router.sliceEngine != nil else { return }
 
         if settings.sliceSoundEnabled {
