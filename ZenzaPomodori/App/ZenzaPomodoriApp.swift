@@ -350,7 +350,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
     private func startSlices(with items: [RotationItem]) {
         let engine = SliceEngine(
             items: items,
-            interval: settings.microRotationInterval
+            interval: settings.sliceRotationInterval
         )
         engine.onRotationComplete = { [weak self] in
             self?.handleMicroRotation()

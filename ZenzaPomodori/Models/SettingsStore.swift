@@ -86,11 +86,11 @@ final class SettingsStore {
         didSet { defaults.set(slicesEnabled, forKey: SettingsKeys.slicesEnabled) }
     }
 
-    var microRotationInterval: Int {
+    var sliceRotationInterval: Int {
         didSet {
-            let validated = max(60, min(600, microRotationInterval))
-            defaults.set(validated, forKey: SettingsKeys.microRotationInterval)
-            if microRotationInterval != validated { microRotationInterval = validated }
+            let validated = max(60, min(600, sliceRotationInterval))
+            defaults.set(validated, forKey: SettingsKeys.sliceRotationInterval)
+            if sliceRotationInterval != validated { sliceRotationInterval = validated }
         }
     }
 
@@ -238,8 +238,8 @@ final class SettingsStore {
             self.slicesEnabled = Defaults.slicesEnabled
         }
 
-        let microInterval = defaults.integer(forKey: SettingsKeys.microRotationInterval)
-        self.microRotationInterval = microInterval > 0 ? microInterval : Defaults.microRotationInterval
+        let microInterval = defaults.integer(forKey: SettingsKeys.sliceRotationInterval)
+        self.sliceRotationInterval = microInterval > 0 ? microInterval : Defaults.sliceRotationInterval
 
         if defaults.object(forKey: SettingsKeys.sliceSoundEnabled) != nil {
             self.sliceSoundEnabled = defaults.bool(forKey: SettingsKeys.sliceSoundEnabled)

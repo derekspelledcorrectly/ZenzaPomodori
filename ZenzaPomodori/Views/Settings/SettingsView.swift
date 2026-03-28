@@ -214,8 +214,8 @@ struct SettingsView: View {
 
     private var microIntervalBinding: Binding<Int> {
         Binding(
-            get: { settings.microRotationInterval / 60 },
-            set: { settings.microRotationInterval = $0 * 60 }
+            get: { settings.sliceRotationInterval / 60 },
+            set: { settings.sliceRotationInterval = $0 * 60 }
         )
     }
 
