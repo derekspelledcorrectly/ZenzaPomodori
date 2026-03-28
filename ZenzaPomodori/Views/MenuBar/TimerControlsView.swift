@@ -3,6 +3,8 @@ import SwiftUI
 struct TimerControlsView: View {
     let phase: TimerPhase
     let isRunning: Bool
+    let isOvertime: Bool
+    let autoAdvance: Bool
     let onStart: () -> Void
     let onPause: () -> Void
     let onResume: () -> Void
@@ -22,12 +24,12 @@ struct TimerControlsView: View {
             .controlSize(phase == .idle ? .large : .regular)
             .help(isRunning ? "Pause (Space / Return)" : (phase == .idle ? "Start (Return)" : "Resume (Space / Return)"))
 
-            if phase != .idle {
+            if phase != .idle && !autoAdvance && isOvertime {
                 Button(action: onNext) {
-                    Image(systemName: phase.isFocus ? "checkmark.circle" : "forward.end.fill")
+                    Image(systemName: "checkmark.circle")
                         .frame(width: 20)
                 }
-                .help(phase.isFocus ? "Finish Block (\u{2318}\u{25B6}\u{FE0E})" : "Skip Break (\u{2318}\u{25B6}\u{FE0E})")
+                .help("\(phase.isFocus ? "Finish Block" : "Finish Break") (\u{2318}\u{21A9}\u{FE0E})")
             }
         }
         .buttonStyle(.bordered)
@@ -38,6 +40,8 @@ struct TimerControlsView: View {
     TimerControlsView(
         phase: .idle,
         isRunning: false,
+        isOvertime: false,
+        autoAdvance: false,
         onStart: {}, onPause: {}, onResume: {},
         onNext: {}
     )
@@ -48,6 +52,8 @@ struct TimerControlsView: View {
     TimerControlsView(
         phase: .focus(block: 1),
         isRunning: true,
+        isOvertime: false,
+        autoAdvance: false,
         onStart: {}, onPause: {}, onResume: {},
         onNext: {}
     )
