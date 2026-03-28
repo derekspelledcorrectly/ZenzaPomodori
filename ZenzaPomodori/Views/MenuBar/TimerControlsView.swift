@@ -30,20 +30,6 @@ struct TimerControlsView: View {
                         .frame(width: 20)
                 }
                 .help(phase.isFocus ? "Complete Block" : "Skip Break")
-
-                Button(action: onReset) {
-                    Image(systemName: "arrow.counterclockwise")
-                        .frame(width: 20)
-                }
-                .help("Restart Timer")
-
-                if phase.isFocus, let onAbandon {
-                    Button(action: onAbandon) {
-                        Image(systemName: "xmark.circle")
-                            .frame(width: 20)
-                    }
-                    .help("Abandon Block")
-                }
             }
         }
         .buttonStyle(.bordered)
