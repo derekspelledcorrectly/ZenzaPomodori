@@ -13,33 +13,40 @@ struct ActiveRotationView: View {
                 sliceProgress: timer.progress,
                 outerProgress: engine.progress,
                 sliceTimeFormatted: TimeFormatting.formatted(seconds: engine.sliceSecondsRemaining),
-                outerTimeFormatted: engine.currentItemName ?? "",
+                outerTimeFormatted: timer.formattedTime,
                 outerColor: .orange,
                 innerColor: phaseColor
             )
 
-            // Rotation + block info
-            HStack(spacing: 6) {
-                if engine.rotationItems.count > 1 {
-                    Text("Focus \(engine.currentIndex + 1)/\(engine.rotationItems.count)")
+            // Current focus, metadata, next focus
+            VStack(spacing: 4) {
+                if let current = engine.currentItemName {
+                    Text(current)
+                        .font(.callout)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.primary)
+                }
+
+                HStack(spacing: 6) {
+                    if engine.rotationItems.count > 1 {
+                        Text("Focus \(engine.currentIndex + 1)/\(engine.rotationItems.count)")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Text("\u{00B7}")
+                        .foregroundStyle(.tertiary)
+
+                    Text(blockLabel)
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.tertiary)
                 }
 
                 if let next = engine.nextItemName {
-                    Text("\u{00B7}")
-                        .foregroundStyle(.tertiary)
                     Text("Next: \(next)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
                 }
-
-                Text("\u{00B7}")
-                    .foregroundStyle(.tertiary)
-
-                Text("\(blockLabel) \u{00B7} \(timer.formattedTime) left")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
             }
 
             // Controls
