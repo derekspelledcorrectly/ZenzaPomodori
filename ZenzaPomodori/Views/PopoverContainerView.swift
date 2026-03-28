@@ -82,9 +82,9 @@ struct PopoverContainerView: View {
     // MARK: - Panels
 
     private var sliceIdlePanel: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 12) {
             // Match TimerDisplayView's 140px frame so the picker stays
-            // at the same Y position in both Regular and Slices panels.
+            // at the same Y position in both Focus and Slices panels.
             // This means NSPopover only grows/shrinks at the bottom (no reposition needed).
             ConcentricTimerView(
                 sliceProgress: Double(settings.sliceRotationInterval) / Double(max(1, settings.focusDuration)),
@@ -118,7 +118,7 @@ struct PopoverContainerView: View {
             )
         }
         .padding()
-        .frame(width: 320)
+        .frame(width: 280)
         .overlay(alignment: .topTrailing) {
             Button(action: { router.activePanel = .settings }) {
                 Image(systemName: "gearshape")

@@ -32,7 +32,7 @@ struct SettingsView: View {
                     .padding(.bottom, 12)
             }
         }
-        .frame(width: 320)
+        .frame(width: 280)
         .fixedSize()
     }
 

@@ -5,7 +5,7 @@ struct MenuBarView: View {
     var onOpenSettings: () -> Void = {}
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 12) {
             TimerDisplayView(
                 phase: timer.phase,
                 totalBlocks: timer.blocksBeforeLongBreak,
@@ -62,7 +62,7 @@ struct MenuBarView: View {
             )
         }
         .padding()
-        .frame(width: 320)
+        .frame(width: 280)
         .overlay(alignment: .topTrailing) {
             Button(action: onOpenSettings) {
                 Image(systemName: "gearshape")
