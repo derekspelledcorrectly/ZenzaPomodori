@@ -9,6 +9,7 @@ struct BlockTypePickerView: View {
             Text("Slices").tag(BlockType.slices)
         }
         .pickerStyle(.segmented)
+        .controlSize(.small)
         .labelsHidden()
     }
 }

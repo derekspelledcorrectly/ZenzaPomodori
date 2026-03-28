@@ -80,7 +80,7 @@ struct ActiveRotationView: View {
             .buttonStyle(.bordered)
         }
         .padding()
-        .frame(width: 320)
+        .frame(width: 280)
         .background { keyboardShortcuts }
     }
 

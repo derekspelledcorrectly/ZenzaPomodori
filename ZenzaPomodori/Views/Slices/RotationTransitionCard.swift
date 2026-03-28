@@ -57,7 +57,7 @@ struct RotationTransitionCard: View {
             }
         }
         .padding(16)
-        .frame(width: 320)
+        .frame(width: 280)
         .background {
             let closeAction = { (onClose ?? onDismiss)() }
             Button("K1") { closeAction() }
