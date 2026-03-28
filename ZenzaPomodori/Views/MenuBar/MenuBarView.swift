@@ -58,6 +58,8 @@ struct MenuBarView<GearContent: View>: View {
             TimerControlsView(
                 phase: timer.phase,
                 isRunning: timer.isRunning,
+                isOvertime: timer.isOvertime,
+                autoAdvance: timer.autoAdvance,
                 onStart: timer.start,
                 onPause: timer.pause,
                 onResume: timer.resume,

@@ -100,7 +100,7 @@ struct PopoverContainerView: View {
                     timer.next()
                 }) {
                     Label(
-                        timer.phase.isFocus ? "Finish Block" : "Skip Break",
+                        timer.phase.isFocus ? "Finish Block" : "Finish Break",
                         systemImage: "checkmark.circle"
                     )
                 }
