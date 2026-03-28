@@ -11,6 +11,7 @@ struct RotationListEditor: View {
                     .font(.system(size: 11))
                     .listRowSeparator(.hidden)
                     .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                    .listRowBackground(Color.clear)
             } else {
                 ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
                     HStack(spacing: 8) {
@@ -19,12 +20,12 @@ struct RotationListEditor: View {
                             .foregroundStyle(.quaternary)
 
                         Text("\(index + 1)")
-                            .font(.caption.bold())
-                            .foregroundStyle(.red)
+                            .font(.system(size: 11, weight: .semibold, design: .rounded))
+                            .foregroundColor(.accentColor)
                             .frame(width: 16)
 
                         Text(item.name)
-                            .font(.callout)
+                            .font(.system(size: 13))
                             .lineLimit(1)
 
                         Spacer()
@@ -39,12 +40,17 @@ struct RotationListEditor: View {
                         .buttonStyle(.borderless)
                     }
                     .listRowSeparator(.hidden)
-                    .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                    .listRowInsets(EdgeInsets(top: 3, leading: 4, bottom: 3, trailing: 4))
+                    .listRowBackground(Color.clear)
                 }
                 .onMove { items.move(fromOffsets: $0, toOffset: $1) }
             }
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
+        .background {
+            RoundedRectangle(cornerRadius: 6)
+                .fill(Color.primary.opacity(0.03))
+        }
     }
 }

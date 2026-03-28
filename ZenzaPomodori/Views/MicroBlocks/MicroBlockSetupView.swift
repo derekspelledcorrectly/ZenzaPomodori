@@ -4,11 +4,14 @@ struct MicroBlockSetupView: View {
     @Bindable var rotationStore: RotationStore
     let focusNameStore: FocusNameStore
     @Binding var workingItems: [RotationItem]
+    var isEditing: Bool = false
     var onStart: () -> Void
+    var onResume: (() -> Void)?
 
     @State private var newItemText: String = ""
     @State private var renamingRotationId: UUID?
     @State private var renameText: String = ""
+    @FocusState private var isTextFieldFocused: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -71,7 +74,13 @@ struct MicroBlockSetupView: View {
                 .font(.system(size: 12))
                 .padding(8)
                 .background(Color.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 6))
+                .focused($isTextFieldFocused)
                 .onSubmit(addNewItem)
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        isTextFieldFocused = true
+                    }
+                }
 
             // Rotation list (fixed height, scrolls)
             Divider().padding(.vertical, 2)
@@ -81,7 +90,7 @@ struct MicroBlockSetupView: View {
 
             // Footer
             HStack {
-                if !workingItems.isEmpty {
+                if !workingItems.isEmpty && !isEditing {
                     SaveRotationButton(
                         items: workingItems,
                         rotationStore: rotationStore
@@ -91,13 +100,17 @@ struct MicroBlockSetupView: View {
                 Spacer()
 
                 Button {
-                    onStart()
+                    if isEditing {
+                        onResume?()
+                    } else {
+                        onStart()
+                    }
                 } label: {
-                    Text("Start")
+                    Text(isEditing ? "Resume" : "Start")
                         .font(.system(size: 12, weight: .semibold))
                         .padding(.horizontal, 16)
                         .padding(.vertical, 6)
-                        .background(workingItems.isEmpty ? Color.secondary.opacity(0.3) : Color.red)
+                        .background(workingItems.isEmpty ? Color.secondary.opacity(0.3) : Color.accentColor)
                         .foregroundStyle(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
@@ -143,10 +156,10 @@ struct MicroBlockSetupView: View {
                 Text(name)
                     .font(.system(size: 11))
             }
-            .foregroundStyle(.red.opacity(0.8))
+            .foregroundStyle(Color.accentColor.opacity(0.8))
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
-            .background(Color.red.opacity(0.08), in: Capsule())
+            .background(Color.accentColor.opacity(0.08), in: Capsule())
         }
         .buttonStyle(.plain)
     }

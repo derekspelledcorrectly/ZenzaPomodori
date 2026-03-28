@@ -26,7 +26,8 @@ struct TimerDisplayView: View {
 
                 VStack(spacing: 2) {
                     Text(formattedTime)
-                        .font(.system(size: 32, weight: .medium, design: .monospaced))
+                        .font(.system(size: 32, weight: .medium, design: .rounded))
+                        .monospacedDigit()
                         .foregroundStyle(isOvertime ? .orange : .primary)
 
                     Text(phase.label(totalBlocks: totalBlocks))
@@ -41,9 +42,9 @@ struct TimerDisplayView: View {
     private var ringColor: Color {
         switch phase {
         case .idle: .secondary
-        case .focus: .red
+        case .focus: .accentColor
         case .shortBreak: .green
-        case .longBreak: .blue
+        case .longBreak: .teal
         }
     }
 }
