@@ -27,7 +27,7 @@ struct TimerControlsView: View {
                     Image(systemName: phase.isFocus ? "checkmark.circle" : "forward.end.fill")
                         .frame(width: 20)
                 }
-                .help(phase.isFocus ? "Complete Block (\u{2318}\u{25B6}\u{FE0E})" : "Skip Break (\u{2318}\u{25B6}\u{FE0E})")
+                .help(phase.isFocus ? "Finish Block (\u{2318}\u{25B6}\u{FE0E})" : "Skip Break (\u{2318}\u{25B6}\u{FE0E})")
             }
         }
         .buttonStyle(.bordered)

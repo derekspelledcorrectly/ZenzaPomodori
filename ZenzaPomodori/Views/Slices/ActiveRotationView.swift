@@ -5,6 +5,8 @@ struct ActiveRotationView: View {
     let timer: PomodoroTimer
     var onNext: () -> Void
     var onPause: () -> Void
+    var onFinishBlock: () -> Void
+    let autoAdvance: Bool
 
     var body: some View {
         VStack(spacing: 12) {
@@ -63,6 +65,13 @@ struct ActiveRotationView: View {
                 }
                 .help("Next Focus")
 
+                if !autoAdvance && timer.isOvertime {
+                    Button(action: { onFinishBlock() }) {
+                        Image(systemName: "checkmark.circle")
+                            .frame(width: 20)
+                    }
+                    .help("Finish Block (\u{2318}\u{21A9}\u{FE0E})")
+                }
             }
             .buttonStyle(.bordered)
         }
@@ -79,6 +88,10 @@ struct ActiveRotationView: View {
 
         Button(action: { onNext() }) { EmptyView() }
             .keyboardShortcut(.return, modifiers: [])
+            .frame(width: 0, height: 0).opacity(0)
+
+        Button(action: { onFinishBlock() }) { EmptyView() }
+            .keyboardShortcut(.return, modifiers: .command)
             .frame(width: 0, height: 0).opacity(0)
     }
 
