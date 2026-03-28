@@ -5,7 +5,6 @@ enum PopoverPanel {
     case settings
     case sliceSetup
     case sliceActive
-    case sliceTransition
 }
 
 @Observable
@@ -13,5 +12,4 @@ enum PopoverPanel {
 final class PopoverRouter {
     var activePanel: PopoverPanel = .timer
     var sliceEngine: SliceEngine?
-    var transitionDismissed: Bool = false
 }

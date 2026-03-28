@@ -73,9 +73,6 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
                 focusNameStore: timer.focusNameStore,
                 onSliceStart: { [weak self] items in
                     self?.startSlices(with: items)
-                },
-                onClosePopover: { [weak self] in
-                    self?.popover.performClose(nil)
                 }
             )
         )
@@ -207,7 +204,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
                 if let picker = self.firstPopUpButton(in: contentView) {
                     window.makeFirstResponder(picker)
                 }
-            case .sliceSetup, .sliceActive, .sliceTransition:
+            case .sliceSetup, .sliceActive:
                 if let button = self.firstBorderedButton(in: contentView) {
                     window.makeFirstResponder(button)
                 }
@@ -369,8 +366,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
             soundService.play(settings.sliceEndSound)
         }
 
-        router.transitionDismissed = false
-        router.activePanel = .sliceTransition
+        router.activePanel = .sliceActive
         showPopover()
 
         if settings.stealFocusOnRotation {
@@ -403,10 +399,6 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
 
     private func handleHotkey() {
         if popover.isShown {
-            if router.activePanel == .sliceTransition {
-                router.transitionDismissed = true
-                router.activePanel = .sliceActive
-            }
             popover.performClose(nil)
         } else {
             showPopover(activate: true)
@@ -435,8 +427,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
 
     private func handleAutoDismiss() {
         removeClickMonitor()
-        if router.activePanel == .sliceTransition {
-            router.activePanel = .sliceActive
+        if router.activePanel == .sliceActive {
             popover.performClose(nil)
             return
         }
@@ -451,10 +442,6 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         MainActor.assumeIsolated {
             cancelAutoDismissTimer()
             switch router.activePanel {
-            case .sliceTransition:
-                router.transitionDismissed = true
-                router.activePanel = .sliceActive
-                popover.behavior = .transient
             case .sliceActive, .sliceSetup:
                 popover.behavior = .transient
             case .timer:
