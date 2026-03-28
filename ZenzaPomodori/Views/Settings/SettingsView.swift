@@ -1,9 +1,17 @@
 import SwiftUI
 
+enum SettingsTab: String, CaseIterable {
+    case timer = "Timer"
+    case behavior = "Behavior"
+    case slices = "Slices"
+}
+
 struct SettingsView: View {
     @Bindable var settings: SettingsStore
     let soundService: SoundService
     var onBack: (() -> Void)?
+
+    @State private var selectedTab: SettingsTab = .timer
 
     private static let focusOptions = [5, 10, 15, 20, 25, 30, 45, 60, 90, 120]
     private static let shortBreakOptions = [1, 2, 3, 5, 10, 15, 20]
@@ -36,13 +44,35 @@ struct SettingsView: View {
                     .opacity(0)
             }
         }
-        .frame(width: 280)
-        .fixedSize()
+        .frame(width: 320)
     }
 
     private var settingsForm: some View {
+        VStack(spacing: 0) {
+            Picker("", selection: $selectedTab) {
+                ForEach(SettingsTab.allCases, id: \.self) { tab in
+                    Text(tab.rawValue).tag(tab)
+                }
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
+            .padding(.bottom, 4)
+
+            switch selectedTab {
+            case .timer:
+                timerTab
+            case .behavior:
+                behaviorTab
+            case .slices:
+                slicesTab
+            }
+        }
+    }
+
+    private var timerTab: some View {
         Form {
-            Section("Timer Durations") {
+            Section("Durations") {
                 Picker("Focus", selection: minutesBinding(\.focusDuration)) {
                     ForEach(Self.focusOptions, id: \.self) { min in
                         Text("\(min) min").tag(min)
@@ -100,7 +130,20 @@ struct SettingsView: View {
                 }
             }
 
-            Section("Behavior") {
+            Section("Notifications") {
+                Toggle("Send notifications", isOn: Binding(
+                    get: { settings.notificationsEnabled },
+                    set: { settings.notificationsEnabled = $0 }
+                ))
+            }
+        }
+        .formStyle(.grouped)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private var behaviorTab: some View {
+        Form {
+            Section("Automation") {
                 Toggle("Auto-advance", isOn: Binding(
                     get: { settings.autoAdvance },
                     set: { settings.autoAdvance = $0 }
@@ -134,7 +177,9 @@ struct SettingsView: View {
                         }
                     }
                 }
+            }
 
+            Section("Menu Bar") {
                 Toggle("Show timer in menu bar", isOn: Binding(
                     get: { settings.showTimerInMenuBar },
                     set: { settings.showTimerInMenuBar = $0 }
@@ -143,13 +188,6 @@ struct SettingsView: View {
                 Toggle("Show focus in menu bar", isOn: Binding(
                     get: { settings.showFocusInMenuBar },
                     set: { settings.showFocusInMenuBar = $0 }
-                ))
-            }
-
-            Section("Notifications") {
-                Toggle("Send notifications", isOn: Binding(
-                    get: { settings.notificationsEnabled },
-                    set: { settings.notificationsEnabled = $0 }
                 ))
             }
 
@@ -168,8 +206,14 @@ struct SettingsView: View {
                     }
                 }
             }
+        }
+        .formStyle(.grouped)
+        .fixedSize(horizontal: false, vertical: true)
+    }
 
-            Section("Slices") {
+    private var slicesTab: some View {
+        Form {
+            Section("Slices Mode") {
                 Toggle("Enable Slices mode", isOn: $settings.slicesEnabled)
 
                 if settings.slicesEnabled {
@@ -179,6 +223,12 @@ struct SettingsView: View {
                         }
                     }
 
+                    Toggle("Steal focus on rotation", isOn: $settings.stealFocusOnRotation)
+                }
+            }
+
+            if settings.slicesEnabled {
+                Section("Sound") {
                     Toggle("Sound on rotation", isOn: $settings.sliceSoundEnabled)
 
                     if settings.sliceSoundEnabled {
@@ -187,17 +237,19 @@ struct SettingsView: View {
                             set: { settings.sliceEndSound = $0 }
                         ))
                     }
+                }
 
-                    Toggle("Steal focus on rotation", isOn: $settings.stealFocusOnRotation)
-
+                Section("Display") {
                     Picker("Menu bar format", selection: $settings.sliceMenuBarFormat) {
                         Text("Slice timer only").tag(SliceMenuBarFormat.sliceOnly)
                         Text("Both timers").tag(SliceMenuBarFormat.dualTimer)
                         Text("Timer + position").tag(SliceMenuBarFormat.slicePosition)
                         Text("Compact").tag(SliceMenuBarFormat.compact)
                     }
+                }
 
-                    Toggle("Rotation hotkey", isOn: $settings.rotationHotkeyEnabled)
+                Section("Hotkey") {
+                    Toggle("Next Slice global hotkey", isOn: $settings.rotationHotkeyEnabled)
 
                     if settings.rotationHotkeyEnabled {
                         HStack {
@@ -214,6 +266,7 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
+        .fixedSize(horizontal: false, vertical: true)
     }
 
     private var sliceIntervalBinding: Binding<Int> {
