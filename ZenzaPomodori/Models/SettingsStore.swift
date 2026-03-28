@@ -141,6 +141,27 @@ final class SettingsStore {
         }
     }
 
+    var rotationHotkeyEnabled: Bool {
+        didSet {
+            defaults.set(rotationHotkeyEnabled, forKey: SettingsKeys.rotationHotkeyEnabled)
+            onHotkeySettingsChanged?()
+        }
+    }
+
+    var rotationHotkeyKeyCode: UInt32 {
+        didSet {
+            defaults.set(rotationHotkeyKeyCode, forKey: SettingsKeys.rotationHotkeyKeyCode)
+            onHotkeySettingsChanged?()
+        }
+    }
+
+    var rotationHotkeyModifiers: UInt32 {
+        didSet {
+            defaults.set(rotationHotkeyModifiers, forKey: SettingsKeys.rotationHotkeyModifiers)
+            onHotkeySettingsChanged?()
+        }
+    }
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
 
@@ -270,6 +291,26 @@ final class SettingsStore {
             self.globalHotkeyModifiers = UInt32(defaults.integer(forKey: SettingsKeys.globalHotkeyModifiers))
         } else {
             self.globalHotkeyModifiers = Defaults.globalHotkeyModifiers
+        }
+
+        if defaults.object(forKey: SettingsKeys.rotationHotkeyEnabled) != nil {
+            self.rotationHotkeyEnabled = defaults.bool(forKey: SettingsKeys.rotationHotkeyEnabled)
+        } else {
+            self.rotationHotkeyEnabled = Defaults.rotationHotkeyEnabled
+        }
+
+        let rotKeyCode = defaults.object(forKey: SettingsKeys.rotationHotkeyKeyCode)
+        if rotKeyCode != nil {
+            self.rotationHotkeyKeyCode = UInt32(defaults.integer(forKey: SettingsKeys.rotationHotkeyKeyCode))
+        } else {
+            self.rotationHotkeyKeyCode = Defaults.rotationHotkeyKeyCode
+        }
+
+        let rotModifiers = defaults.object(forKey: SettingsKeys.rotationHotkeyModifiers)
+        if rotModifiers != nil {
+            self.rotationHotkeyModifiers = UInt32(defaults.integer(forKey: SettingsKeys.rotationHotkeyModifiers))
+        } else {
+            self.rotationHotkeyModifiers = Defaults.rotationHotkeyModifiers
         }
     }
 }

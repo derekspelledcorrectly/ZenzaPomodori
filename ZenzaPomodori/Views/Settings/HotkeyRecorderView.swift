@@ -94,6 +94,19 @@ final class HotkeyRecorderNSView: NSView {
         return result
     }
 
+    private static let specialKeyNames: [UInt32: String] = [
+        36: "\u{21A9}",  // Return
+        48: "\u{21E5}",  // Tab
+        49: "\u{2423}",  // Space
+        51: "\u{232B}",  // Delete
+        53: "\u{238B}",  // Escape
+        76: "\u{2324}",  // Enter (numpad)
+        123: "\u{2190}", // Left arrow
+        124: "\u{2192}", // Right arrow
+        125: "\u{2193}", // Down arrow
+        126: "\u{2191}", // Up arrow
+    ]
+
     private func hotkeyDescription(keyCode: UInt32, modifiers: UInt32) -> String {
         var parts: [String] = []
         if modifiers & UInt32(controlKey) != 0 { parts.append("\u{2303}") }
@@ -101,7 +114,9 @@ final class HotkeyRecorderNSView: NSView {
         if modifiers & UInt32(optionKey) != 0 { parts.append("\u{2325}") }
         if modifiers & UInt32(cmdKey) != 0 { parts.append("\u{2318}") }
 
-        if let inputSource = TISCopyCurrentKeyboardLayoutInputSource()?.takeRetainedValue(),
+        if let special = Self.specialKeyNames[keyCode] {
+            parts.append(special)
+        } else if let inputSource = TISCopyCurrentKeyboardLayoutInputSource()?.takeRetainedValue(),
            let layoutPtr = TISGetInputSourceProperty(inputSource, kTISPropertyUnicodeKeyLayoutData) {
             let data = unsafeBitCast(layoutPtr, to: CFData.self) as Data
             var deadKeyState: UInt32 = 0

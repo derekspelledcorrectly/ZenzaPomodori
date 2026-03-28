@@ -192,6 +192,20 @@ struct SettingsView: View {
                         Text("Timer + position").tag(MicroBlockMenuBarFormat.microPosition)
                         Text("Compact").tag(MicroBlockMenuBarFormat.compact)
                     }
+
+                    Toggle("Rotation hotkey", isOn: $settings.rotationHotkeyEnabled)
+
+                    if settings.rotationHotkeyEnabled {
+                        HStack {
+                            Text("Shortcut")
+                            Spacer()
+                            HotkeyRecorderView(
+                                keyCode: $settings.rotationHotkeyKeyCode,
+                                modifiers: $settings.rotationHotkeyModifiers
+                            )
+                            .frame(width: 120, height: 24)
+                        }
+                    }
                 }
             }
         }
