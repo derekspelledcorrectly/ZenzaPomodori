@@ -97,6 +97,16 @@ struct PopoverContainerView: View {
                 }
 
                 Button(action: {
+                    timer.next()
+                }) {
+                    Label(
+                        timer.phase.isFocus ? "Finish Block" : "Skip Break",
+                        systemImage: "checkmark.circle"
+                    )
+                }
+                .keyboardShortcut(.return, modifiers: .command)
+
+                Button(action: {
                     timer.restartPhase()
                 }) {
                     Label("Restart Timer", systemImage: "arrow.counterclockwise")
@@ -150,6 +160,9 @@ struct PopoverContainerView: View {
     @ViewBuilder
     private var gearMenuShortcuts: some View {
         if timer.phase != .idle {
+            hiddenShortcut(.return, modifiers: .command) {
+                timer.next()
+            }
             hiddenShortcut(.leftArrow, modifiers: .command) {
                 timer.restartPhase()
             }
@@ -242,7 +255,9 @@ struct PopoverContainerView: View {
                 onNext: { engine.skip() },
                 onPause: {
                     if engine.isPaused { engine.resume() } else { engine.pause() }
-                }
+                },
+                onFinishBlock: { timer.next() },
+                autoAdvance: settings.autoAdvance
             )
             .overlay(alignment: .topTrailing) {
                 gearMenu
