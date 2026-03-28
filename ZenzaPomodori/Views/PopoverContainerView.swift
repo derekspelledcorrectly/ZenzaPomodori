@@ -254,7 +254,13 @@ struct PopoverContainerView: View {
                 timer: timer,
                 onNext: { engine.skip() },
                 onPause: {
-                    if engine.isPaused { engine.resume() } else { engine.pause() }
+                    if engine.isPaused {
+                        engine.resume()
+                        timer.resume()
+                    } else {
+                        engine.pause()
+                        timer.pause()
+                    }
                 },
                 onFinishBlock: { timer.next() },
                 autoAdvance: settings.autoAdvance
