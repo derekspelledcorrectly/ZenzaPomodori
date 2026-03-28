@@ -3,111 +3,114 @@ import SwiftUI
 struct ActiveRotationView: View {
     let engine: MicroBlockEngine
     let timer: PomodoroTimer
-    var onSkip: () -> Void
+    var onNext: () -> Void
     var onEditList: () -> Void
     var onPause: () -> Void
-    var onEndBlock: () -> Void
+    var onCompleteBlock: () -> Void
+    var onAbandonBlock: () -> Void
 
     var body: some View {
-        VStack(spacing: 16) {
-            // Concentric timer rings (centered, like TimerDisplayView)
+        VStack(spacing: 12) {
+            // Concentric rings: outer = micro (hero), inner = block (context)
             ConcentricTimerView(
-                microProgress: engine.progress,
-                outerProgress: timer.progress,
+                microProgress: timer.progress,
+                outerProgress: engine.progress,
                 microTimeFormatted: TimeFormatting.formatted(seconds: engine.microSecondsRemaining),
-                outerTimeFormatted: timer.formattedTime
+                outerTimeFormatted: engine.currentItemName ?? "",
+                outerColor: .orange,
+                innerColor: phaseColor
             )
 
-            // Focus name + position
-            VStack(spacing: 4) {
-                Text(engine.currentItemName ?? "")
-                    .font(.title3.bold())
-                    .lineLimit(1)
-
-                HStack(spacing: 6) {
-                    Text(timer.phase.label(totalBlocks: timer.blocksBeforeLongBreak))
+            // Rotation + block info
+            HStack(spacing: 6) {
+                if engine.rotationItems.count > 1 {
+                    Text("Focus \(engine.currentIndex + 1)/\(engine.rotationItems.count)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-
-                    if engine.rotationItems.count > 1 {
-                        Text("\u{00B7}")
-                            .foregroundStyle(.tertiary)
-                        Text("\(engine.currentIndex + 1) of \(engine.rotationItems.count)")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-
-                    if let next = engine.nextItemName {
-                        Text("\u{00B7}")
-                            .foregroundStyle(.tertiary)
-                        Text("Next: \(next)")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
                 }
-            }
 
-            // Collapsed list preview
-            CollapsedListPreview(items: engine.rotationItems, currentIndex: engine.currentIndex)
+                if let next = engine.nextItemName {
+                    Text("\u{00B7}")
+                        .foregroundStyle(.tertiary)
+                    Text("Next: \(next)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Text("\u{00B7}")
+                    .foregroundStyle(.tertiary)
+
+                Text("\(blockLabel) \u{00B7} \(timer.formattedTime) left")
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+            }
 
             // Controls
-            HStack(spacing: 8) {
-                Button("Skip") { onSkip() }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.red)
-                    .controlSize(.small)
+            HStack(spacing: 16) {
+                Button(action: { onPause() }) {
+                    Image(systemName: engine.isPaused ? "play.fill" : "pause.fill")
+                        .frame(width: 20)
+                }
+                .help(engine.isPaused ? "Resume" : "Pause")
 
-                Button("Edit List") { onEditList() }
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
+                Button(action: { onNext() }) {
+                    Image(systemName: "forward.end.fill")
+                        .frame(width: 20)
+                }
+                .help("Next Focus")
 
-                Button(engine.isPaused ? "Resume" : "Pause") { onPause() }
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
+                Button(action: { onEditList() }) {
+                    Image(systemName: "list.bullet")
+                        .frame(width: 20)
+                }
+                .help("Edit List")
 
-                Button("End Block") { onEndBlock() }
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
+                Button(action: { onCompleteBlock() }) {
+                    Image(systemName: "checkmark.circle")
+                        .frame(width: 20)
+                }
+                .help("Complete Block")
+
+                Button(action: { onAbandonBlock() }) {
+                    Image(systemName: "xmark.circle")
+                        .frame(width: 20)
+                }
+                .help("Abandon Block")
             }
+            .buttonStyle(.bordered)
         }
         .padding()
         .frame(width: 320)
+        .background { keyboardShortcuts }
     }
-}
 
-private struct CollapsedListPreview: View {
-    let items: [RotationItem]
-    let currentIndex: Int
-    @State private var isExpanded = false
+    @ViewBuilder
+    private var keyboardShortcuts: some View {
+        Button(action: { onPause() }) { EmptyView() }
+            .keyboardShortcut(.space, modifiers: [])
+            .frame(width: 0, height: 0).opacity(0)
 
-    var body: some View {
-        if items.count > 1 {
-            DisclosureGroup(isExpanded: $isExpanded) {
-                VStack(alignment: .leading, spacing: 2) {
-                    ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
-                        Text(item.name)
-                            .font(.caption)
-                            .foregroundStyle(index == currentIndex ? .primary : .secondary)
-                            .fontWeight(index == currentIndex ? .bold : .regular)
-                    }
-                }
-            } label: {
-                let upcoming = items.dropFirst(currentIndex + 1).prefix(2).map(\.name)
-                let remaining = max(0, items.count - currentIndex - 1 - upcoming.count)
-                HStack(spacing: 4) {
-                    if !upcoming.isEmpty {
-                        Text(upcoming.joined(separator: " \u{00B7} "))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    if remaining > 0 {
-                        Text("+\(remaining) more")
-                            .font(.caption)
-                            .foregroundStyle(.tertiary)
-                    }
-                }
-            }
-            .font(.caption)
+        Button(action: { onNext() }) { EmptyView() }
+            .keyboardShortcut(.return, modifiers: [])
+            .frame(width: 0, height: 0).opacity(0)
+    }
+
+    private var blockLabel: String {
+        switch timer.phase {
+        case .focus(let block): "Block \(block)/\(timer.blocksBeforeLongBreak)"
+        case .shortBreak: "Short Break"
+        case .longBreak: "Long Break"
+        case .idle: "Ready"
+        }
+    }
+
+    private var phaseColor: Color {
+        switch timer.phase {
+        case .idle: .secondary
+        case .focus: .accentColor
+        case .shortBreak: .green
+        case .longBreak: .teal
         }
     }
 }
+
