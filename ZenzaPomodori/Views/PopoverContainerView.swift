@@ -9,7 +9,7 @@ struct PopoverContainerView: View {
     let rotationStore: RotationStore
     let focusNameStore: FocusNameStore
     @State private var workingItems: [RotationItem] = []
-    var onMicroBlockStart: (([RotationItem]) -> Void)?
+    var onSliceStart: (([RotationItem]) -> Void)?
     var onClosePopover: (() -> Void)?
 
     var body: some View {
@@ -26,24 +26,24 @@ struct PopoverContainerView: View {
                     settings: settings,
                     soundService: soundService,
                     onBack: {
-                        if router.microBlockEngine?.isActive == true {
-                            router.activePanel = .microBlockActive
-                        } else if settings.lastBlockType == .microBlocks {
-                            router.activePanel = .microBlockSetup
+                        if router.sliceEngine?.isActive == true {
+                            router.activePanel = .sliceActive
+                        } else if settings.lastBlockType == .slices {
+                            router.activePanel = .sliceSetup
                         } else {
                             router.activePanel = .timer
                         }
                     }
                 )
 
-            case .microBlockSetup:
-                microBlockIdlePanel
+            case .sliceSetup:
+                sliceIdlePanel
 
-            case .microBlockActive:
-                microBlockActivePanel
+            case .sliceActive:
+                sliceActivePanel
 
-            case .microBlockTransition:
-                microBlockTransitionPanel
+            case .sliceTransition:
+                sliceTransitionPanel
             }
         }
         .onChange(of: router.activePanel) { _, panel in
@@ -55,36 +55,36 @@ struct PopoverContainerView: View {
             }
         }
         .onChange(of: timer.phase) { _, newPhase in
-            if newPhase == .idle && router.microBlockEngine?.isActive != true {
-                router.activePanel = settings.lastBlockType == .microBlocks
-                    ? .microBlockSetup : .timer
+            if newPhase == .idle && router.sliceEngine?.isActive != true {
+                router.activePanel = settings.lastBlockType == .slices
+                    ? .sliceSetup : .timer
             }
             if router.activePanel == .timer {
                 onPanelChange(.timer)
             }
         }
-        .onChange(of: settings.microBlocksEnabled) { _, enabled in
-            if !enabled && router.activePanel == .microBlockSetup {
+        .onChange(of: settings.slicesEnabled) { _, enabled in
+            if !enabled && router.activePanel == .sliceSetup {
                 router.activePanel = .timer
             }
         }
         .onChange(of: settings.lastBlockType) { _, newType in
             if timer.phase == .idle {
-                router.activePanel = newType == .microBlocks ? .microBlockSetup : .timer
+                router.activePanel = newType == .slices ? .sliceSetup : .timer
             }
         }
     }
 
     private var isEditingActiveRotation: Bool {
-        router.microBlockEngine?.isActive == true
+        router.sliceEngine?.isActive == true
     }
 
     // MARK: - Panels
 
-    private var microBlockIdlePanel: some View {
+    private var sliceIdlePanel: some View {
         VStack(spacing: 16) {
             // Match TimerDisplayView's 140px frame so the picker stays
-            // at the same Y position in both Regular and MicroBlocks panels.
+            // at the same Y position in both Regular and Slices panels.
             // This means NSPopover only grows/shrinks at the bottom (no reposition needed).
             ConcentricTimerView(
                 microProgress: Double(settings.microRotationInterval) / Double(max(1, settings.focusDuration)),
@@ -101,18 +101,18 @@ struct PopoverContainerView: View {
                 )
             )
 
-            MicroBlockSetupView(
+            SliceSetupView(
                 rotationStore: rotationStore,
                 focusNameStore: focusNameStore,
                 workingItems: $workingItems,
                 isEditing: isEditingActiveRotation,
-                onStart: { onMicroBlockStart?(workingItems) },
+                onStart: { onSliceStart?(workingItems) },
                 onResume: {
-                    if let engine = router.microBlockEngine {
+                    if let engine = router.sliceEngine {
                         engine.updateItems(workingItems)
                         engine.resume()
                         timer.resume()
-                        router.activePanel = .microBlockActive
+                        router.activePanel = .sliceActive
                     }
                 }
             )
@@ -130,8 +130,8 @@ struct PopoverContainerView: View {
     }
 
     @ViewBuilder
-    private var microBlockActivePanel: some View {
-        if let engine = router.microBlockEngine {
+    private var sliceActivePanel: some View {
+        if let engine = router.sliceEngine {
             ActiveRotationView(
                 engine: engine,
                 timer: timer,
@@ -140,7 +140,7 @@ struct PopoverContainerView: View {
                     engine.pause()
                     timer.pause()
                     workingItems = engine.rotationItems
-                    router.activePanel = .microBlockSetup
+                    router.activePanel = .sliceSetup
                 },
                 onPause: {
                     if engine.isPaused { engine.resume() } else { engine.pause() }
@@ -152,7 +152,7 @@ struct PopoverContainerView: View {
                 onAbandonBlock: {
                     engine.deactivate()
                     timer.abandonBlock()
-                    router.activePanel = .microBlockSetup
+                    router.activePanel = .sliceSetup
                 }
             )
             .overlay(alignment: .topTrailing) {
@@ -169,8 +169,8 @@ struct PopoverContainerView: View {
     }
 
     @ViewBuilder
-    private var microBlockTransitionPanel: some View {
-        if let engine = router.microBlockEngine {
+    private var sliceTransitionPanel: some View {
+        if let engine = router.sliceEngine {
             RotationTransitionCard(
                 currentName: engine.currentItemName ?? "",
                 nextName: engine.nextItemName,
@@ -178,11 +178,11 @@ struct PopoverContainerView: View {
                 outerTimeRemaining: timer.formattedTime,
                 rotationProgress: Double(engine.currentIndex + 1) / Double(max(1, engine.rotationItems.count)),
                 onDismiss: {
-                    router.activePanel = .microBlockActive
+                    router.activePanel = .sliceActive
                 },
                 onClose: {
                     router.transitionDismissed = true
-                    router.activePanel = .microBlockActive
+                    router.activePanel = .sliceActive
                     onClosePopover?()
                 }
             )

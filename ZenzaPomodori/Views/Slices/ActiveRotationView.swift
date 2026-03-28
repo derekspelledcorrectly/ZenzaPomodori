@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ActiveRotationView: View {
-    let engine: MicroBlockEngine
+    let engine: SliceEngine
     let timer: PomodoroTimer
     var onNext: () -> Void
     var onEditList: () -> Void

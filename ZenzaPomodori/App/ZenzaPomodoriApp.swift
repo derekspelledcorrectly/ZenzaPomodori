@@ -71,8 +71,8 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
                 },
                 rotationStore: rotationStore,
                 focusNameStore: timer.focusNameStore,
-                onMicroBlockStart: { [weak self] items in
-                    self?.startMicroBlocks(with: items)
+                onSliceStart: { [weak self] items in
+                    self?.startSlices(with: items)
                 },
                 onClosePopover: { [weak self] in
                     self?.popover.performClose(nil)
@@ -108,8 +108,8 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         timer.onPhaseChange = { [weak self] _, newPhase in
             guard let self else { return }
             if !newPhase.isFocus {
-                self.router.microBlockEngine?.deactivate()
-                self.router.microBlockEngine = nil
+                self.router.sliceEngine?.deactivate()
+                self.router.sliceEngine = nil
             }
         }
         timer.onTimerComplete = { [weak self] phase in
@@ -207,7 +207,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
                 if let picker = self.firstPopUpButton(in: contentView) {
                     window.makeFirstResponder(picker)
                 }
-            case .microBlockSetup, .microBlockActive, .microBlockTransition:
+            case .sliceSetup, .sliceActive, .sliceTransition:
                 if let button = self.firstBorderedButton(in: contentView) {
                     window.makeFirstResponder(button)
                 }
@@ -298,14 +298,14 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
 
         let title = NSMutableAttributedString()
 
-        if let engine = router.microBlockEngine, engine.isActive {
-            let formatted = MenuBarFormatting.microBlockFormatted(
+        if let engine = router.sliceEngine, engine.isActive {
+            let formatted = MenuBarFormatting.sliceFormatted(
                 microSeconds: engine.microSecondsRemaining,
                 outerFormattedTime: timer.formattedTime,
                 focusName: engine.currentItemName,
                 position: engine.currentIndex + 1,
                 total: engine.rotationItems.count,
-                format: settings.microBlockMenuBarFormat,
+                format: settings.sliceMenuBarFormat,
                 showTimer: settings.showTimerInMenuBar,
                 showFocus: settings.showFocusInMenuBar
             )
@@ -345,32 +345,32 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         button.attributedTitle = title
     }
 
-    // MARK: - MicroBlocks
+    // MARK: - Slices
 
-    private func startMicroBlocks(with items: [RotationItem]) {
-        let engine = MicroBlockEngine(
+    private func startSlices(with items: [RotationItem]) {
+        let engine = SliceEngine(
             items: items,
             interval: settings.microRotationInterval
         )
         engine.onRotationComplete = { [weak self] in
             self?.handleMicroRotation()
         }
-        router.microBlockEngine = engine
-        settings.lastBlockType = .microBlocks
+        router.sliceEngine = engine
+        settings.lastBlockType = .slices
         timer.start()
         engine.activate()
-        router.activePanel = .microBlockActive
+        router.activePanel = .sliceActive
     }
 
     private func handleMicroRotation() {
-        guard router.microBlockEngine != nil else { return }
+        guard router.sliceEngine != nil else { return }
 
-        if settings.microBlockSoundEnabled {
-            soundService.play(settings.microBlockEndSound)
+        if settings.sliceSoundEnabled {
+            soundService.play(settings.sliceEndSound)
         }
 
         router.transitionDismissed = false
-        router.activePanel = .microBlockTransition
+        router.activePanel = .sliceTransition
         showPopover()
 
         if settings.stealFocusOnRotation {
@@ -397,15 +397,15 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
     }
 
     private func handleRotationHotkey() {
-        guard let engine = router.microBlockEngine, engine.isActive else { return }
+        guard let engine = router.sliceEngine, engine.isActive else { return }
         engine.skip()
     }
 
     private func handleHotkey() {
         if popover.isShown {
-            if router.activePanel == .microBlockTransition {
+            if router.activePanel == .sliceTransition {
                 router.transitionDismissed = true
-                router.activePanel = .microBlockActive
+                router.activePanel = .sliceActive
             }
             popover.performClose(nil)
         } else {
@@ -435,8 +435,8 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
 
     private func handleAutoDismiss() {
         removeClickMonitor()
-        if router.activePanel == .microBlockTransition {
-            router.activePanel = .microBlockActive
+        if router.activePanel == .sliceTransition {
+            router.activePanel = .sliceActive
             popover.performClose(nil)
             return
         }
@@ -451,11 +451,11 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         MainActor.assumeIsolated {
             cancelAutoDismissTimer()
             switch router.activePanel {
-            case .microBlockTransition:
+            case .sliceTransition:
                 router.transitionDismissed = true
-                router.activePanel = .microBlockActive
+                router.activePanel = .sliceActive
                 popover.behavior = .transient
-            case .microBlockActive, .microBlockSetup:
+            case .sliceActive, .sliceSetup:
                 popover.behavior = .transient
             case .timer:
                 break

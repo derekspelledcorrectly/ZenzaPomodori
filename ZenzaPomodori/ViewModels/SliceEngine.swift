@@ -3,7 +3,7 @@ import Observation
 
 @Observable
 @MainActor
-final class MicroBlockEngine {
+final class SliceEngine {
     private(set) var rotationItems: [RotationItem]
     let interval: Int
 

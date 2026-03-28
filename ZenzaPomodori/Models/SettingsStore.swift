@@ -82,8 +82,8 @@ final class SettingsStore {
         }
     }
 
-    var microBlocksEnabled: Bool {
-        didSet { defaults.set(microBlocksEnabled, forKey: SettingsKeys.microBlocksEnabled) }
+    var slicesEnabled: Bool {
+        didSet { defaults.set(slicesEnabled, forKey: SettingsKeys.slicesEnabled) }
     }
 
     var microRotationInterval: Int {
@@ -94,21 +94,21 @@ final class SettingsStore {
         }
     }
 
-    var microBlockSoundEnabled: Bool {
-        didSet { defaults.set(microBlockSoundEnabled, forKey: SettingsKeys.microBlockSoundEnabled) }
+    var sliceSoundEnabled: Bool {
+        didSet { defaults.set(sliceSoundEnabled, forKey: SettingsKeys.sliceSoundEnabled) }
     }
 
-    var microBlockEndSound: String {
-        didSet { defaults.set(microBlockEndSound, forKey: SettingsKeys.microBlockEndSound) }
+    var sliceEndSound: String {
+        didSet { defaults.set(sliceEndSound, forKey: SettingsKeys.sliceEndSound) }
     }
 
     var stealFocusOnRotation: Bool {
         didSet { defaults.set(stealFocusOnRotation, forKey: SettingsKeys.stealFocusOnRotation) }
     }
 
-    var microBlockMenuBarFormat: MicroBlockMenuBarFormat {
+    var sliceMenuBarFormat: SliceMenuBarFormat {
         didSet {
-            defaults.set(microBlockMenuBarFormat.rawValue, forKey: SettingsKeys.microBlockMenuBarFormat)
+            defaults.set(sliceMenuBarFormat.rawValue, forKey: SettingsKeys.sliceMenuBarFormat)
         }
     }
 
@@ -232,25 +232,25 @@ final class SettingsStore {
             self.autoDismissSeconds = Defaults.autoDismissSeconds
         }
 
-        if defaults.object(forKey: SettingsKeys.microBlocksEnabled) != nil {
-            self.microBlocksEnabled = defaults.bool(forKey: SettingsKeys.microBlocksEnabled)
+        if defaults.object(forKey: SettingsKeys.slicesEnabled) != nil {
+            self.slicesEnabled = defaults.bool(forKey: SettingsKeys.slicesEnabled)
         } else {
-            self.microBlocksEnabled = Defaults.microBlocksEnabled
+            self.slicesEnabled = Defaults.slicesEnabled
         }
 
         let microInterval = defaults.integer(forKey: SettingsKeys.microRotationInterval)
         self.microRotationInterval = microInterval > 0 ? microInterval : Defaults.microRotationInterval
 
-        if defaults.object(forKey: SettingsKeys.microBlockSoundEnabled) != nil {
-            self.microBlockSoundEnabled = defaults.bool(forKey: SettingsKeys.microBlockSoundEnabled)
+        if defaults.object(forKey: SettingsKeys.sliceSoundEnabled) != nil {
+            self.sliceSoundEnabled = defaults.bool(forKey: SettingsKeys.sliceSoundEnabled)
         } else {
-            self.microBlockSoundEnabled = Defaults.microBlockSoundEnabled
+            self.sliceSoundEnabled = Defaults.sliceSoundEnabled
         }
 
-        if let sound = defaults.string(forKey: SettingsKeys.microBlockEndSound) {
-            self.microBlockEndSound = sound
+        if let sound = defaults.string(forKey: SettingsKeys.sliceEndSound) {
+            self.sliceEndSound = sound
         } else {
-            self.microBlockEndSound = Defaults.microBlockEndSound
+            self.sliceEndSound = Defaults.sliceEndSound
         }
 
         if defaults.object(forKey: SettingsKeys.stealFocusOnRotation) != nil {
@@ -259,11 +259,11 @@ final class SettingsStore {
             self.stealFocusOnRotation = Defaults.stealFocusOnRotation
         }
 
-        if let raw = defaults.string(forKey: SettingsKeys.microBlockMenuBarFormat),
-           let format = MicroBlockMenuBarFormat(rawValue: raw) {
-            self.microBlockMenuBarFormat = format
+        if let raw = defaults.string(forKey: SettingsKeys.sliceMenuBarFormat),
+           let format = SliceMenuBarFormat(rawValue: raw) {
+            self.sliceMenuBarFormat = format
         } else {
-            self.microBlockMenuBarFormat = Defaults.microBlockMenuBarFormat
+            self.sliceMenuBarFormat = Defaults.sliceMenuBarFormat
         }
 
         if let raw = defaults.string(forKey: SettingsKeys.lastBlockType),
