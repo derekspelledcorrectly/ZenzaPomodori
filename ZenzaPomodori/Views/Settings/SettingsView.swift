@@ -30,6 +30,10 @@ struct SettingsView: View {
                 Button("Done", action: onBack)
                     .keyboardShortcut(.defaultAction)
                     .padding(.bottom, 12)
+                Button(action: onBack) { EmptyView() }
+                    .keyboardShortcut(.escape, modifiers: [])
+                    .frame(width: 0, height: 0)
+                    .opacity(0)
             }
         }
         .frame(width: 280)
