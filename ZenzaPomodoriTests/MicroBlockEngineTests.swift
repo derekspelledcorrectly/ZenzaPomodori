@@ -205,4 +205,58 @@ struct MicroBlockEngineTests {
         #expect(engine.nextItemName == "CI")
         engine.deactivate()
     }
+
+    // MARK: - Update Items
+
+    @Test func updateItemsPreservesCurrentPosition() {
+        let items = [
+            RotationItem(name: "API"),
+            RotationItem(name: "CI"),
+            RotationItem(name: "Frontend"),
+        ]
+        let engine = MicroBlockEngine(items: items, interval: 180)
+        engine.activate()
+        engine.skip() // now on CI (index 1)
+        #expect(engine.currentItemName == "CI")
+
+        var newItems = items
+        newItems.append(RotationItem(name: "Docs"))
+        engine.updateItems(newItems)
+
+        #expect(engine.currentItemName == "CI")
+        #expect(engine.rotationItems.count == 4)
+    }
+
+    @Test func updateItemsWhenCurrentRemovedClamps() {
+        let items = [
+            RotationItem(name: "API"),
+            RotationItem(name: "CI"),
+            RotationItem(name: "Frontend"),
+        ]
+        let engine = MicroBlockEngine(items: items, interval: 180)
+        engine.activate()
+        engine.skip() // now on CI (index 1)
+        engine.skip() // now on Frontend (index 2)
+        #expect(engine.currentItemName == "Frontend")
+
+        let newItems = [items[0]] // only API remains
+        engine.updateItems(newItems)
+
+        #expect(engine.currentIndex == 0)
+        #expect(engine.currentItemName == "API")
+    }
+
+    @Test func updateItemsWhileInactiveIsNoOp() {
+        let engine = makeEngine()
+        engine.updateItems([RotationItem(name: "New")])
+        #expect(engine.rotationItems.count == 3) // unchanged
+    }
+
+    @Test func updateItemsEmptyListIsNoOp() {
+        let engine = makeEngine()
+        engine.activate()
+        engine.updateItems([])
+        #expect(engine.rotationItems.count == 3)
+        engine.deactivate()
+    }
 }

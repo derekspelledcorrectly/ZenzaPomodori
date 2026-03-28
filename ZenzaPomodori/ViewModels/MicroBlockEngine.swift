@@ -4,7 +4,7 @@ import Observation
 @Observable
 @MainActor
 final class MicroBlockEngine {
-    let rotationItems: [RotationItem]
+    private(set) var rotationItems: [RotationItem]
     let interval: Int
 
     private(set) var currentIndex: Int = 0
@@ -67,6 +67,18 @@ final class MicroBlockEngine {
     func skip() {
         guard isActive else { return }
         advanceToNext()
+    }
+
+    func updateItems(_ newItems: [RotationItem]) {
+        guard isActive, !newItems.isEmpty else { return }
+        let currentId = rotationItems.indices.contains(currentIndex)
+            ? rotationItems[currentIndex].id : nil
+        rotationItems = newItems
+        if let currentId, let idx = newItems.firstIndex(where: { $0.id == currentId }) {
+            currentIndex = idx
+        } else {
+            currentIndex = min(currentIndex, newItems.count - 1)
+        }
     }
 
     func pause() {
