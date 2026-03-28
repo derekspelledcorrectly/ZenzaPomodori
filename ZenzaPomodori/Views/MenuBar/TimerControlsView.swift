@@ -7,8 +7,6 @@ struct TimerControlsView: View {
     let onPause: () -> Void
     let onResume: () -> Void
     let onNext: () -> Void
-    let onReset: () -> Void
-    var onAbandon: (() -> Void)?
 
     private var playPauseAction: () -> Void {
         if phase == .idle { return onStart }
@@ -41,7 +39,7 @@ struct TimerControlsView: View {
         phase: .idle,
         isRunning: false,
         onStart: {}, onPause: {}, onResume: {},
-        onNext: {}, onReset: {}
+        onNext: {}
     )
     .padding()
 }
@@ -51,7 +49,7 @@ struct TimerControlsView: View {
         phase: .focus(block: 1),
         isRunning: true,
         onStart: {}, onPause: {}, onResume: {},
-        onNext: {}, onReset: {}
+        onNext: {}
     )
     .padding()
 }
