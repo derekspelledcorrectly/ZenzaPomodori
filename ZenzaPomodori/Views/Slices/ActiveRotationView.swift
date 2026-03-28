@@ -4,10 +4,7 @@ struct ActiveRotationView: View {
     let engine: SliceEngine
     let timer: PomodoroTimer
     var onNext: () -> Void
-    var onEditList: () -> Void
     var onPause: () -> Void
-    var onCompleteBlock: () -> Void
-    var onAbandonBlock: () -> Void
 
     var body: some View {
         VStack(spacing: 12) {
@@ -59,23 +56,6 @@ struct ActiveRotationView: View {
                 }
                 .help("Next Focus")
 
-                Button(action: { onEditList() }) {
-                    Image(systemName: "list.bullet")
-                        .frame(width: 20)
-                }
-                .help("Edit List")
-
-                Button(action: { onCompleteBlock() }) {
-                    Image(systemName: "checkmark.circle")
-                        .frame(width: 20)
-                }
-                .help("Complete Block")
-
-                Button(action: { onAbandonBlock() }) {
-                    Image(systemName: "xmark.circle")
-                        .frame(width: 20)
-                }
-                .help("Abandon Block")
             }
             .buttonStyle(.bordered)
         }

@@ -136,33 +136,10 @@ struct PopoverContainerView: View {
                 engine: engine,
                 timer: timer,
                 onNext: { engine.skip() },
-                onEditList: {
-                    engine.pause()
-                    timer.pause()
-                    workingItems = engine.rotationItems
-                    router.activePanel = .sliceSetup
-                },
                 onPause: {
                     if engine.isPaused { engine.resume() } else { engine.pause() }
-                },
-                onCompleteBlock: {
-                    engine.deactivate()
-                    timer.next()
-                },
-                onAbandonBlock: {
-                    engine.deactivate()
-                    timer.abandonBlock()
-                    router.activePanel = .sliceSetup
                 }
             )
-            .overlay(alignment: .topTrailing) {
-                Button(action: { router.activePanel = .settings }) {
-                    Image(systemName: "gearshape")
-                        .foregroundStyle(.secondary)
-                }
-                .buttonStyle(.borderless)
-                .padding(8)
-            }
         } else {
             Color.clear.onAppear { router.activePanel = .timer }
         }
