@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zenza Pomodori | A Tomato-Free Focus Timer for macOS</title>
-  <meta name="description" content="A menu bar Pomodoro timer for macOS. No dock icon, no window clutter. MicroBlocks mode rotates between tasks automatically. Free and open source.">
+  <meta name="description" content="A menu bar Pomodoro timer for macOS. No dock icon, no window clutter. Slices mode cycles your focus across multiple agents. Free and open source.">
 
   <!-- Open Graph (TODO: replace og-image.svg with a PNG for social platform compatibility) -->
   <meta property="og:title" content="Zenza Pomodori">
@@ -37,7 +37,7 @@
       </a>
       <div class="nav-links">
         <a href="#features">Features</a>
-        <a href="#microblocks">MicroBlocks</a>
+        <a href="#slices">Slices</a>
         <a href="#open-source">Source</a>
         <a href="https://github.com/derekspelledcorrectly/ZenzaPomodori" class="nav-github" aria-label="View on GitHub" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
@@ -118,8 +118,8 @@
                 <circle cx="24" cy="12" r="2" fill="var(--accent)" opacity="0.6"/>
               </svg>
             </div>
-            <h3>MicroBlocks</h3>
-            <p>Subdivide focus blocks into timed rotations across multiple tasks. Your timer handles the context switching so your brain doesn't have to.</p>
+            <h3>Slices</h3>
+            <p>Slice your focus across multiple agents. Cycle between them in timed rotations, unblock each one, advance when ready. Purpose-built for agentic workflows.</p>
           </div>
 
           <div class="feature-card reveal">
@@ -170,33 +170,34 @@
               </svg>
             </div>
             <h3>Smart Automation</h3>
-            <p>Auto-advance between phases. Auto-pop the popover when a phase completes. Save rotation lists for MicroBlocks. Set it and forget it.</p>
+            <p>Auto-advance between phases. Auto-pop the popover when a phase completes. Save rotation lists for Slices. Set it and forget it.</p>
           </div>
 
         </div>
       </div>
     </section>
 
-    <!-- MicroBlocks Deep Dive -->
-    <section id="microblocks" class="microblocks">
+    <!-- Slices Deep Dive -->
+    <section id="slices" class="microblocks">
       <div class="container">
         <div class="microblocks-layout">
           <div class="microblocks-text">
-            <h2 class="section-title reveal">Your brain wants variety.<br>MicroBlocks delivers.</h2>
-            <p class="microblocks-lead reveal">Traditional Pomodoro says: pick one task, focus for 25 minutes. But sometimes your best work happens when you rotate between tasks in short bursts.</p>
-            <p class="reveal">MicroBlocks subdivides a focus block into timed rotations. Write docs for 3 minutes, review PRs for 3, refactor for 3. The timer handles the switching. You stay in flow.</p>
+            <h2 class="section-title reveal">Built for the age of agents.</h2>
+            <p class="microblocks-lead reveal">Context switching is expensive. Task loading is real. But when you're managing three agents in parallel, the cost of <em>not</em> checking in is higher: stalled agents, lost momentum, compounding delays.</p>
+            <p class="reveal">Slices gives you structure. Set up a rotation list for your active workstreams. The timer cycles you through each one in short intervals: check in, unblock, advance. No decision fatigue about what to look at next. No forgetting which agent you haven't touched in 20 minutes.</p>
+            <p class="reveal">For deep solo work, use regular focus blocks. Slices is for when you're the bottleneck across multiple parallel tasks and you need to keep everything moving.</p>
             <div class="microblocks-details reveal">
               <div class="micro-detail">
                 <span class="micro-detail-label">Rotation interval</span>
                 <span class="micro-detail-value">Configurable (default 3 min)</span>
               </div>
               <div class="micro-detail">
-                <span class="micro-detail-label">Task count</span>
-                <span class="micro-detail-value">Unlimited rotation items</span>
+                <span class="micro-detail-label">Advance early</span>
+                <span class="micro-detail-value"><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Return</kbd> to skip ahead</span>
               </div>
               <div class="micro-detail">
                 <span class="micro-detail-label">Saved lists</span>
-                <span class="micro-detail-value">Save and reuse rotation sets</span>
+                <span class="micro-detail-value">Save rotation sets per project or workflow</span>
               </div>
               <div class="micro-detail">
                 <span class="micro-detail-label">Menu bar</span>
@@ -209,18 +210,18 @@
               <div class="ring ring-outer">
                 <svg viewBox="0 0 200 200">
                   <circle cx="100" cy="100" r="90" fill="none" stroke="var(--border)" stroke-width="2"/>
-                  <circle cx="100" cy="100" r="90" fill="none" stroke="var(--accent)" stroke-width="3" stroke-dasharray="400 566" stroke-linecap="round" class="ring-progress ring-progress-outer"/>
+                  <circle cx="100" cy="100" r="90" fill="none" stroke="var(--ring-outer)" stroke-width="3" stroke-dasharray="400 566" stroke-linecap="round" class="ring-progress ring-progress-outer"/>
                 </svg>
               </div>
               <div class="ring ring-inner">
                 <svg viewBox="0 0 200 200">
                   <circle cx="100" cy="100" r="70" fill="none" stroke="var(--border)" stroke-width="2"/>
-                  <circle cx="100" cy="100" r="70" fill="none" stroke="var(--sage)" stroke-width="3" stroke-dasharray="280 440" stroke-linecap="round" class="ring-progress ring-progress-inner"/>
+                  <circle cx="100" cy="100" r="70" fill="none" stroke="var(--ring-inner)" stroke-width="3" stroke-dasharray="280 440" stroke-linecap="round" class="ring-progress ring-progress-inner"/>
                 </svg>
               </div>
               <div class="ring-label">
                 <span class="ring-time">2:47</span>
-                <span class="ring-task">review PRs</span>
+                <span class="ring-task">agent 2: API</span>
               </div>
             </div>
             <!-- Screenshot placeholder -->
