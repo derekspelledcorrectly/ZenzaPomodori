@@ -1,9 +1,9 @@
 import SwiftUI
 
 struct ConcentricTimerView: View {
-    let microProgress: Double
+    let sliceProgress: Double
     let outerProgress: Double
-    let microTimeFormatted: String
+    let sliceTimeFormatted: String
     let outerTimeFormatted: String
     var outerColor: Color = .secondary
     var innerColor: Color = .orange
@@ -33,23 +33,23 @@ struct ConcentricTimerView: View {
                 .rotationEffect(.degrees(-90))
                 .animation(.linear(duration: 0.3), value: outerProgress)
 
-            // Inner ring: micro-rotation
+            // Inner ring: slice rotation
             Circle()
                 .stroke(Color.primary.opacity(0.06), lineWidth: innerStroke)
                 .frame(width: innerRadius * 2, height: innerRadius * 2)
             Circle()
-                .trim(from: 0, to: microProgress)
+                .trim(from: 0, to: sliceProgress)
                 .stroke(
                     innerColor,
                     style: StrokeStyle(lineWidth: innerStroke, lineCap: .round)
                 )
                 .frame(width: innerRadius * 2, height: innerRadius * 2)
                 .rotationEffect(.degrees(-90))
-                .animation(.linear(duration: 0.3), value: microProgress)
+                .animation(.linear(duration: 0.3), value: sliceProgress)
 
             // Center text
             VStack(spacing: 1) {
-                Text(microTimeFormatted)
+                Text(sliceTimeFormatted)
                     .font(.system(size: mainFontSize, weight: .medium, design: .rounded))
                     .monospacedDigit()
                     .foregroundStyle(.primary)

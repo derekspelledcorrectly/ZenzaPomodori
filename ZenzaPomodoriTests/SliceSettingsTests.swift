@@ -14,7 +14,7 @@ struct SliceSettingsTests {
         let store = makeStore()
         #expect(store.slicesEnabled == false)
     }
-    @Test func defaultMicroRotationInterval() {
+    @Test func defaultSliceRotationInterval() {
         let store = makeStore()
         #expect(store.sliceRotationInterval == 180)
     }

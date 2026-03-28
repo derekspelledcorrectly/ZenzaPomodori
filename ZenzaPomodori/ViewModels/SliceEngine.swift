@@ -8,7 +8,7 @@ final class SliceEngine {
     let interval: Int
 
     private(set) var currentIndex: Int = 0
-    private(set) var microSecondsRemaining: Int = 0
+    private(set) var sliceSecondsRemaining: Int = 0
     private(set) var isActive: Bool = false
     private(set) var isPaused: Bool = false
 
@@ -27,7 +27,7 @@ final class SliceEngine {
 
     var progress: Double {
         guard interval > 0 else { return 0 }
-        return 1.0 - Double(microSecondsRemaining) / Double(interval)
+        return 1.0 - Double(sliceSecondsRemaining) / Double(interval)
     }
 
     var onRotationChange: ((Int, String) -> Void)?
@@ -42,7 +42,7 @@ final class SliceEngine {
         guard !isActive, !rotationItems.isEmpty else { return }
         isActive = true
         currentIndex = 0
-        microSecondsRemaining = interval
+        sliceSecondsRemaining = interval
         startTickLoop()
     }
 
@@ -52,13 +52,13 @@ final class SliceEngine {
         isActive = false
         isPaused = false
         currentIndex = 0
-        microSecondsRemaining = 0
+        sliceSecondsRemaining = 0
     }
 
     func tick() {
-        guard isActive, !isPaused, microSecondsRemaining > 0 else { return }
-        microSecondsRemaining -= 1
-        if microSecondsRemaining == 0 {
+        guard isActive, !isPaused, sliceSecondsRemaining > 0 else { return }
+        sliceSecondsRemaining -= 1
+        if sliceSecondsRemaining == 0 {
             onRotationComplete?()
             advanceToNext()
         }
@@ -94,7 +94,7 @@ final class SliceEngine {
     private func advanceToNext() {
         guard !rotationItems.isEmpty else { return }
         currentIndex = (currentIndex + 1) % rotationItems.count
-        microSecondsRemaining = interval
+        sliceSecondsRemaining = interval
         if let name = currentItemName {
             onRotationChange?(currentIndex, name)
         }

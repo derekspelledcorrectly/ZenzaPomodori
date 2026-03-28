@@ -169,7 +169,7 @@ struct SettingsView: View {
                 Toggle("Enable Slices mode", isOn: $settings.slicesEnabled)
 
                 if settings.slicesEnabled {
-                    Picker("Max rotation interval", selection: microIntervalBinding) {
+                    Picker("Max rotation interval", selection: sliceIntervalBinding) {
                         ForEach([1, 2, 3, 4, 5, 7, 10], id: \.self) { min in
                             Text("\(min) min").tag(min)
                         }
@@ -187,9 +187,9 @@ struct SettingsView: View {
                     Toggle("Steal focus on rotation", isOn: $settings.stealFocusOnRotation)
 
                     Picker("Menu bar format", selection: $settings.sliceMenuBarFormat) {
-                        Text("Micro timer only").tag(SliceMenuBarFormat.microOnly)
+                        Text("Slice timer only").tag(SliceMenuBarFormat.sliceOnly)
                         Text("Both timers").tag(SliceMenuBarFormat.dualTimer)
-                        Text("Timer + position").tag(SliceMenuBarFormat.microPosition)
+                        Text("Timer + position").tag(SliceMenuBarFormat.slicePosition)
                         Text("Compact").tag(SliceMenuBarFormat.compact)
                     }
 
@@ -212,7 +212,7 @@ struct SettingsView: View {
         .formStyle(.grouped)
     }
 
-    private var microIntervalBinding: Binding<Int> {
+    private var sliceIntervalBinding: Binding<Int> {
         Binding(
             get: { settings.sliceRotationInterval / 60 },
             set: { settings.sliceRotationInterval = $0 * 60 }

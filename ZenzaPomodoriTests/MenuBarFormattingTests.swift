@@ -46,8 +46,8 @@ struct MenuBarFormattingTests {
 
     // MARK: - Slice Formatting
 
-    private func microFormatted(
-        microSeconds: Int = 107,
+    private func sliceFormatted(
+        sliceSeconds: Int = 107,
         outerTime: String = "18:42",
         focusName: String? = "API Refactor",
         position: Int = 3,
@@ -57,7 +57,7 @@ struct MenuBarFormattingTests {
         showFocus: Bool = true
     ) -> String {
         MenuBarFormatting.sliceFormatted(
-            microSeconds: microSeconds,
+            sliceSeconds: sliceSeconds,
             outerFormattedTime: outerTime,
             focusName: focusName,
             position: position,
@@ -68,35 +68,35 @@ struct MenuBarFormattingTests {
         )
     }
 
-    @Test func microOnlyFormat() {
-        #expect(microFormatted(format: .microOnly) == "01:47 [API Refactor]")
+    @Test func sliceOnlyFormat() {
+        #expect(sliceFormatted(format: .sliceOnly) == "01:47 [API Refactor]")
     }
 
     @Test func dualTimerFormat() {
-        #expect(microFormatted(format: .dualTimer) == "01:47/18:42 [API Refactor]")
+        #expect(sliceFormatted(format: .dualTimer) == "01:47/18:42 [API Refactor]")
     }
 
-    @Test func microPositionFormat() {
-        #expect(microFormatted(format: .microPosition) == "01:47 3/5 [API Refactor]")
+    @Test func slicePositionFormat() {
+        #expect(sliceFormatted(format: .slicePosition) == "01:47 3/5 [API Refactor]")
     }
 
     @Test func compactFormat() {
-        #expect(microFormatted(format: .compact) == "01:47")
+        #expect(sliceFormatted(format: .compact) == "01:47")
     }
 
     @Test func noFocusNameOmitsName() {
-        #expect(microFormatted(focusName: nil, format: .dualTimer) == "01:47/18:42")
+        #expect(sliceFormatted(focusName: nil, format: .dualTimer) == "01:47/18:42")
     }
 
     @Test func showFocusFalseOmitsName() {
-        #expect(microFormatted(format: .dualTimer, showFocus: false) == "01:47/18:42")
+        #expect(sliceFormatted(format: .dualTimer, showFocus: false) == "01:47/18:42")
     }
 
     @Test func showTimerFalseWithFocusReturnsName() {
-        #expect(microFormatted(showTimer: false) == "API Refactor")
+        #expect(sliceFormatted(showTimer: false) == "API Refactor")
     }
 
     @Test func showTimerFalseNoFocusReturnsEmpty() {
-        #expect(microFormatted(showTimer: false, showFocus: false) == "")
+        #expect(sliceFormatted(showTimer: false, showFocus: false) == "")
     }
 }
