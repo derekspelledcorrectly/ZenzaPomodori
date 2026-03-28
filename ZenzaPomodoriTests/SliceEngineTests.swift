@@ -2,19 +2,19 @@ import Foundation
 import Testing
 @testable import ZenzaPomodori
 
-@Suite("MicroBlockEngine")
+@Suite("SliceEngine")
 @MainActor
-struct MicroBlockEngineTests {
+struct SliceEngineTests {
     private func makeEngine(
         items: [RotationItem]? = nil,
         interval: Int = 180
-    ) -> MicroBlockEngine {
+    ) -> SliceEngine {
         let defaultItems = items ?? [
             RotationItem(name: "API"),
             RotationItem(name: "CI"),
             RotationItem(name: "Frontend"),
         ]
-        return MicroBlockEngine(items: defaultItems, interval: interval)
+        return SliceEngine(items: defaultItems, interval: interval)
     }
 
     // MARK: - Initial State
@@ -172,7 +172,7 @@ struct MicroBlockEngineTests {
     }
 
     @Test func emptyItemsActivateIsNoOp() {
-        let engine = MicroBlockEngine(items: [], interval: 180)
+        let engine = SliceEngine(items: [], interval: 180)
         engine.activate()
         #expect(engine.isActive == false)
         #expect(engine.currentItemName == nil)
@@ -214,7 +214,7 @@ struct MicroBlockEngineTests {
             RotationItem(name: "CI"),
             RotationItem(name: "Frontend"),
         ]
-        let engine = MicroBlockEngine(items: items, interval: 180)
+        let engine = SliceEngine(items: items, interval: 180)
         engine.activate()
         engine.skip() // now on CI (index 1)
         #expect(engine.currentItemName == "CI")
@@ -233,7 +233,7 @@ struct MicroBlockEngineTests {
             RotationItem(name: "CI"),
             RotationItem(name: "Frontend"),
         ]
-        let engine = MicroBlockEngine(items: items, interval: 180)
+        let engine = SliceEngine(items: items, interval: 180)
         engine.activate()
         engine.skip() // now on CI (index 1)
         engine.skip() // now on Frontend (index 2)

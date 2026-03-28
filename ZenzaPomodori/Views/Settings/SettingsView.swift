@@ -165,32 +165,32 @@ struct SettingsView: View {
                 }
             }
 
-            Section("MicroBlocks") {
-                Toggle("Enable MicroBlocks mode", isOn: $settings.microBlocksEnabled)
+            Section("Slices") {
+                Toggle("Enable Slices mode", isOn: $settings.slicesEnabled)
 
-                if settings.microBlocksEnabled {
+                if settings.slicesEnabled {
                     Picker("Max rotation interval", selection: microIntervalBinding) {
                         ForEach([1, 2, 3, 4, 5, 7, 10], id: \.self) { min in
                             Text("\(min) min").tag(min)
                         }
                     }
 
-                    Toggle("Sound on rotation", isOn: $settings.microBlockSoundEnabled)
+                    Toggle("Sound on rotation", isOn: $settings.sliceSoundEnabled)
 
-                    if settings.microBlockSoundEnabled {
+                    if settings.sliceSoundEnabled {
                         soundPicker("Rotation sound", sound: Binding(
-                            get: { settings.microBlockEndSound },
-                            set: { settings.microBlockEndSound = $0 }
+                            get: { settings.sliceEndSound },
+                            set: { settings.sliceEndSound = $0 }
                         ))
                     }
 
                     Toggle("Steal focus on rotation", isOn: $settings.stealFocusOnRotation)
 
-                    Picker("Menu bar format", selection: $settings.microBlockMenuBarFormat) {
-                        Text("Micro timer only").tag(MicroBlockMenuBarFormat.microOnly)
-                        Text("Both timers").tag(MicroBlockMenuBarFormat.dualTimer)
-                        Text("Timer + position").tag(MicroBlockMenuBarFormat.microPosition)
-                        Text("Compact").tag(MicroBlockMenuBarFormat.compact)
+                    Picker("Menu bar format", selection: $settings.sliceMenuBarFormat) {
+                        Text("Micro timer only").tag(SliceMenuBarFormat.microOnly)
+                        Text("Both timers").tag(SliceMenuBarFormat.dualTimer)
+                        Text("Timer + position").tag(SliceMenuBarFormat.microPosition)
+                        Text("Compact").tag(SliceMenuBarFormat.compact)
                     }
 
                     Toggle("Rotation hotkey", isOn: $settings.rotationHotkeyEnabled)

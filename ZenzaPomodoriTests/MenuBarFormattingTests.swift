@@ -44,7 +44,7 @@ struct MenuBarFormattingTests {
         #expect(MenuBarFormatting.truncatedFocusName("Hi", maxLength: 5) == "Hi")
     }
 
-    // MARK: - MicroBlock Formatting
+    // MARK: - Slice Formatting
 
     private func microFormatted(
         microSeconds: Int = 107,
@@ -52,11 +52,11 @@ struct MenuBarFormattingTests {
         focusName: String? = "API Refactor",
         position: Int = 3,
         total: Int = 5,
-        format: MicroBlockMenuBarFormat = .dualTimer,
+        format: SliceMenuBarFormat = .dualTimer,
         showTimer: Bool = true,
         showFocus: Bool = true
     ) -> String {
-        MenuBarFormatting.microBlockFormatted(
+        MenuBarFormatting.sliceFormatted(
             microSeconds: microSeconds,
             outerFormattedTime: outerTime,
             focusName: focusName,

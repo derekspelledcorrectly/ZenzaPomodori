@@ -2,37 +2,37 @@ import Foundation
 import Testing
 @testable import ZenzaPomodori
 
-@Suite("MicroBlock Settings")
-struct MicroBlockSettingsTests {
+@Suite("Slice Settings")
+struct SliceSettingsTests {
     private func makeStore() -> SettingsStore {
         let suiteName = "test-settings-\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suiteName)!
         return SettingsStore(defaults: defaults)
     }
 
-    @Test func defaultMicroBlocksEnabled() {
+    @Test func defaultSlicesEnabled() {
         let store = makeStore()
-        #expect(store.microBlocksEnabled == false)
+        #expect(store.slicesEnabled == false)
     }
     @Test func defaultMicroRotationInterval() {
         let store = makeStore()
         #expect(store.microRotationInterval == 180)
     }
-    @Test func defaultMicroBlockSoundEnabled() {
+    @Test func defaultSliceSoundEnabled() {
         let store = makeStore()
-        #expect(store.microBlockSoundEnabled == true)
+        #expect(store.sliceSoundEnabled == true)
     }
-    @Test func defaultMicroBlockEndSound() {
+    @Test func defaultSliceEndSound() {
         let store = makeStore()
-        #expect(store.microBlockEndSound == "Taptap")
+        #expect(store.sliceEndSound == "Taptap")
     }
     @Test func defaultStealFocusOnRotation() {
         let store = makeStore()
         #expect(store.stealFocusOnRotation == false)
     }
-    @Test func defaultMicroBlockMenuBarFormat() {
+    @Test func defaultSliceMenuBarFormat() {
         let store = makeStore()
-        #expect(store.microBlockMenuBarFormat == .dualTimer)
+        #expect(store.sliceMenuBarFormat == .dualTimer)
     }
     @Test func defaultLastBlockType() {
         let store = makeStore()
@@ -48,20 +48,20 @@ struct MicroBlockSettingsTests {
         store.microRotationInterval = 900
         #expect(store.microRotationInterval == 600)
     }
-    @Test func microBlockSettingsPersist() {
+    @Test func sliceSettingsPersist() {
         let suiteName = "test-settings-\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suiteName)!
         let store1 = SettingsStore(defaults: defaults)
-        store1.microBlocksEnabled = true
+        store1.slicesEnabled = true
         store1.microRotationInterval = 120
-        store1.microBlockEndSound = "Glass"
-        store1.lastBlockType = .microBlocks
-        store1.microBlockMenuBarFormat = .compact
+        store1.sliceEndSound = "Glass"
+        store1.lastBlockType = .slices
+        store1.sliceMenuBarFormat = .compact
         let store2 = SettingsStore(defaults: defaults)
-        #expect(store2.microBlocksEnabled == true)
+        #expect(store2.slicesEnabled == true)
         #expect(store2.microRotationInterval == 120)
-        #expect(store2.microBlockEndSound == "Glass")
-        #expect(store2.lastBlockType == .microBlocks)
-        #expect(store2.microBlockMenuBarFormat == .compact)
+        #expect(store2.sliceEndSound == "Glass")
+        #expect(store2.lastBlockType == .slices)
+        #expect(store2.sliceMenuBarFormat == .compact)
     }
 }

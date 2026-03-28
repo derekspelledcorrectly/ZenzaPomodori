@@ -14,7 +14,7 @@ struct MenuBarView: View {
                 isOvertime: timer.isOvertime
             )
 
-            if timer.phase == .idle && timer.settings.microBlocksEnabled {
+            if timer.phase == .idle && timer.settings.slicesEnabled {
                 BlockTypePickerView(
                     blockType: Binding(
                         get: { timer.settings.lastBlockType },

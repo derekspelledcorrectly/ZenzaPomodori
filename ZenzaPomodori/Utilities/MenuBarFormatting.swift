@@ -9,13 +9,13 @@ enum MenuBarFormatting {
         return String(trimmed.prefix(maxLength)) + "..."
     }
 
-    static func microBlockFormatted(
+    static func sliceFormatted(
         microSeconds: Int,
         outerFormattedTime: String,
         focusName: String?,
         position: Int,
         total: Int,
-        format: MicroBlockMenuBarFormat,
+        format: SliceMenuBarFormat,
         showTimer: Bool,
         showFocus: Bool
     ) -> String {

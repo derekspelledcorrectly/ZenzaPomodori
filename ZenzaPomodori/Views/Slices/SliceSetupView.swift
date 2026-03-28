@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct MicroBlockSetupView: View {
+struct SliceSetupView: View {
     @Bindable var rotationStore: RotationStore
     let focusNameStore: FocusNameStore
     @Binding var workingItems: [RotationItem]

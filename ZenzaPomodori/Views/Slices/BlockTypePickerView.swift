@@ -6,7 +6,7 @@ struct BlockTypePickerView: View {
     var body: some View {
         Picker("Block Type", selection: $blockType) {
             Text("Regular").tag(BlockType.regular)
-            Text("MicroBlocks").tag(BlockType.microBlocks)
+            Text("Slices").tag(BlockType.slices)
         }
         .pickerStyle(.segmented)
         .labelsHidden()
