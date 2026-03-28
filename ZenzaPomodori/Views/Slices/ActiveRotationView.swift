@@ -57,13 +57,13 @@ struct ActiveRotationView: View {
                     Image(systemName: engine.isPaused ? "play.fill" : "pause.fill")
                         .frame(width: 20)
                 }
-                .help(engine.isPaused ? "Resume" : "Pause")
+                .help(engine.isPaused ? "Resume (Space)" : "Pause (Space)")
 
                 Button(action: { onNext() }) {
                     Image(systemName: "forward.end.fill")
                         .frame(width: 20)
                 }
-                .help("Next Focus")
+                .help("Next Slice (Return)")
 
                 if !autoAdvance && timer.isOvertime {
                     Button(action: { onFinishBlock() }) {
