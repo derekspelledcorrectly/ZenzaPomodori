@@ -12,11 +12,11 @@ struct SliceSettingsTests {
 
     @Test func defaultSlicesEnabled() {
         let store = makeStore()
-        #expect(store.slicesEnabled == false)
+        #expect(store.slicesEnabled == true)
     }
     @Test func defaultSliceRotationInterval() {
         let store = makeStore()
-        #expect(store.sliceRotationInterval == 180)
+        #expect(store.sliceRotationInterval == 120)
     }
     @Test func defaultSliceSoundEnabled() {
         let store = makeStore()
@@ -24,7 +24,7 @@ struct SliceSettingsTests {
     }
     @Test func defaultSliceEndSound() {
         let store = makeStore()
-        #expect(store.sliceEndSound == "Taptap")
+        #expect(store.sliceEndSound == "Polite")
     }
     @Test func defaultStealFocusOnRotation() {
         let store = makeStore()
@@ -32,7 +32,7 @@ struct SliceSettingsTests {
     }
     @Test func defaultSliceMenuBarFormat() {
         let store = makeStore()
-        #expect(store.sliceMenuBarFormat == .dualTimer)
+        #expect(store.sliceMenuBarFormat == .sliceOnly)
     }
     @Test func defaultLastBlockType() {
         let store = makeStore()

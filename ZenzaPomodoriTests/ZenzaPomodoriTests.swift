@@ -68,7 +68,7 @@ struct DefaultsTests {
     @Test func defaultValues() {
         #expect(Defaults.focusDuration == 1500)
         #expect(Defaults.shortBreakDuration == 300)
-        #expect(Defaults.longBreakDuration == 1500)
+        #expect(Defaults.longBreakDuration == 1200)
         #expect(Defaults.blocksBeforeLongBreak == 4)
     }
 }
