@@ -57,7 +57,8 @@ struct MenuBarView: View {
                 onPause: timer.pause,
                 onResume: timer.resume,
                 onNext: timer.next,
-                onReset: timer.restartPhase
+                onReset: timer.restartPhase,
+                onAbandon: timer.abandonBlock
             )
         }
         .padding()

@@ -108,6 +108,19 @@ final class PomodoroTimer {
         }
     }
 
+    func abandonBlock() {
+        guard case .focus(let block) = phase else { return }
+        pause()
+        pendingBlock = block
+        isOvertime = false
+        overtimeSeconds = 0
+        activeFocusName = nil
+        let oldPhase = phase
+        phase = .idle
+        secondsRemaining = 0
+        onPhaseChange?(oldPhase, .idle)
+    }
+
     func restartPhase() {
         guard phase != .idle else { return }
         secondsRemaining = duration(for: phase)
