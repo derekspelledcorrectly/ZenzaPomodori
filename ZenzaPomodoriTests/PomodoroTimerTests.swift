@@ -484,4 +484,46 @@ struct PomodoroTimerTests {
         #expect(!timer.formattedTime.hasPrefix("+"))
         timer.reset()
     }
+
+    // MARK: - Abandon Block
+
+    @Test func abandonBlockReturnsToIdleWithSameBlock() {
+        let timer = makeTimer()
+        timer.start()
+        #expect(timer.phase == .focus(block: 1))
+        timer.abandonBlock()
+        #expect(timer.phase == .idle)
+        #expect(timer.pendingBlock == 1)
+        #expect(timer.completedBlocks == 0)
+        #expect(timer.isRunning == false)
+    }
+
+    @Test func abandonBlockPreservesCompletedBlocks() {
+        let timer = makeTimer()
+        timer.start() // focus(block: 1)
+        timer.next()  // short break
+        timer.next()  // idle with pendingBlock = 2
+        timer.start() // focus(block: 2)
+        #expect(timer.completedBlocks == 1)
+        timer.abandonBlock()
+        #expect(timer.phase == .idle)
+        #expect(timer.pendingBlock == 2)
+        #expect(timer.completedBlocks == 1)
+    }
+
+    @Test func abandonBlockWhileIdleIsNoOp() {
+        let timer = makeTimer()
+        timer.abandonBlock()
+        #expect(timer.phase == .idle)
+        #expect(timer.pendingBlock == nil)
+    }
+
+    @Test func abandonBlockDuringBreakIsNoOp() {
+        let timer = makeTimer()
+        timer.start()
+        timer.next() // short break
+        #expect(timer.phase.isBreak)
+        timer.abandonBlock()
+        #expect(timer.phase.isBreak) // unchanged
+    }
 }
