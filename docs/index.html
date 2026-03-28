@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zenza Pomodori | A Tomato-Free Focus Timer for macOS</title>
+  <meta name="description" content="A menu bar Pomodoro timer for macOS. No dock icon, no window clutter. MicroBlocks mode rotates between tasks automatically. Free and open source.">
+
+  <!-- Open Graph (TODO: replace og-image.svg with a PNG for social platform compatibility) -->
+  <meta property="og:title" content="Zenza Pomodori">
+  <meta property="og:description" content="A tomato-free focus timer for your macOS menu bar. Free and open source.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://derekspelledcorrectly.github.io/ZenzaPomodori/">
+  <meta property="og:image" content="https://derekspelledcorrectly.github.io/ZenzaPomodori/og-image.svg">
+
+  <!-- Twitter/X Card (TODO: replace with PNG) -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Zenza Pomodori">
+  <meta name="twitter:description" content="A tomato-free focus timer for your macOS menu bar.">
+  <meta name="twitter:image" content="https://derekspelledcorrectly.github.io/ZenzaPomodori/og-image.svg">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo" aria-label="Zenza Pomodori home">
+        <svg class="nav-icon" viewBox="0 0 32 32" width="24" height="24" aria-hidden="true">
+          <circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="2.5"/>
+          <path d="M16 8 L16 16 L22 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Zenza Pomodori</span>
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#microblocks">MicroBlocks</a>
+        <a href="#open-source">Source</a>
+        <a href="https://github.com/derekspelledcorrectly/ZenzaPomodori" class="nav-github" aria-label="View on GitHub" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="hero-icon-wrap reveal">
+          <div class="hero-icon" aria-hidden="true">
+            <svg viewBox="0 0 120 120" width="120" height="120">
+              <defs>
+                <linearGradient id="icon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:var(--accent)"/>
+                  <stop offset="100%" style="stop-color:var(--accent-hover)"/>
+                </linearGradient>
+              </defs>
+              <circle cx="60" cy="60" r="54" fill="none" stroke="url(#icon-grad)" stroke-width="4"/>
+              <circle cx="60" cy="60" r="42" fill="none" stroke="var(--text-secondary)" stroke-width="1.5" opacity="0.3"/>
+              <path d="M60 24 L60 60 L84 60" fill="none" stroke="url(#icon-grad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="60" cy="24" r="3" fill="var(--accent)"/>
+            </svg>
+          </div>
+        </div>
+        <h1 class="hero-title reveal">A tomato-free focus timer<br>for your macOS menu bar.</h1>
+        <p class="hero-subtitle reveal">No dock icon. No window clutter. Just focus.</p>
+        <div class="hero-cta reveal">
+          <a href="https://github.com/derekspelledcorrectly/ZenzaPomodori/releases" class="btn btn-primary" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+            Download from GitHub
+          </a>
+          <span class="btn btn-secondary btn-disabled" aria-disabled="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+            </svg>
+            Mac App Store (Soon)
+          </span>
+        </div>
+        <p class="hero-meta reveal">macOS 15+ &middot; Free &amp; Open Source &middot; GPL-3.0</p>
+      </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section id="features" class="features">
+      <div class="container">
+        <h2 class="section-title reveal">Built for focus, nothing else.</h2>
+        <div class="features-grid">
+
+          <div class="feature-card reveal">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" width="48" height="48">
+                <rect x="4" y="8" width="40" height="4" rx="2" fill="var(--accent)" opacity="0.3"/>
+                <rect x="4" y="8" width="12" height="4" rx="2" fill="var(--accent)"/>
+                <circle cx="24" cy="30" r="12" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+                <path d="M24 22 L24 30 L30 30" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3>Menu Bar Native</h3>
+            <p>Lives in your menu bar where it belongs. A clean popover with timer display and controls. No dock icon stealing your attention.</p>
+          </div>
+
+          <div class="feature-card reveal">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" width="48" height="48">
+                <circle cx="24" cy="24" r="18" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+                <circle cx="24" cy="24" r="12" fill="none" stroke="var(--accent)" stroke-width="2" opacity="0.5"/>
+                <circle cx="24" cy="24" r="6" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="0.3"/>
+                <circle cx="24" cy="6" r="3" fill="var(--accent)"/>
+                <circle cx="24" cy="12" r="2" fill="var(--accent)" opacity="0.6"/>
+              </svg>
+            </div>
+            <h3>MicroBlocks</h3>
+            <p>Subdivide focus blocks into timed rotations across multiple tasks. Your timer handles the context switching so your brain doesn't have to.</p>
+          </div>
+
+          <div class="feature-card reveal">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" width="48" height="48">
+                <rect x="8" y="14" width="32" height="22" rx="4" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+                <rect x="14" y="20" width="8" height="6" rx="1.5" fill="var(--accent)" opacity="0.3"/>
+                <rect x="26" y="20" width="8" height="6" rx="1.5" fill="var(--accent)" opacity="0.3"/>
+                <rect x="14" y="28" width="20" height="4" rx="1.5" fill="var(--accent)" opacity="0.15"/>
+                <path d="M20 8 L20 14 M28 8 L28 14" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+              </svg>
+            </div>
+            <h3>Global Hotkeys</h3>
+            <p><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> toggles the popover from anywhere. <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Return</kbd> advances your rotation. Hands on keyboard, always.</p>
+          </div>
+
+          <div class="feature-card reveal">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" width="48" height="48">
+                <circle cx="24" cy="24" r="18" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+                <path d="M24 24 L24 10" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+                <path d="M24 24 L34 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+                <circle cx="24" cy="24" r="2.5" fill="var(--accent)"/>
+              </svg>
+            </div>
+            <h3>Configurable Timers</h3>
+            <p>25-minute focus blocks, 5-minute short breaks, 25-minute long breaks. Change every duration to match your rhythm. Set how many blocks before a long break.</p>
+          </div>
+
+          <div class="feature-card reveal">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" width="48" height="48">
+                <path d="M12 32 Q12 20 24 14 Q36 20 36 32" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M8 36 Q8 22 24 12 Q40 22 40 36" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="0.3"/>
+                <circle cx="24" cy="36" r="4" fill="var(--accent)" opacity="0.5"/>
+                <path d="M24 36 L24 28" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3>Notification Sounds</h3>
+            <p>Calm, Chord, Taptap, and more: pleasant sounds from <a href="https://github.com/akx/Notifications" target="_blank" rel="noopener">akx/Notifications</a>. Different sounds for focus end, break end, and micro-rotation transitions. Or turn them all off.</p>
+          </div>
+
+          <div class="feature-card reveal">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" width="48" height="48">
+                <path d="M10 24 L20 24 L24 14 L28 34 L32 20 L38 20" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="24" cy="24" r="18" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="0.2"/>
+              </svg>
+            </div>
+            <h3>Smart Automation</h3>
+            <p>Auto-advance between phases. Auto-pop the popover when a phase completes. Save rotation lists for MicroBlocks. Set it and forget it.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- MicroBlocks Deep Dive -->
+    <section id="microblocks" class="microblocks">
+      <div class="container">
+        <div class="microblocks-layout">
+          <div class="microblocks-text">
+            <h2 class="section-title reveal">Your brain wants variety.<br>MicroBlocks delivers.</h2>
+            <p class="microblocks-lead reveal">Traditional Pomodoro says: pick one task, focus for 25 minutes. But sometimes your best work happens when you rotate between tasks in short bursts.</p>
+            <p class="reveal">MicroBlocks subdivides a focus block into timed rotations. Write docs for 3 minutes, review PRs for 3, refactor for 3. The timer handles the switching. You stay in flow.</p>
+            <div class="microblocks-details reveal">
+              <div class="micro-detail">
+                <span class="micro-detail-label">Rotation interval</span>
+                <span class="micro-detail-value">Configurable (default 3 min)</span>
+              </div>
+              <div class="micro-detail">
+                <span class="micro-detail-label">Task count</span>
+                <span class="micro-detail-value">Unlimited rotation items</span>
+              </div>
+              <div class="micro-detail">
+                <span class="micro-detail-label">Saved lists</span>
+                <span class="micro-detail-value">Save and reuse rotation sets</span>
+              </div>
+              <div class="micro-detail">
+                <span class="micro-detail-label">Menu bar</span>
+                <span class="micro-detail-value">Shows current task + dual countdown</span>
+              </div>
+            </div>
+          </div>
+          <div class="microblocks-visual reveal">
+            <div class="concentric-rings" aria-hidden="true">
+              <div class="ring ring-outer">
+                <svg viewBox="0 0 200 200">
+                  <circle cx="100" cy="100" r="90" fill="none" stroke="var(--border)" stroke-width="2"/>
+                  <circle cx="100" cy="100" r="90" fill="none" stroke="var(--accent)" stroke-width="3" stroke-dasharray="400 566" stroke-linecap="round" class="ring-progress ring-progress-outer"/>
+                </svg>
+              </div>
+              <div class="ring ring-inner">
+                <svg viewBox="0 0 200 200">
+                  <circle cx="100" cy="100" r="70" fill="none" stroke="var(--border)" stroke-width="2"/>
+                  <circle cx="100" cy="100" r="70" fill="none" stroke="var(--sage)" stroke-width="3" stroke-dasharray="280 440" stroke-linecap="round" class="ring-progress ring-progress-inner"/>
+                </svg>
+              </div>
+              <div class="ring-label">
+                <span class="ring-time">2:47</span>
+                <span class="ring-task">review PRs</span>
+              </div>
+            </div>
+            <!-- Screenshot placeholder -->
+            <div class="screenshot-placeholder">
+              <span>App screenshot placeholder</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Progress Ring Screenshot Section -->
+    <section class="showcase">
+      <div class="container">
+        <div class="showcase-layout">
+          <div class="showcase-screenshot reveal">
+            <div class="screenshot-placeholder screenshot-placeholder-large">
+              <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true">
+                <circle cx="24" cy="24" r="18" fill="none" stroke="var(--text-secondary)" stroke-width="1.5" opacity="0.4"/>
+                <path d="M24 24 L24 12" fill="none" stroke="var(--text-secondary)" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+              </svg>
+              <span>Timer popover screenshot</span>
+            </div>
+          </div>
+          <div class="showcase-text">
+            <h2 class="section-title reveal">Clean, focused interface.</h2>
+            <p class="reveal">A circular progress ring with countdown display. Play, pause, skip, reset. Everything you need, nothing you don't. The popover appears on click or hotkey and disappears when you click away.</p>
+            <ul class="showcase-list reveal">
+              <li>Circular progress ring with countdown</li>
+              <li>Phase indicator (Focus, Short Break, Long Break)</li>
+              <li>Block counter shows progress through your session</li>
+              <li>Name your focus session for context</li>
+              <li>Auto-pop on phase completion</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Open Source -->
+    <section id="open-source" class="open-source">
+      <div class="container">
+        <div class="oss-inner reveal">
+          <h2 class="section-title">Free as in freedom.<br>Free as in beer.</h2>
+          <p class="oss-lead">Zenza Pomodori is GPL-3.0 open source. Read the code, fork it, build it yourself. No telemetry, no analytics, no nonsense.</p>
+          <div class="oss-stats">
+            <div class="oss-stat">
+              <span class="oss-stat-value">55+</span>
+              <span class="oss-stat-label">Unit tests</span>
+            </div>
+            <div class="oss-stat">
+              <span class="oss-stat-value">Swift 6</span>
+              <span class="oss-stat-label">Strict concurrency</span>
+            </div>
+            <div class="oss-stat">
+              <span class="oss-stat-value">GPL-3.0</span>
+              <span class="oss-stat-label">License</span>
+            </div>
+          </div>
+          <div class="oss-tech">
+            <span class="tech-badge">Swift Testing</span>
+            <span class="tech-badge">@Observable</span>
+            <span class="tech-badge">XcodeGen</span>
+            <span class="tech-badge">macOS 15+</span>
+            <span class="tech-badge">No Dependencies</span>
+          </div>
+          <a href="https://github.com/derekspelledcorrectly/ZenzaPomodori" class="btn btn-outline" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+            View on GitHub
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Download CTA -->
+    <section class="download">
+      <div class="container">
+        <h2 class="section-title reveal">Get Zenza Pomodori.</h2>
+        <div class="download-options reveal">
+          <div class="download-card">
+            <div class="download-card-header">
+              <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor" aria-hidden="true">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+              </svg>
+              <h3>GitHub Release</h3>
+            </div>
+            <p>Free &amp; open source. Download the <code>.zip</code>, unzip, drag to Applications. Unsigned build: right-click &gt; Open on first launch.</p>
+            <a href="https://github.com/derekspelledcorrectly/ZenzaPomodori/releases" class="btn btn-primary" target="_blank" rel="noopener">Download from GitHub</a>
+          </div>
+          <div class="download-card">
+            <div class="download-card-header">
+              <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor" aria-hidden="true">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+              </svg>
+              <h3>Mac App Store</h3>
+            </div>
+            <p>Signed &amp; notarized. Automatic updates. Same app, nominal fee to cover Apple Developer Program costs.</p>
+            <span class="btn btn-secondary btn-disabled" aria-disabled="true">Coming Soon</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <p>Made with focus by <a href="https://github.com/derekspelledcorrectly" target="_blank" rel="noopener">derek</a></p>
+        <p>GPL-3.0 &middot; <a href="https://github.com/derekspelledcorrectly/ZenzaPomodori" target="_blank" rel="noopener">Source on GitHub</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
