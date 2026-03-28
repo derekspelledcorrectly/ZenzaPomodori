@@ -729,6 +729,82 @@ kbd {
   align-self: flex-start;
 }
 
+/* --- Tomato-Free Tooltip (desktop) --- */
+.tomato-asterisk {
+  display: none;
+  font-size: 0.6em;
+  vertical-align: super;
+  text-decoration: none;
+  color: var(--text-secondary);
+  line-height: 1;
+}
+
+.tomato-tip {
+  position: relative;
+  text-decoration: underline dotted;
+  text-decoration-color: var(--text-secondary);
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+  cursor: help;
+}
+
+.tomato-tip-text {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 380px;
+  padding: var(--space-md) var(--space-lg);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 50;
+  white-space: normal;
+}
+
+.tomato-tip:hover .tomato-tip-text,
+.tomato-tip:focus .tomato-tip-text {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tomato-tip-text {
+    transition: none;
+  }
+}
+
+/* --- Tomato-Free Aside (mobile fallback) --- */
+.tomato-free {
+  display: none;
+  padding: var(--space-xl) 0;
+  text-align: center;
+}
+
+.tomato-free-text {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.tomato-free-text strong {
+  color: var(--text);
+}
+
 /* --- Footer --- */
 .footer {
   padding: var(--space-xl) 0;
@@ -844,5 +920,22 @@ kbd {
   .concentric-rings {
     width: 180px;
     height: 180px;
+  }
+
+  .tomato-tip {
+    text-decoration: none;
+    cursor: default;
+  }
+
+  .tomato-tip-text {
+    display: none;
+  }
+
+  .tomato-asterisk {
+    display: inline;
+  }
+
+  .tomato-free {
+    display: block;
   }
 }
