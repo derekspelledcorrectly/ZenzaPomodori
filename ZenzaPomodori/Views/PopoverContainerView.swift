@@ -10,6 +10,7 @@ struct PopoverContainerView: View {
     let focusNameStore: FocusNameStore
     @State private var workingItems: [RotationItem] = []
     var onMicroBlockStart: (([RotationItem]) -> Void)?
+    var onClosePopover: (() -> Void)?
 
     var body: some View {
         Group {
@@ -24,7 +25,15 @@ struct PopoverContainerView: View {
                 SettingsView(
                     settings: settings,
                     soundService: soundService,
-                    onBack: { router.activePanel = .timer }
+                    onBack: {
+                        if router.microBlockEngine?.isActive == true {
+                            router.activePanel = .microBlockActive
+                        } else if settings.lastBlockType == .microBlocks {
+                            router.activePanel = .microBlockSetup
+                        } else {
+                            router.activePanel = .timer
+                        }
+                    }
                 )
 
             case .microBlockSetup:
@@ -45,7 +54,11 @@ struct PopoverContainerView: View {
                 onPanelChange(.timer)
             }
         }
-        .onChange(of: timer.phase) { _, _ in
+        .onChange(of: timer.phase) { _, newPhase in
+            if newPhase == .idle && router.microBlockEngine?.isActive != true {
+                router.activePanel = settings.lastBlockType == .microBlocks
+                    ? .microBlockSetup : .timer
+            }
             if router.activePanel == .timer {
                 onPanelChange(.timer)
             }
@@ -62,6 +75,10 @@ struct PopoverContainerView: View {
         }
     }
 
+    private var isEditingActiveRotation: Bool {
+        router.microBlockEngine?.isActive == true
+    }
+
     // MARK: - Panels
 
     private var microBlockIdlePanel: some View {
@@ -74,9 +91,8 @@ struct PopoverContainerView: View {
                 outerProgress: 1.0,
                 microTimeFormatted: timer.formattedTime,
                 outerTimeFormatted: "\(settings.microRotationInterval / 60) min each",
-                size: 120
+                outerColor: .accentColor.opacity(0.25)
             )
-            .frame(height: 140)
 
             BlockTypePickerView(
                 blockType: Binding(
@@ -89,7 +105,16 @@ struct PopoverContainerView: View {
                 rotationStore: rotationStore,
                 focusNameStore: focusNameStore,
                 workingItems: $workingItems,
-                onStart: { onMicroBlockStart?(workingItems) }
+                isEditing: isEditingActiveRotation,
+                onStart: { onMicroBlockStart?(workingItems) },
+                onResume: {
+                    if let engine = router.microBlockEngine {
+                        engine.updateItems(workingItems)
+                        engine.resume()
+                        timer.resume()
+                        router.activePanel = .microBlockActive
+                    }
+                }
             )
         }
         .padding()
@@ -110,16 +135,34 @@ struct PopoverContainerView: View {
             ActiveRotationView(
                 engine: engine,
                 timer: timer,
-                onSkip: { engine.skip() },
-                onEditList: { router.activePanel = .microBlockSetup },
+                onNext: { engine.skip() },
+                onEditList: {
+                    engine.pause()
+                    timer.pause()
+                    workingItems = engine.rotationItems
+                    router.activePanel = .microBlockSetup
+                },
                 onPause: {
                     if engine.isPaused { engine.resume() } else { engine.pause() }
                 },
-                onEndBlock: {
+                onCompleteBlock: {
                     engine.deactivate()
                     timer.next()
+                },
+                onAbandonBlock: {
+                    engine.deactivate()
+                    timer.abandonBlock()
+                    router.activePanel = .microBlockSetup
                 }
             )
+            .overlay(alignment: .topTrailing) {
+                Button(action: { router.activePanel = .settings }) {
+                    Image(systemName: "gearshape")
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.borderless)
+                .padding(8)
+            }
         } else {
             Color.clear.onAppear { router.activePanel = .timer }
         }
@@ -135,8 +178,12 @@ struct PopoverContainerView: View {
                 outerTimeRemaining: timer.formattedTime,
                 rotationProgress: Double(engine.currentIndex + 1) / Double(max(1, engine.rotationItems.count)),
                 onDismiss: {
-                    engine.skip()
                     router.activePanel = .microBlockActive
+                },
+                onClose: {
+                    router.transitionDismissed = true
+                    router.activePanel = .microBlockActive
+                    onClosePopover?()
                 }
             )
         } else {

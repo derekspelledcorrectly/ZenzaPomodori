@@ -13,4 +13,5 @@ enum PopoverPanel {
 final class PopoverRouter {
     var activePanel: PopoverPanel = .timer
     var microBlockEngine: MicroBlockEngine?
+    var transitionDismissed: Bool = false
 }

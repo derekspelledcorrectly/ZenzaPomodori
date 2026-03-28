@@ -73,6 +73,9 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
                 focusNameStore: timer.focusNameStore,
                 onMicroBlockStart: { [weak self] items in
                     self?.startMicroBlocks(with: items)
+                },
+                onClosePopover: { [weak self] in
+                    self?.popover.performClose(nil)
                 }
             )
         )
@@ -366,6 +369,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
             soundService.play(settings.microBlockEndSound)
         }
 
+        router.transitionDismissed = false
         router.activePanel = .microBlockTransition
         showPopover()
 
@@ -382,6 +386,9 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         hotkeyService.onHotkeyPressed = { [weak self] in
             self?.handleHotkey()
         }
+        hotkeyService.onRotationHotkeyPressed = { [weak self] in
+            self?.handleRotationHotkey()
+        }
         hotkeyService.startListening()
         hotkeyService.register()
         settings.onHotkeySettingsChanged = { [weak self] in
@@ -389,21 +396,20 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         }
     }
 
+    private func handleRotationHotkey() {
+        guard let engine = router.microBlockEngine, engine.isActive else { return }
+        engine.skip()
+    }
+
     private func handleHotkey() {
-        if let engine = router.microBlockEngine, engine.isActive {
+        if popover.isShown {
             if router.activePanel == .microBlockTransition {
-                engine.skip()
+                router.transitionDismissed = true
                 router.activePanel = .microBlockActive
-            } else {
-                router.activePanel = .microBlockTransition
-                showPopover(activate: true)
             }
+            popover.performClose(nil)
         } else {
-            if popover.isShown {
-                popover.performClose(nil)
-            } else {
-                showPopover(activate: true)
-            }
+            showPopover(activate: true)
         }
     }
 
@@ -445,7 +451,11 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
         MainActor.assumeIsolated {
             cancelAutoDismissTimer()
             switch router.activePanel {
-            case .microBlockActive, .microBlockTransition, .microBlockSetup:
+            case .microBlockTransition:
+                router.transitionDismissed = true
+                router.activePanel = .microBlockActive
+                popover.behavior = .transient
+            case .microBlockActive, .microBlockSetup:
                 popover.behavior = .transient
             case .timer:
                 break

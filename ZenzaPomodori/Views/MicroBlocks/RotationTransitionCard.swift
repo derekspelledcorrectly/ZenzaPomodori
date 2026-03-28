@@ -7,6 +7,7 @@ struct RotationTransitionCard: View {
     let outerTimeRemaining: String
     let rotationProgress: Double
     var onDismiss: () -> Void
+    var onClose: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -14,7 +15,7 @@ struct RotationTransitionCard: View {
                 Text("Rotating")
                     .font(.caption.bold())
                     .textCase(.uppercase)
-                    .foregroundStyle(.red)
+                    .foregroundColor(.accentColor)
                 Spacer()
                 Text("\(positionText) \u{00B7} \(outerTimeRemaining) left")
                     .font(.caption)
@@ -28,31 +29,49 @@ struct RotationTransitionCard: View {
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     RoundedRectangle(cornerRadius: 2)
-                        .fill(Color(.sRGB, red: 0.04, green: 0.04, blue: 0.1))
+                        .fill(Color.secondary.opacity(0.2))
                         .frame(height: 4)
                     RoundedRectangle(cornerRadius: 2)
-                        .fill(Color.red)
+                        .fill(Color.accentColor)
                         .frame(width: geo.size.width * rotationProgress, height: 4)
                 }
             }
             .frame(height: 4)
 
-            if let nextName {
-                Text("Up next: \(nextName)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            HStack {
+                if let nextName {
+                    Text("Up next: \(nextName)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                Button(action: { onDismiss() }) {
+                    Image(systemName: "chevron.down.circle")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .help("Show Full View")
             }
         }
         .padding(16)
         .frame(width: 320)
         .background {
-            Button("Dismiss") { onDismiss() }
+            let closeAction = { (onClose ?? onDismiss)() }
+            Button("K1") { closeAction() }
                 .keyboardShortcut(.return, modifiers: [])
                 .frame(width: 0, height: 0)
                 .opacity(0)
 
-            Button("Dismiss2") { onDismiss() }
+            Button("K2") { closeAction() }
                 .keyboardShortcut(.space, modifiers: [])
+                .frame(width: 0, height: 0)
+                .opacity(0)
+
+            Button("K3") { closeAction() }
+                .keyboardShortcut(.escape, modifiers: [])
                 .frame(width: 0, height: 0)
                 .opacity(0)
         }
