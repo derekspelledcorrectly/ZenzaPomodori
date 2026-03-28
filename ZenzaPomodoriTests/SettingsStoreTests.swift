@@ -153,7 +153,7 @@ struct SettingsStoreTests {
 
     @Test func defaultFocusEndSound() {
         let store = makeStore()
-        #expect(store.focusEndSound == "Calm")
+        #expect(store.focusEndSound == "Reverie")
     }
 
     @Test func setFocusEndSound() {
@@ -175,7 +175,7 @@ struct SettingsStoreTests {
 
     @Test func defaultBreakEndSound() {
         let store = makeStore()
-        #expect(store.breakEndSound == "Chord")
+        #expect(store.breakEndSound == "Cloud")
     }
 
     @Test func setBreakEndSound() {
