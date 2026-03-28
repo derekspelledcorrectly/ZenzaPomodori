@@ -144,6 +144,48 @@ struct PopoverContainerView: View {
         .menuIndicator(.hidden)
         .fixedSize()
         .padding(8)
+        .background { gearMenuShortcuts }
+    }
+
+    @ViewBuilder
+    private var gearMenuShortcuts: some View {
+        if timer.phase != .idle {
+            hiddenShortcut(.leftArrow, modifiers: .command) {
+                timer.restartPhase()
+            }
+            if router.activePanel == .sliceActive, let engine = router.sliceEngine {
+                hiddenShortcut("e", modifiers: .command) {
+                    engine.pause()
+                    timer.pause()
+                    workingItems = engine.rotationItems
+                    router.activePanel = .sliceSetup
+                }
+            }
+            if timer.phase.isFocus {
+                hiddenShortcut(.delete, modifiers: .command) {
+                    if let engine = router.sliceEngine, engine.isActive {
+                        engine.deactivate()
+                        router.activePanel = .sliceSetup
+                    } else {
+                        timer.abandonBlock()
+                    }
+                }
+            }
+        }
+        hiddenShortcut(",", modifiers: .command) {
+            router.activePanel = .settings
+        }
+    }
+
+    private func hiddenShortcut(
+        _ key: KeyEquivalent,
+        modifiers: EventModifiers,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) { EmptyView() }
+            .keyboardShortcut(key, modifiers: modifiers)
+            .frame(width: 0, height: 0)
+            .opacity(0)
     }
 
     // MARK: - Panels
