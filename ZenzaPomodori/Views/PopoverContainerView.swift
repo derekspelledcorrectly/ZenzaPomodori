@@ -16,10 +16,9 @@ struct PopoverContainerView: View {
         Group {
             switch router.activePanel {
             case .timer:
-                MenuBarView(
-                    timer: timer,
-                    onOpenSettings: { router.activePanel = .settings }
-                )
+                MenuBarView(timer: timer) {
+                    gearMenu
+                }
 
             case .settings:
                 SettingsView(
@@ -79,6 +78,71 @@ struct PopoverContainerView: View {
         router.sliceEngine?.isActive == true
     }
 
+    // MARK: - Gear Menu
+
+    @ViewBuilder
+    private var gearMenu: some View {
+        Menu {
+            if timer.phase != .idle {
+                if router.activePanel == .sliceActive, let engine = router.sliceEngine {
+                    Button("Edit Rotation List", systemImage: "list.bullet") {
+                        engine.pause()
+                        timer.pause()
+                        workingItems = engine.rotationItems
+                        router.activePanel = .sliceSetup
+                    }
+                }
+
+                Button("Restart Timer", systemImage: "arrow.counterclockwise") {
+                    timer.restartPhase()
+                }
+
+                Divider()
+
+                Button(action: {
+                    if let engine = router.sliceEngine, engine.isActive {
+                        engine.deactivate()
+                    }
+                    timer.next()
+                }) {
+                    Label("Finish Block Early", systemImage: "checkmark.circle")
+                        .foregroundStyle(.orange)
+                }
+
+                Button(role: .destructive, action: {
+                    if let engine = router.sliceEngine, engine.isActive {
+                        engine.deactivate()
+                        router.activePanel = .sliceSetup
+                    } else {
+                        timer.abandonBlock()
+                    }
+                }) {
+                    Label("Abandon Block", systemImage: "xmark.circle")
+                }
+
+                Divider()
+            }
+
+            Button("Settings...", systemImage: "gearshape") {
+                router.activePanel = .settings
+            }
+        } label: {
+            Image(systemName: "gearshape")
+                .foregroundStyle(.secondary)
+                .overlay(alignment: .topTrailing) {
+                    if timer.phase != .idle {
+                        Circle()
+                            .fill(Color.accentColor)
+                            .frame(width: 6, height: 6)
+                            .offset(x: 2, y: -2)
+                    }
+                }
+        }
+        .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
+        .padding(8)
+    }
+
     // MARK: - Panels
 
     private var sliceIdlePanel: some View {
@@ -120,12 +184,7 @@ struct PopoverContainerView: View {
         .padding()
         .frame(width: 280)
         .overlay(alignment: .topTrailing) {
-            Button(action: { router.activePanel = .settings }) {
-                Image(systemName: "gearshape")
-                    .foregroundStyle(.secondary)
-            }
-            .buttonStyle(.borderless)
-            .padding(8)
+            gearMenu
         }
     }
 
@@ -140,6 +199,9 @@ struct PopoverContainerView: View {
                     if engine.isPaused { engine.resume() } else { engine.pause() }
                 }
             )
+            .overlay(alignment: .topTrailing) {
+                gearMenu
+            }
         } else {
             Color.clear.onAppear { router.activePanel = .timer }
         }
