@@ -82,7 +82,6 @@ struct MenuBarView<GearContent: View>: View {
         } else {
             shortcutButton(.return, modifiers: [], action: togglePlayPause)
             shortcutButton(.space, modifiers: [], action: togglePlayPause)
-            shortcutButton(.rightArrow, modifiers: .command, action: timer.next)
         }
     }
 
