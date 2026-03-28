@@ -93,6 +93,7 @@ struct PopoverContainerView: View {
                     }) {
                         Label("Edit Rotation List", systemImage: "list.bullet")
                     }
+                    .keyboardShortcut("e", modifiers: .command)
                 }
 
                 Button(action: {
@@ -100,6 +101,7 @@ struct PopoverContainerView: View {
                 }) {
                     Label("Restart Timer", systemImage: "arrow.counterclockwise")
                 }
+                .keyboardShortcut(.leftArrow, modifiers: .command)
 
                 if timer.phase.isFocus {
                     Divider()
@@ -114,6 +116,7 @@ struct PopoverContainerView: View {
                     }) {
                         Label("Abandon Block", systemImage: "xmark.circle")
                     }
+                    .keyboardShortcut(.delete, modifiers: .command)
                 }
 
                 Divider()
@@ -124,6 +127,7 @@ struct PopoverContainerView: View {
             }) {
                 Label("Settings...", systemImage: "gearshape")
             }
+            .keyboardShortcut(",", modifiers: .command)
         } label: {
             Image(systemName: "gearshape")
                 .foregroundStyle(.secondary)
