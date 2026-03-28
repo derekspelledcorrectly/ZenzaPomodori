@@ -20,14 +20,14 @@ struct TimerControlsView: View {
                     .frame(width: 20)
             }
             .controlSize(phase == .idle ? .large : .regular)
-            .help(isRunning ? "Pause" : (phase == .idle ? "Start" : "Resume"))
+            .help(isRunning ? "Pause (Space / Return)" : (phase == .idle ? "Start (Return)" : "Resume (Space / Return)"))
 
             if phase != .idle {
                 Button(action: onNext) {
                     Image(systemName: phase.isFocus ? "checkmark.circle" : "forward.end.fill")
                         .frame(width: 20)
                 }
-                .help(phase.isFocus ? "Complete Block" : "Skip Break")
+                .help(phase.isFocus ? "Complete Block (\u{2318}\u{2192})" : "Skip Break (\u{2318}\u{2192})")
             }
         }
         .buttonStyle(.bordered)
