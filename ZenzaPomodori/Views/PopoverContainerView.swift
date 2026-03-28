@@ -87,10 +87,10 @@ struct PopoverContainerView: View {
             // at the same Y position in both Regular and Slices panels.
             // This means NSPopover only grows/shrinks at the bottom (no reposition needed).
             ConcentricTimerView(
-                microProgress: Double(settings.microRotationInterval) / Double(max(1, settings.focusDuration)),
+                microProgress: Double(settings.sliceRotationInterval) / Double(max(1, settings.focusDuration)),
                 outerProgress: 1.0,
                 microTimeFormatted: timer.formattedTime,
-                outerTimeFormatted: "\(settings.microRotationInterval / 60) min each",
+                outerTimeFormatted: "\(settings.sliceRotationInterval / 60) min each",
                 outerColor: .accentColor.opacity(0.25)
             )
 

@@ -16,7 +16,7 @@ enum Defaults {
     static let autoDismissSeconds: Int = 5
     static let focusNameMaxRecents: Int = 25
     static let slicesEnabled: Bool = false
-    static let microRotationInterval: Int = 180
+    static let sliceRotationInterval: Int = 180
     static let sliceSoundEnabled: Bool = true
     static let sliceEndSound: String = "Taptap"
     static let stealFocusOnRotation: Bool = false
@@ -47,7 +47,7 @@ enum SettingsKeys {
     static let focusNameEntries = "focusNameEntries"
     static let focusNameDraft = "focusNameDraft"
     static let slicesEnabled = "slicesEnabled"
-    static let microRotationInterval = "microRotationInterval"
+    static let sliceRotationInterval = "sliceRotationInterval"
     static let sliceSoundEnabled = "sliceSoundEnabled"
     static let sliceEndSound = "sliceEndSound"
     static let stealFocusOnRotation = "stealFocusOnRotation"
