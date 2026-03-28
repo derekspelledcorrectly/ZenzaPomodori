@@ -1,8 +1,13 @@
 import SwiftUI
 
-struct MenuBarView: View {
+struct MenuBarView<GearContent: View>: View {
     @Bindable var timer: PomodoroTimer
-    var onOpenSettings: () -> Void = {}
+    var gearContent: GearContent
+
+    init(timer: PomodoroTimer, @ViewBuilder gearContent: () -> GearContent) {
+        self.timer = timer
+        self.gearContent = gearContent()
+    }
 
     var body: some View {
         VStack(spacing: 12) {
@@ -64,12 +69,7 @@ struct MenuBarView: View {
         .padding()
         .frame(width: 280)
         .overlay(alignment: .topTrailing) {
-            Button(action: onOpenSettings) {
-                Image(systemName: "gearshape")
-                    .foregroundStyle(.secondary)
-            }
-            .buttonStyle(.borderless)
-            .padding(8)
+            gearContent
         }
         .background { keyboardShortcuts }
     }
