@@ -111,7 +111,7 @@ struct PopoverContainerView: View {
                 }) {
                     Label("Restart Timer", systemImage: "arrow.counterclockwise")
                 }
-                .keyboardShortcut(.leftArrow, modifiers: .command)
+                .keyboardShortcut("r", modifiers: .command)
 
                 if timer.phase.isFocus {
                     Divider()
@@ -163,7 +163,7 @@ struct PopoverContainerView: View {
             hiddenShortcut(.return, modifiers: .command) {
                 timer.next()
             }
-            hiddenShortcut(.leftArrow, modifiers: .command) {
+            hiddenShortcut("r", modifiers: .command) {
                 timer.restartPhase()
             }
             if router.activePanel == .sliceActive, let engine = router.sliceEngine {
