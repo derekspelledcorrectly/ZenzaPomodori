@@ -21,7 +21,7 @@ enum Defaults {
     static let sliceEndSound: String = "Taptap"
     static let stealFocusOnRotation: Bool = false
     static let sliceMenuBarFormat: SliceMenuBarFormat = .dualTimer
-    static let lastBlockType: BlockType = .regular
+    static let lastBlockType: BlockType = .focus
     static let globalHotkeyEnabled: Bool = true
     static let globalHotkeyKeyCode: UInt32 = 35 // P
     static let globalHotkeyModifiers: UInt32 = 4608 // controlKey + shiftKey

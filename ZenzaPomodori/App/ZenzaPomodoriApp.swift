@@ -54,7 +54,7 @@ final class PopoverManager: NSObject, NSPopoverDelegate {
     }
 
     func setup() {
-        settings.lastBlockType = .regular
+        settings.lastBlockType = .focus
         installEditMenu()
 
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)

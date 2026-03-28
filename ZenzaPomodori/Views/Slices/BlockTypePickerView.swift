@@ -5,7 +5,7 @@ struct BlockTypePickerView: View {
 
     var body: some View {
         Picker("Block Type", selection: $blockType) {
-            Text("Regular").tag(BlockType.regular)
+            Text("Focus").tag(BlockType.focus)
             Text("Slices").tag(BlockType.slices)
         }
         .pickerStyle(.segmented)

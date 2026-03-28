@@ -36,7 +36,7 @@ struct SliceSettingsTests {
     }
     @Test func defaultLastBlockType() {
         let store = makeStore()
-        #expect(store.lastBlockType == .regular)
+        #expect(store.lastBlockType == .focus)
     }
     @Test func sliceRotationIntervalClampsMin() {
         let store = makeStore()
