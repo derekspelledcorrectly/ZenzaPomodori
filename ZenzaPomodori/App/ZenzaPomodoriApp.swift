@@ -46,6 +46,7 @@ final class PopoverManager: NSObject {
     private var clickMonitor: Any?
     private let rotationStore = RotationStore()
     private let hotkeyService: HotkeyService
+    private let aboutWindowController = AboutWindowController()
 
     init(timer: PomodoroTimer, settings: SettingsStore) {
         self.timer = timer
@@ -173,7 +174,7 @@ final class PopoverManager: NSObject {
 
     private func handlePanelClose() {
         cancelAutoDismissTimer()
-        if router.activePanel == .settings {
+        if router.activePanel == .settings || router.activePanel == .shortcuts {
             router.activePanel = .timer
         }
     }
@@ -209,6 +210,10 @@ final class PopoverManager: NSObject {
         let menu = NSMenu()
         menu.autoenablesItems = false
 
+        let aboutItem = NSMenuItem(title: "About Zenza Pomodori", action: #selector(openAbout), keyEquivalent: "")
+        aboutItem.target = self
+        menu.addItem(aboutItem)
+
         let settingsItem = NSMenuItem(title: "Settings...", action: #selector(openSettings), keyEquivalent: ",")
         settingsItem.target = self
         menu.addItem(settingsItem)
@@ -222,6 +227,10 @@ final class PopoverManager: NSObject {
         statusItem?.menu = menu
         statusItem?.button?.performClick(nil)
         statusItem?.menu = nil
+    }
+
+    @objc private func openAbout() {
+        aboutWindowController.showAbout()
     }
 
     @objc private func openSettings() {
@@ -248,6 +257,10 @@ final class PopoverManager: NSObject {
                     self.panel.makeFirstResponder(picker)
                 }
             case .sliceSetup, .sliceActive:
+                if let button = self.firstBorderedButton(in: contentView) {
+                    self.panel.makeFirstResponder(button)
+                }
+            case .shortcuts:
                 if let button = self.firstBorderedButton(in: contentView) {
                     self.panel.makeFirstResponder(button)
                 }
