@@ -12,7 +12,7 @@ struct HotkeyServiceTests {
 
     @Test func defaultHotkeySettings() {
         let settings = makeSettings()
-        #expect(settings.globalHotkeyEnabled == true)
+        #expect(settings.globalHotkeyEnabled == false)
         #expect(settings.globalHotkeyKeyCode == 6)
         #expect(settings.globalHotkeyModifiers == 4608)
     }
@@ -21,11 +21,11 @@ struct HotkeyServiceTests {
         let suiteName = "test-hotkey-\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suiteName)!
         let store1 = SettingsStore(defaults: defaults)
-        store1.globalHotkeyEnabled = false
+        store1.globalHotkeyEnabled = true
         store1.globalHotkeyKeyCode = 0
         store1.globalHotkeyModifiers = 256
         let store2 = SettingsStore(defaults: defaults)
-        #expect(store2.globalHotkeyEnabled == false)
+        #expect(store2.globalHotkeyEnabled == true)
         #expect(store2.globalHotkeyKeyCode == 0)
         #expect(store2.globalHotkeyModifiers == 256)
     }
@@ -41,7 +41,7 @@ struct HotkeyServiceTests {
         let settings = makeSettings()
         var callCount = 0
         settings.onHotkeySettingsChanged = { callCount += 1 }
-        settings.globalHotkeyEnabled = false
+        settings.globalHotkeyEnabled = true
         #expect(callCount == 1)
     }
 
