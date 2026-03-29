@@ -192,7 +192,7 @@ struct SettingsView: View {
             }
 
             Section("Global Hotkey") {
-                Toggle("Enable global hotkey", isOn: $settings.globalHotkeyEnabled)
+                Toggle("Show/hide timer hotkey", isOn: $settings.globalHotkeyEnabled)
 
                 if settings.globalHotkeyEnabled {
                     HStack {
@@ -249,7 +249,7 @@ struct SettingsView: View {
                 }
 
                 Section("Hotkey") {
-                    Toggle("Next Slice global hotkey", isOn: $settings.rotationHotkeyEnabled)
+                    Toggle("Next slice hotkey", isOn: $settings.rotationHotkeyEnabled)
 
                     if settings.rotationHotkeyEnabled {
                         HStack {
