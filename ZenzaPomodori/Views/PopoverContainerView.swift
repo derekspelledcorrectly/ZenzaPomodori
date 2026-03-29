@@ -233,19 +233,24 @@ struct PopoverContainerView: View {
             // Match TimerDisplayView's 140px frame so the picker stays
             // at the same Y position in both Focus and Slices panels.
             ConcentricTimerView(
-                sliceProgress: Double(settings.sliceRotationInterval) / Double(max(1, settings.focusDuration)),
-                outerProgress: 1.0,
-                sliceTimeFormatted: timer.formattedTime,
-                outerTimeFormatted: "\(settings.sliceRotationInterval / 60) min each",
-                outerColor: .accentColor.opacity(0.25)
+                sliceProgress: timer.progress,
+                outerProgress: router.sliceEngine?.progress ?? Double(settings.sliceRotationInterval) / Double(max(1, settings.focusDuration)),
+                sliceTimeFormatted: router.sliceEngine != nil
+                    ? TimeFormatting.formatted(seconds: router.sliceEngine!.sliceSecondsRemaining)
+                    : TimeFormatting.formatted(seconds: settings.sliceRotationInterval),
+                outerTimeFormatted: timer.formattedTime,
+                outerColor: .orange,
+                innerColor: timer.phase == .idle ? .accentColor.opacity(0.25) : .accentColor
             )
 
-            BlockTypePickerView(
-                blockType: Binding(
-                    get: { settings.lastBlockType },
-                    set: { settings.lastBlockType = $0 }
+            if !isEditingActiveRotation {
+                BlockTypePickerView(
+                    blockType: Binding(
+                        get: { settings.lastBlockType },
+                        set: { settings.lastBlockType = $0 }
+                    )
                 )
-            )
+            }
 
             SliceSetupView(
                 rotationStore: rotationStore,
