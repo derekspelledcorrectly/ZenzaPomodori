@@ -178,8 +178,17 @@ struct PopoverContainerView: View {
     @ViewBuilder
     private var gearMenuShortcuts: some View {
         if timer.phase != .idle {
-            hiddenShortcut(.return, modifiers: .command) {
-                timer.next()
+            if isEditingActiveRotation, let engine = router.sliceEngine {
+                hiddenShortcut(.return, modifiers: .command) {
+                    engine.updateItems(workingItems)
+                    engine.resume()
+                    timer.resume()
+                    router.activePanel = .sliceActive
+                }
+            } else {
+                hiddenShortcut(.return, modifiers: .command) {
+                    timer.next()
+                }
             }
             if router.activePanel == .sliceActive, let engine = router.sliceEngine {
                 hiddenShortcut("r", modifiers: .command) {
@@ -233,8 +242,8 @@ struct PopoverContainerView: View {
             // Match TimerDisplayView's 140px frame so the picker stays
             // at the same Y position in both Focus and Slices panels.
             ConcentricTimerView(
-                sliceProgress: timer.progress,
-                outerProgress: router.sliceEngine?.progress ?? Double(settings.sliceRotationInterval) / Double(max(1, settings.focusDuration)),
+                sliceProgress: timer.phase == .idle ? 1.0 : timer.progress,
+                outerProgress: router.sliceEngine?.progress ?? 1.0,
                 sliceTimeFormatted: router.sliceEngine != nil
                     ? TimeFormatting.formatted(seconds: router.sliceEngine!.sliceSecondsRemaining)
                     : TimeFormatting.formatted(seconds: settings.sliceRotationInterval),
