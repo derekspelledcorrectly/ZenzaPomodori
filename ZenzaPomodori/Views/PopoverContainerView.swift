@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 struct PopoverContainerView: View {
@@ -24,13 +25,10 @@ struct PopoverContainerView: View {
                     settings: settings,
                     soundService: soundService,
                     onBack: {
-                        if router.sliceEngine?.isActive == true {
-                            router.activePanel = .sliceActive
-                        } else if settings.lastBlockType == .slices {
-                            router.activePanel = .sliceSetup
-                        } else {
-                            router.activePanel = .timer
-                        }
+                        router.activePanel = router.returnToContextPanel(
+                            sliceEngineActive: router.sliceEngine?.isActive == true,
+                            lastBlockType: settings.lastBlockType
+                        )
                     }
                 )
 
@@ -39,6 +37,16 @@ struct PopoverContainerView: View {
 
             case .sliceActive:
                 sliceActivePanel
+
+            case .shortcuts:
+                KeyboardShortcutsView(
+                    onBack: {
+                        router.activePanel = router.returnToContextPanel(
+                            sliceEngineActive: router.sliceEngine?.isActive == true,
+                            lastBlockType: settings.lastBlockType
+                        )
+                    }
+                )
             }
         }
         .onChange(of: router.activePanel) { _, panel in
@@ -156,6 +164,23 @@ struct PopoverContainerView: View {
                 Label("Settings...", systemImage: "gearshape")
             }
             .keyboardShortcut(",", modifiers: .command)
+
+            Button(action: {
+                router.activePanel = .shortcuts
+            }) {
+                Label("Keyboard Shortcuts", systemImage: "keyboard")
+            }
+            .keyboardShortcut("/", modifiers: .command)
+
+            Divider()
+
+            Button(action: {
+                if let url = URL(string: "mailto:help@zenzapomodori.com") {
+                    NSWorkspace.shared.open(url)
+                }
+            }) {
+                Label("Support & Feedback", systemImage: "envelope")
+            }
         } label: {
             Image(systemName: "gearshape")
                 .foregroundStyle(.secondary)
@@ -219,8 +244,22 @@ struct PopoverContainerView: View {
                 }
             }
         }
+        if timer.phase == .idle && settings.slicesEnabled {
+            hiddenShortcut(.leftArrow, modifiers: .command) {
+                settings.lastBlockType = .focus
+            }
+            hiddenShortcut(.rightArrow, modifiers: .command) {
+                settings.lastBlockType = .slices
+            }
+        }
         hiddenShortcut(",", modifiers: .command) {
             router.activePanel = .settings
+        }
+        hiddenShortcut("/", modifiers: .command) {
+            router.activePanel = .shortcuts
+        }
+        hiddenShortcut("/", modifiers: [.command, .shift]) {
+            router.activePanel = .shortcuts
         }
     }
 

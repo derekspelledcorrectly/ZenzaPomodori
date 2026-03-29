@@ -5,6 +5,7 @@ enum PopoverPanel {
     case settings
     case sliceSetup
     case sliceActive
+    case shortcuts
 }
 
 @Observable
@@ -12,4 +13,14 @@ enum PopoverPanel {
 final class PopoverRouter {
     var activePanel: PopoverPanel = .timer
     var sliceEngine: SliceEngine?
+
+    func returnToContextPanel(sliceEngineActive: Bool, lastBlockType: BlockType) -> PopoverPanel {
+        if sliceEngineActive {
+            return .sliceActive
+        } else if lastBlockType == .slices {
+            return .sliceSetup
+        } else {
+            return .timer
+        }
+    }
 }
