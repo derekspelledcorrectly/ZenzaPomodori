@@ -123,6 +123,11 @@ a:focus-visible {
 }
 
 /* --- Layout --- */
+main {
+  position: relative;
+  overflow: hidden;
+}
+
 .container {
   max-width: var(--max-width);
   margin: 0 auto;
@@ -459,7 +464,7 @@ kbd {
   color: var(--text);
 }
 
-/* Concentric Rings Animation */
+/* Concentric Rings — Floating Decoration */
 .microblocks-visual {
   display: flex;
   flex-direction: column;
@@ -467,21 +472,19 @@ kbd {
   gap: var(--space-xl);
 }
 
-.concentric-rings {
-  position: relative;
-  width: 220px;
-  height: 220px;
-}
-
-.ring {
+.rings-deco {
   position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  right: 20px;
+  top: 700px;
+  width: 340px;
+  height: 340px;
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform;
 }
 
-.ring svg {
+.rings-deco svg {
   width: 100%;
   height: 100%;
 }
@@ -491,53 +494,10 @@ kbd {
   transform: rotate(-90deg);
 }
 
-.ring-progress-outer {
-  animation: ring-rotate-outer 25s linear infinite;
-}
-
-.ring-progress-inner {
-  animation: ring-rotate-inner 8s linear infinite;
-}
-
-@keyframes ring-rotate-outer {
-  from { stroke-dashoffset: 0; }
-  to { stroke-dashoffset: -566; }
-}
-
-@keyframes ring-rotate-inner {
-  from { stroke-dashoffset: 0; }
-  to { stroke-dashoffset: -440; }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .ring-progress-outer,
-  .ring-progress-inner {
-    animation: none;
+  .rings-deco {
+    display: none;
   }
-}
-
-.ring-label {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.ring-time {
-  font-family: var(--font-mono);
-  font-size: 1.75rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: var(--text);
-}
-
-.ring-task {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  margin-top: 0.25rem;
 }
 
 /* --- Screenshot Frames --- */
@@ -911,6 +871,10 @@ kbd {
     display: none;
   }
 
+  .rings-deco {
+    display: none;
+  }
+
   .features-grid {
     grid-template-columns: 1fr;
   }
@@ -947,11 +911,6 @@ kbd {
     flex-direction: column;
     gap: var(--space-sm);
     text-align: center;
-  }
-
-  .concentric-rings {
-    width: 180px;
-    height: 180px;
   }
 
   .screenshot-img {
