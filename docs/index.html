@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zenza Pomodori | A Tomato-Free Focus Timer for macOS</title>
-  <meta name="description" content="A menu bar Pomodoro timer for macOS. No dock icon, no window clutter. Slices mode cycles your focus across multiple agents. Free and open source.">
+  <meta name="description" content="A menu bar Pomodoro timer for macOS. No dock icon, no window clutter. Slices mode cycles your focus across multiple agents. Open source.">
 
   <!-- Open Graph (TODO: replace og-image.svg with a PNG for social platform compatibility) -->
   <meta property="og:title" content="Zenza Pomodori">
-  <meta property="og:description" content="A tomato-free focus timer for your macOS menu bar. Free and open source.">
+  <meta property="og:description" content="A tomato-free focus timer built for the agentic era. Open source.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://zenzapomodori.com/">
   <meta property="og:image" content="https://zenzapomodori.com/og-image.svg">
@@ -16,7 +16,7 @@
   <!-- Twitter/X Card (TODO: replace with PNG) -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Zenza Pomodori">
-  <meta name="twitter:description" content="A tomato-free focus timer for your macOS menu bar.">
+  <meta name="twitter:description" content="A tomato-free focus timer built for the agentic era.">
   <meta name="twitter:image" content="https://zenzapomodori.com/og-image.svg">
 
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -79,7 +79,7 @@
             </svg>
           </div>
         </div>
-        <h1 class="hero-title reveal">A <span class="tomato-tip" tabindex="0" role="button" aria-label="Why tomato-free?">tomato-free<a href="#tomato-free" class="tomato-asterisk" aria-label="Why tomato-free?">*</a><span class="tomato-tip-text">Though the Pomodoro technique works well for me, I've never liked tomatoes very much. They are the fruit of an otherwise toxic nightshade plant, you know.</span></span> focus timer<br>for your macOS menu bar.</h1>
+        <h1 class="hero-title reveal">A <span class="tomato-tip" tabindex="0" role="button" aria-label="Why tomato-free?">tomato-free<a href="#tomato-free" class="tomato-asterisk" aria-label="Why tomato-free?">*</a><span class="tomato-tip-text">Though the Pomodoro technique works well for me, I've never liked tomatoes very much. They are the fruit of an otherwise toxic nightshade plant, you know.</span></span> focus timer<br>for humans in the agentic era.</h1>
         <p class="hero-subtitle reveal">No dock icon. No window clutter. Just focus.</p>
         <div class="hero-cta reveal">
           <a href="https://github.com/derekspelledcorrectly/ZenzaPomodori/releases" class="btn btn-primary" target="_blank" rel="noopener">
@@ -95,7 +95,7 @@
             Mac App Store (Soon)
           </span>
         </div>
-        <p class="hero-meta reveal">macOS 15+ &middot; Free &amp; Open Source &middot; GPL-3.0</p>
+        <p class="hero-meta reveal">macOS 15+ &middot; Open Source &middot; GPL-3.0</p>
       </div>
     </section>
 
@@ -114,8 +114,8 @@
                 <path d="M24 22 L24 30 L30 30" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"/>
               </svg>
             </div>
-            <h3>Menu Bar Native</h3>
-            <p>Lives in your menu bar where it belongs. A clean popover with timer display and controls. No dock icon stealing your attention.</p>
+            <h3>Fully Native</h3>
+            <p>Built with SwiftUI and native vibrancy. The popover adapts to your context and appearance. Lives in your menu bar where it belongs, no dock icon stealing your attention.</p>
           </div>
 
           <div class="feature-card reveal">
@@ -192,14 +192,14 @@
       <div class="container">
         <div class="microblocks-layout">
           <div class="microblocks-text">
-            <h2 class="section-title reveal">Built for the age of agents.</h2>
-            <p class="microblocks-lead reveal">Context switching is expensive. Task loading is real. But when you're managing three agents in parallel, the cost of <em>not</em> checking in is higher: stalled agents, lost momentum, compounding delays.</p>
-            <p class="reveal">Slices gives you structure. Set up a rotation list for your active workstreams. The timer cycles you through each one in short intervals: check in, unblock, advance. No decision fatigue about what to look at next. No forgetting which agent you haven't touched in 20 minutes.</p>
-            <p class="reveal">For deep solo work, use regular focus blocks. Slices is for when you're the bottleneck across multiple parallel tasks and you need to keep everything moving.</p>
+            <h2 class="section-title reveal">Parallel focus, on rotation.</h2>
+            <p class="microblocks-lead reveal">Context switching is expensive. Task loading is real. But when you're managing a team of agents in parallel, the cost of <em>not</em> checking in is higher: stalled agents, lost momentum, compounding delays.</p>
+            <p class="reveal">Slices give you structure. Set up a rotation list for your active workstreams. The timer cycles you through each one in short intervals: check in, unblock, advance. No decision fatigue about what to look at next. No forgetting which agent you haven't touched in 20 minutes.</p>
+            <p class="reveal">A Slices block takes the place of any regular focus block. Instead of 25 minutes on one task, you spend that block cycling through your agents: unblock each one, keep them all moving. When the block ends, take your break, then come back to solo work or another round of slices.</p>
             <div class="microblocks-details reveal">
               <div class="micro-detail">
                 <span class="micro-detail-label">Rotation interval</span>
-                <span class="micro-detail-value">Configurable (default 3 min)</span>
+                <span class="micro-detail-value">Configurable (default 2 min)</span>
               </div>
               <div class="micro-detail">
                 <span class="micro-detail-label">Advance early</span>
@@ -241,14 +241,25 @@
           </div>
           <div class="showcase-text">
             <h2 class="section-title reveal">Clean, focused interface.</h2>
-            <p class="reveal">A circular progress ring with countdown display. Play, pause, skip, reset. Everything you need, nothing you don't. The popover appears on click or hotkey and disappears when you click away.</p>
-            <ul class="showcase-list reveal">
-              <li>Circular progress ring with countdown</li>
-              <li>Phase indicator (Focus, Short Break, Long Break)</li>
-              <li>Block counter shows progress through your session</li>
-              <li>Name your focus session for context</li>
-              <li>Auto-pop on phase completion</li>
-            </ul>
+            <p class="reveal">For deep solo work, the classic focus timer. A progress ring, a countdown, and a name for what you're working on. The popover appears on click or hotkey and stays out of your way until a phase completes.</p>
+            <div class="microblocks-details reveal">
+              <div class="micro-detail">
+                <span class="micro-detail-label">Phases</span>
+                <span class="micro-detail-value">Focus, short break, long break</span>
+              </div>
+              <div class="micro-detail">
+                <span class="micro-detail-label">Block counter</span>
+                <span class="micro-detail-value">Tracks progress through your session</span>
+              </div>
+              <div class="micro-detail">
+                <span class="micro-detail-label">Focus name</span>
+                <span class="micro-detail-value">Label what you're working on</span>
+              </div>
+              <div class="micro-detail">
+                <span class="micro-detail-label">Auto-pop</span>
+                <span class="micro-detail-value">Popover appears when a phase completes</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -262,7 +273,7 @@
           <p class="oss-lead">Zenza Pomodori is GPL-3.0 open source. Read the code, fork it, build it yourself. No telemetry, no analytics, no nonsense.</p>
           <div class="oss-stats">
             <div class="oss-stat">
-              <span class="oss-stat-value">55+</span>
+              <span class="oss-stat-value">200+</span>
               <span class="oss-stat-label">Unit tests</span>
             </div>
             <div class="oss-stat">
@@ -313,7 +324,7 @@
               </svg>
               <h3>Mac App Store</h3>
             </div>
-            <p>Signed &amp; notarized. Automatic updates. Same app, nominal fee to cover Apple Developer Program costs.</p>
+            <p>Signed &amp; notarized. Automatic updates. Same app, nominal fee to cover Apple Developer Program costs and support open source development.</p>
             <span class="btn btn-secondary btn-disabled" aria-disabled="true">Coming Soon</span>
           </div>
         </div>
@@ -334,7 +345,7 @@
     <div class="container">
       <div class="footer-inner">
         <p>Made with focus by <a href="https://github.com/derekspelledcorrectly" target="_blank" rel="noopener">Derek Shockey</a></p>
-        <p>&copy; 2026 Giant Shenanigans &middot; GPL-3.0 &middot; <a href="https://github.com/derekspelledcorrectly/ZenzaPomodori" target="_blank" rel="noopener">Source on GitHub</a></p>
+        <p>&copy; 2026 Giant Shenanigans LLC &middot; GPL-3.0 &middot; <a href="https://github.com/derekspelledcorrectly/ZenzaPomodori" target="_blank" rel="noopener">Source on GitHub</a></p>
       </div>
     </div>
   </footer>
