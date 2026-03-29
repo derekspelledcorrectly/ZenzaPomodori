@@ -68,6 +68,32 @@
     });
   }
 
+  // Floating rings parallax on scroll
+  function initRingsParallax() {
+    var rings = document.querySelector('.rings-deco');
+    if (!rings) return;
+
+    var prefersReducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
+    if (prefersReducedMotion) return;
+
+    var ticking = false;
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        requestAnimationFrame(function () {
+          var scrollY = window.scrollY;
+          var yOffset = scrollY * -0.35;
+          var rotation = scrollY * 0.08;
+          rings.style.transform =
+            'translateY(' + yOffset + 'px) rotate(' + rotation + 'deg)';
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+  }
+
   // Smooth scroll for anchor links
   function initSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(function (link) {
@@ -88,6 +114,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     initScrollReveal();
     initIconTilt();
+    initRingsParallax();
     initSmoothScroll();
   });
 })();

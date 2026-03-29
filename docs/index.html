@@ -50,6 +50,16 @@
 
   <main>
 
+    <!-- Floating concentric rings decoration -->
+    <div class="rings-deco" aria-hidden="true">
+      <svg viewBox="0 0 200 200" width="200" height="200">
+        <circle cx="100" cy="100" r="90" fill="none" stroke="var(--border)" stroke-width="1.5"/>
+        <circle cx="100" cy="100" r="90" fill="none" stroke="var(--ring-outer)" stroke-width="2.5" stroke-dasharray="400 566" stroke-linecap="round" class="ring-progress ring-progress-outer"/>
+        <circle cx="100" cy="100" r="70" fill="none" stroke="var(--border)" stroke-width="1.5"/>
+        <circle cx="100" cy="100" r="70" fill="none" stroke="var(--ring-inner)" stroke-width="2.5" stroke-dasharray="280 440" stroke-linecap="round" class="ring-progress ring-progress-inner"/>
+      </svg>
+    </div>
+
     <!-- Hero -->
     <section class="hero">
       <div class="hero-inner">
@@ -206,24 +216,6 @@
             </div>
           </div>
           <div class="microblocks-visual reveal">
-            <div class="concentric-rings" aria-hidden="true">
-              <div class="ring ring-outer">
-                <svg viewBox="0 0 200 200">
-                  <circle cx="100" cy="100" r="90" fill="none" stroke="var(--border)" stroke-width="2"/>
-                  <circle cx="100" cy="100" r="90" fill="none" stroke="var(--ring-outer)" stroke-width="3" stroke-dasharray="400 566" stroke-linecap="round" class="ring-progress ring-progress-outer"/>
-                </svg>
-              </div>
-              <div class="ring ring-inner">
-                <svg viewBox="0 0 200 200">
-                  <circle cx="100" cy="100" r="70" fill="none" stroke="var(--border)" stroke-width="2"/>
-                  <circle cx="100" cy="100" r="70" fill="none" stroke="var(--ring-inner)" stroke-width="3" stroke-dasharray="280 440" stroke-linecap="round" class="ring-progress ring-progress-inner"/>
-                </svg>
-              </div>
-              <div class="ring-label">
-                <span class="ring-time">2:47</span>
-                <span class="ring-task">agent 2: API</span>
-              </div>
-            </div>
             <div class="screenshot-frame">
               <picture>
                 <source srcset="screenshot-slices-dark.png" media="(prefers-color-scheme: dark)">
