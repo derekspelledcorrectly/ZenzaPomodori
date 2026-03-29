@@ -143,7 +143,7 @@ struct SliceSetupView: View {
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
-            .background(Color.primary.opacity(0.06), in: Capsule())
+            .background(Color.primary.opacity(0.1), in: Capsule())
         }
         .buttonStyle(.plain)
     }
@@ -156,10 +156,10 @@ struct SliceSetupView: View {
                 Text(name)
                     .font(.system(size: 11))
             }
-            .foregroundStyle(Color.accentColor.opacity(0.8))
+            .foregroundStyle(.secondary)
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
-            .background(Color.accentColor.opacity(0.08), in: Capsule())
+            .background(Color.accentColor.opacity(0.1), in: Capsule())
         }
         .buttonStyle(.plain)
     }
