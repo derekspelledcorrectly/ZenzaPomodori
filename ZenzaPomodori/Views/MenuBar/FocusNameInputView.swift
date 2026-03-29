@@ -34,8 +34,9 @@ struct FocusNameInputView: View {
         Group {
             if let name = activeFocusName {
                 Text(name)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .font(.callout)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.primary)
                     .lineLimit(2)
                     .frame(maxWidth: .infinity)
             }
