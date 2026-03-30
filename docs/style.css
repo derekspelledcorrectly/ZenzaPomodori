@@ -266,7 +266,8 @@ main {
   transform: rotateY(-8deg) rotateX(5deg) scale(1.05);
 }
 
-/* Hero ring animations */
+/* Hero ring animations — gated on .visible so they don't play while
+   the scroll-reveal parent is still opacity:0 */
 .hero-ring {
   transform-origin: 80px 80px;
   transform: rotate(-90deg);
@@ -274,12 +275,32 @@ main {
 
 .hero-ring-outer {
   stroke-dasharray: 0 428;
-  animation: sweep-outer 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards;
 }
 
 .hero-ring-inner {
   stroke-dasharray: 0 314;
+}
+
+.hero-ring-dot {
+  opacity: 0;
+}
+
+/* Start animations only after reveal triggers */
+.visible .hero-ring-outer {
+  animation: sweep-outer 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards,
+             ring-pulse 4s ease-in-out 2s infinite;
+}
+
+.visible .hero-ring-inner {
   animation: sweep-inner 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s forwards;
+}
+
+.visible .hero-ring-dot-outer {
+  animation: dot-appear 0.4s ease 1.5s forwards;
+}
+
+.visible .hero-ring-dot-inner {
+  animation: dot-appear 0.4s ease 1.6s forwards;
 }
 
 @keyframes sweep-outer {
@@ -290,28 +311,8 @@ main {
   to { stroke-dasharray: 173 314; }
 }
 
-/* Endpoint dots fade in after arcs finish */
-.hero-ring-dot {
-  opacity: 0;
-  animation: dot-appear 0.4s ease forwards;
-}
-
-.hero-ring-dot-outer {
-  animation-delay: 1.5s;
-}
-
-.hero-ring-dot-inner {
-  animation-delay: 1.6s;
-}
-
 @keyframes dot-appear {
   to { opacity: 1; }
-}
-
-/* Subtle glow pulse on the outer ring */
-.hero-ring-outer {
-  animation: sweep-outer 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards,
-             ring-pulse 4s ease-in-out 2s infinite;
 }
 
 @keyframes ring-pulse {
