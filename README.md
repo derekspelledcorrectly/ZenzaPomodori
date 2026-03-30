@@ -22,7 +22,7 @@ The Mac App Store listing is not live yet. In the meantime, you can grab an unsi
 
 ### Build from source
 
-Requires macOS 15+ and Xcode Command Line Tools (free, no Apple Developer Program fee).
+Requires macOS 15+ and Xcode Command Line Tools (free, no Apple Developer Program fee). Point your favorite AI agent at [`AGENTS.md`](AGENTS.md) for detailed build instructions.
 
 ```bash
 xcode-select --install      # Install Xcode Command Line Tools (if not already installed)
