@@ -18,11 +18,10 @@ rerun: build
 	-pkill -x "Zenza Pomodori"
 	open "$(DERIVED_DATA)/Build/Products/Debug/Zenza Pomodori.app"
 
+release: generate
+	xcodebuild -scheme ZenzaPomodori -configuration Release -derivedDataPath $(DERIVED_DATA) build
+	@echo "Built: $(DERIVED_DATA)/Build/Products/Release/Zenza Pomodori.app"
+
 clean:
 	rm -rf $(DERIVED_DATA)
 	xcodebuild -scheme ZenzaPomodori clean 2>/dev/null || true
-
-release: generate
-	xcodebuild -scheme ZenzaPomodori -configuration Release -derivedDataPath $(DERIVED_DATA) build
-	cd "$(DERIVED_DATA)/Build/Products/Release" && zip -r ../../../../ZenzaPomodori.zip "Zenza Pomodori.app"
-	@echo "Release built: ZenzaPomodori.zip"

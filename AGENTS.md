@@ -1,72 +1,163 @@
 # Agent Guidelines for Zenza Pomodori
 
-## Project Overview
+Zenza Pomodori is a macOS menu bar focus timer built with SwiftUI and Swift 6.
+It runs as a menu bar agent (LSUIElement) with no Dock presence. GPL-3.0 open
+source.
 
-Zenza Pomodori is a macOS menu bar pomodoro timer built with SwiftUI and Swift 6. The app runs as a menu bar agent (LSUIElement) with no Dock presence.
+## Helping a User Build From Source
 
-## Build System
+If someone asks you to build this app for them, walk them through these steps.
+Check each prerequisite before installing it.
 
-This project uses [XcodeGen](https://github.com/yonaskolb/XcodeGen) to generate the Xcode project from `project.yml`. The `.xcodeproj` is gitignored. All build commands go through the `Makefile`:
+### 1. Xcode Command Line Tools
 
-- `make build` -- generate project and build Debug
-- `make test` -- generate project and run unit tests
-- `make run` -- build and launch the app
-- `make clean` -- remove build artifacts
-- `make release` -- build Release and package as .zip
+Required for `xcodebuild`, `clang`, and the macOS SDK.
 
-Build output goes to `.build/` (local derived data, gitignored).
+```bash
+# Check if already installed
+xcode-select -p          # success = installed, error = not installed
 
-Always run `make test` after changes to verify nothing is broken.
+# Install if needed
+xcode-select --install   # opens a system dialog, user must click "Install"
+```
+
+`xcode-select` ships with every Mac. No prerequisites. The Command Line Tools
+are free and do not require an Apple Developer Program membership -- a free
+Apple ID is enough.
+
+After the dialog completes, verify with `xcode-select -p` again.
+
+### 2. Homebrew
+
+Required to install XcodeGen.
+
+```bash
+# Check if already installed
+which brew
+
+# Install if needed (see https://brew.sh)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+### 3. XcodeGen
+
+Generates the `.xcodeproj` from `project.yml`. The Xcode project file is
+gitignored and must be regenerated.
+
+```bash
+# Check if already installed
+which xcodegen
+
+# Install if needed
+brew install xcodegen
+```
+
+### 4. Build and run
+
+```bash
+make run       # Builds Debug and launches the app
+```
+
+The app appears in the menu bar (not the Dock). Click the icon to open the
+timer popover.
+
+## Make Targets
+
+| Target       | Config  | What it does                                        |
+| ------------ | ------- | --------------------------------------------------- |
+| `make build` | Debug   | Generate project, build .app                        |
+| `make run`   | Debug   | Build and launch                                    |
+| `make rerun` | Debug   | Kill running instance, rebuild, relaunch             |
+| `make test`  | Debug   | Run unit tests                                      |
+| `make release` | Release | Build optimized .app, print path                  |
+| `make clean` |         | Remove `.build/` derived data                       |
+
+All build output goes to `.build/` (gitignored local derived data).
+
+### Debug vs Release
+
+- `make run` and `make rerun` build Debug for fast iteration during development.
+- `make release` builds an optimized Release `.app` suitable for daily use.
+
+### Release build location
+
+`make release` prints the path when it finishes:
+
+```
+Built: .build/Build/Products/Release/Zenza Pomodori.app
+```
+
+To install the release build (with user permission), copy it to Applications:
+
+```bash
+# System-wide (requires permission)
+cp -R ".build/Build/Products/Release/Zenza Pomodori.app" /Applications/
+
+# Per-user (no special permission)
+mkdir -p ~/Applications
+cp -R ".build/Build/Products/Release/Zenza Pomodori.app" ~/Applications/
+```
+
+Then launch:
+
+```bash
+open "/Applications/Zenza Pomodori.app"
+# or
+open "~/Applications/Zenza Pomodori.app"
+```
 
 ## Architecture
 
-**MVVM with SwiftUI Scenes**
+**Raw NSApplication + AppDelegate (no SwiftUI App lifecycle)**
 
-- `ZenzaPomodoriApp.swift` -- `@main` App with `MenuBarExtra` scene
-- `PomodoroTimer` -- `@Observable @MainActor` view model, single source of truth for timer state
-- `TimerPhase` -- enum with associated values: `.idle`, `.focus(block:)`, `.shortBreak(afterBlock:)`, `.longBreak`
-- Views are composed in `MenuBarView` from `TimerDisplayView` and `TimerControlsView`
+- `ZenzaPomodoriApp.swift` contains `AppDelegate` and `PopoverManager`
+- `PomodoroTimer` is an `@Observable @MainActor` state machine, single source
+  of truth for timer state
+- `SettingsStore` wraps `UserDefaults` with `@Observable`
+- `Constants.swift` has `Defaults` enum (values) and `SettingsKeys` enum (keys)
 
 **Key patterns:**
-- Swift structured concurrency (`Task.sleep`) for the timer tick loop, not Combine
-- `@Observable` (Observation framework), not `ObservableObject`
+
+- `@Observable` + `@Bindable` throughout (Observation framework, not
+  `ObservableObject`)
+- Swift structured concurrency (`Task.sleep`) for timer ticks, not Combine
 - Zero external dependencies
+- All timer tests are `@MainActor`
+- Tests use isolated UserDefaults suites: `UserDefaults(suiteName: "test-\(UUID())")`
 
 ## Code Conventions
 
 - Swift 6 strict concurrency
 - macOS 15.0 minimum deployment target
 - Ad-hoc code signing (`CODE_SIGN_IDENTITY: "-"`)
-- Tests use Swift Testing framework (`import Testing`, `@Test`, `#expect`), not XCTest
+- Tests use Swift Testing framework (`import Testing`, `@Test`, `#expect`), not
+  XCTest
+- `project.yml` uses directory-based sources -- creating files in the right
+  directory is sufficient, no need to edit project config
 
 ## Testing
 
-25 tests across 4 suites:
-- `PomodoroTimerTests` -- timer engine logic (start, pause, resume, skip, reset, phase transitions)
-- `TimerPhaseTests` -- phase labels, boolean helpers, equality
-- `TimeFormattingTests` -- MM:SS and short format helpers
-- `DefaultsTests` -- constant values
+214 tests across 17 suites. Run with `make test`.
 
-All timer tests are `@MainActor` since `PomodoroTimer` requires main actor isolation.
+Always run `make test` after changes to verify nothing is broken.
 
 ## File Layout
 
 ```
 ZenzaPomodori/
-  App/ZenzaPomodoriApp.swift
-  Models/TimerPhase.swift
-  ViewModels/PomodoroTimer.swift
-  Views/MenuBar/
-    MenuBarView.swift
-    TimerDisplayView.swift
-    TimerControlsView.swift
-  Utilities/
-    Constants.swift
-    TimeFormatting.swift
-  Resources/
-    Info.plist
-    Assets.xcassets/
-ZenzaPomodoriTests/
-  PomodoroTimerTests.swift
-  ZenzaPomodoriTests.swift
+  App/                  # AppDelegate, PopoverManager
+  Models/               # TimerPhase, SliceEngine
+  ViewModels/           # PomodoroTimer state machine
+  Views/
+    MenuBar/            # Timer popover UI
+    Slices/             # Rotation list and Slices controls
+    Settings/           # Settings window
+    About/              # About window
+  Services/             # HotkeyService, NotificationService, SoundService
+  Utilities/            # Constants, SettingsStore, time formatting
+  Resources/            # Info.plist, asset catalog, sounds
+ZenzaPomodoriTests/     # Unit tests (Swift Testing framework)
+project.yml             # XcodeGen spec (generates .xcodeproj, gitignored)
+Makefile                # Build automation
+docs/                   # Marketing site (zenzapomodori.com)
 ```
