@@ -65,17 +65,53 @@
       <div class="hero-inner">
         <div class="hero-icon-wrap reveal">
           <div class="hero-icon" aria-hidden="true">
-            <svg viewBox="0 0 120 120" width="120" height="120">
+            <svg viewBox="0 0 160 160" width="160" height="160">
               <defs>
-                <linearGradient id="icon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style="stop-color:var(--accent)"/>
-                  <stop offset="100%" style="stop-color:var(--accent-hover)"/>
+                <!-- Outer ring gradient (orange) -->
+                <linearGradient id="ring-outer-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#e8943a"/>
+                  <stop offset="100%" stop-color="#f0a850"/>
                 </linearGradient>
+                <!-- Inner ring gradient (teal) -->
+                <linearGradient id="ring-inner-grad" x1="100%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#59c8b3"/>
+                  <stop offset="100%" stop-color="#7ad4c4"/>
+                </linearGradient>
+                <!-- Glow filters -->
+                <filter id="glow-outer" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="3" result="blur"/>
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <filter id="glow-inner" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
               </defs>
-              <circle cx="60" cy="60" r="54" fill="none" stroke="url(#icon-grad)" stroke-width="4"/>
-              <circle cx="60" cy="60" r="42" fill="none" stroke="var(--text-secondary)" stroke-width="1.5" opacity="0.3"/>
-              <path d="M60 24 L60 60 L84 60" fill="none" stroke="url(#icon-grad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="60" cy="24" r="3" fill="var(--accent)"/>
+
+              <!-- Track rings (subtle guide circles) -->
+              <circle cx="80" cy="80" r="68" fill="none" stroke="var(--border)" stroke-width="2" opacity="0.4"/>
+              <circle cx="80" cy="80" r="50" fill="none" stroke="var(--border)" stroke-width="2" opacity="0.3"/>
+
+              <!-- Outer progress arc (orange) — ~70% sweep -->
+              <circle cx="80" cy="80" r="68" fill="none"
+                stroke="url(#ring-outer-grad)" stroke-width="5"
+                stroke-dasharray="299 428" stroke-linecap="round"
+                filter="url(#glow-outer)"
+                class="hero-ring hero-ring-outer"/>
+
+              <!-- Inner progress arc (teal) — ~55% sweep -->
+              <circle cx="80" cy="80" r="50" fill="none"
+                stroke="url(#ring-inner-grad)" stroke-width="4.5"
+                stroke-dasharray="173 314" stroke-linecap="round"
+                filter="url(#glow-inner)"
+                class="hero-ring hero-ring-inner"/>
+
+              <!-- Outer arc endpoint dot -->
+              <circle cx="80" cy="12" r="4" fill="#e8943a" class="hero-ring-dot hero-ring-dot-outer"/>
+
+              <!-- Inner arc endpoint dot -->
+              <circle cx="80" cy="30" r="3.5" fill="#59c8b3" class="hero-ring-dot hero-ring-dot-inner"/>
+
             </svg>
           </div>
         </div>

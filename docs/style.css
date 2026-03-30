@@ -266,6 +266,76 @@ main {
   transform: rotateY(-8deg) rotateX(5deg) scale(1.05);
 }
 
+/* Hero ring animations */
+.hero-ring {
+  transform-origin: 80px 80px;
+  transform: rotate(-90deg);
+}
+
+.hero-ring-outer {
+  stroke-dasharray: 0 428;
+  animation: sweep-outer 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards;
+}
+
+.hero-ring-inner {
+  stroke-dasharray: 0 314;
+  animation: sweep-inner 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s forwards;
+}
+
+@keyframes sweep-outer {
+  to { stroke-dasharray: 299 428; }
+}
+
+@keyframes sweep-inner {
+  to { stroke-dasharray: 173 314; }
+}
+
+/* Endpoint dots fade in after arcs finish */
+.hero-ring-dot {
+  opacity: 0;
+  animation: dot-appear 0.4s ease forwards;
+}
+
+.hero-ring-dot-outer {
+  animation-delay: 1.5s;
+}
+
+.hero-ring-dot-inner {
+  animation-delay: 1.6s;
+}
+
+@keyframes dot-appear {
+  to { opacity: 1; }
+}
+
+/* Subtle glow pulse on the outer ring */
+.hero-ring-outer {
+  animation: sweep-outer 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards,
+             ring-pulse 4s ease-in-out 2s infinite;
+}
+
+@keyframes ring-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-ring-outer,
+  .hero-ring-inner {
+    animation: none;
+  }
+  .hero-ring-outer {
+    stroke-dasharray: 299 428;
+  }
+  .hero-ring-inner {
+    stroke-dasharray: 173 314;
+  }
+  .hero-ring-dot {
+    animation: none;
+    opacity: 1;
+  }
+}
+
 .hero-title {
   font-family: var(--font-display);
   font-size: clamp(2rem, 6vw, 3.5rem);
