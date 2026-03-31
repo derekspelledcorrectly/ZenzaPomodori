@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Background with subtle gradient -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141318"/>
+      <stop offset="100%" stop-color="#0c0b0e"/>
+    </linearGradient>
+    <linearGradient id="outer-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8943a"/>
+      <stop offset="100%" stop-color="#f0a850"/>
+    </linearGradient>
+    <linearGradient id="inner-grad" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#59c8b3"/>
+      <stop offset="100%" stop-color="#7ad4c4"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded rect background (macOS icon shape is applied by the OS) -->
+  <rect width="1024" height="1024" rx="228" fill="url(#bg)"/>
+
+  <!-- Track rings -->
+  <circle cx="512" cy="512" r="340" fill="none" stroke="#2a2833" stroke-width="12"/>
+  <circle cx="512" cy="512" r="248" fill="none" stroke="#2a2833" stroke-width="10"/>
+
+  <!-- Outer arc (orange) ~70% -->
+  <circle cx="512" cy="512" r="340" fill="none"
+    stroke="url(#outer-grad)" stroke-width="40"
+    stroke-dasharray="1496 2136" stroke-linecap="round"
+    transform="rotate(-90 512 512)"/>
+
+  <!-- Inner arc (teal) ~55% -->
+  <circle cx="512" cy="512" r="248" fill="none"
+    stroke="url(#inner-grad)" stroke-width="34"
+    stroke-dasharray="857 1558" stroke-linecap="round"
+    transform="rotate(-90 512 512)"/>
+
+  <!-- Endpoint dots -->
+  <circle cx="512" cy="172" r="24" fill="#e8943a"/>
+  <circle cx="512" cy="264" r="20" fill="#59c8b3"/>
+</svg>
