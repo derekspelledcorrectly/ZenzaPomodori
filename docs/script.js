@@ -94,7 +94,7 @@
     });
   }
 
-  // Smooth scroll for anchor links
+  // Smooth scroll for anchor links (manual offset to respect sticky nav)
   function initSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(function (link) {
       link.addEventListener('click', function (e) {
@@ -104,7 +104,12 @@
         var target = document.querySelector(href);
         if (target) {
           e.preventDefault();
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          var padding = parseFloat(
+            getComputedStyle(document.documentElement).scrollPaddingTop
+          ) || 0;
+          var top =
+            target.getBoundingClientRect().top + window.scrollY - padding;
+          window.scrollTo({ top: top, behavior: 'smooth' });
         }
       });
     });
