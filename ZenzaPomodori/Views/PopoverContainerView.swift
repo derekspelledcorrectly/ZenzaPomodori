@@ -143,12 +143,13 @@ struct PopoverContainerView: View {
                     Divider()
 
                     Button(role: .destructive, action: {
+                        let wasSlicing = router.sliceEngine?.isActive == true
                         if let engine = router.sliceEngine, engine.isActive {
                             engine.deactivate()
-                            router.activePanel = .sliceSetup
-                        } else {
-                            timer.abandonBlock()
+                            router.sliceEngine = nil
                         }
+                        timer.abandonBlock()
+                        router.activePanel = wasSlicing ? .sliceSetup : .timer
                     }) {
                         Label("Abandon Block", systemImage: "xmark.circle")
                     }
@@ -235,12 +236,13 @@ struct PopoverContainerView: View {
             }
             if timer.phase.isFocus {
                 hiddenShortcut(.delete, modifiers: .command) {
+                    let wasSlicing = router.sliceEngine?.isActive == true
                     if let engine = router.sliceEngine, engine.isActive {
                         engine.deactivate()
-                        router.activePanel = .sliceSetup
-                    } else {
-                        timer.abandonBlock()
+                        router.sliceEngine = nil
                     }
+                    timer.abandonBlock()
+                    router.activePanel = wasSlicing ? .sliceSetup : .timer
                 }
             }
         }
