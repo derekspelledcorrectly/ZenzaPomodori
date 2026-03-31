@@ -1,5 +1,16 @@
 import Foundation
 
+struct SliceDisplayInfo {
+    let sliceSeconds: Int
+    let outerFormattedTime: String
+    let focusName: String?
+    let position: Int
+    let total: Int
+    let format: SliceMenuBarFormat
+    let showTimer: Bool
+    let showFocus: Bool
+}
+
 enum MenuBarFormatting {
     static func truncatedFocusName(_ name: String, maxLength: Int = 20) -> String {
         let trimmed = name.trimmingCharacters(in: .whitespaces)
@@ -9,38 +20,29 @@ enum MenuBarFormatting {
         return String(trimmed.prefix(maxLength)) + "..."
     }
 
-    static func sliceFormatted(
-        sliceSeconds: Int,
-        outerFormattedTime: String,
-        focusName: String?,
-        position: Int,
-        total: Int,
-        format: SliceMenuBarFormat,
-        showTimer: Bool,
-        showFocus: Bool
-    ) -> String {
-        guard showTimer else {
-            if showFocus, let name = focusName {
+    static func sliceFormatted(_ info: SliceDisplayInfo) -> String {
+        guard info.showTimer else {
+            if info.showFocus, let name = info.focusName {
                 return truncatedFocusName(name, maxLength: 20)
             }
             return ""
         }
 
-        let slice = TimeFormatting.formatted(seconds: sliceSeconds)
+        let slice = TimeFormatting.formatted(seconds: info.sliceSeconds)
         let name: String
-        if showFocus, let focusName {
+        if info.showFocus, let focusName = info.focusName {
             name = " [\(truncatedFocusName(focusName, maxLength: 15))]"
         } else {
             name = ""
         }
 
-        switch format {
+        switch info.format {
         case .sliceOnly:
             return "\(slice)\(name)"
         case .dualTimer:
-            return "\(slice)/\(outerFormattedTime)\(name)"
+            return "\(slice)/\(info.outerFormattedTime)\(name)"
         case .slicePosition:
-            return "\(slice) \(position)/\(total)\(name)"
+            return "\(slice) \(info.position)/\(info.total)\(name)"
         case .compact:
             return slice
         }

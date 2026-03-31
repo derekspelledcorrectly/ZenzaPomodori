@@ -345,7 +345,7 @@ final class PopoverManager: NSObject {
         let title = NSMutableAttributedString()
 
         if let engine = router.sliceEngine, engine.isActive {
-            let formatted = MenuBarFormatting.sliceFormatted(
+            let formatted = MenuBarFormatting.sliceFormatted(SliceDisplayInfo(
                 sliceSeconds: engine.sliceSecondsRemaining,
                 outerFormattedTime: timer.formattedTime,
                 focusName: engine.currentItemName,
@@ -354,7 +354,7 @@ final class PopoverManager: NSObject {
                 format: settings.sliceMenuBarFormat,
                 showTimer: settings.showTimerInMenuBar,
                 showFocus: settings.showFocusInMenuBar
-            )
+            ))
             if !formatted.isEmpty {
                 let monoFont = NSFont.monospacedDigitSystemFont(
                     ofSize: NSFont.systemFontSize, weight: .regular

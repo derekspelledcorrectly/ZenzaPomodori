@@ -56,7 +56,7 @@ struct MenuBarFormattingTests {
         showTimer: Bool = true,
         showFocus: Bool = true
     ) -> String {
-        MenuBarFormatting.sliceFormatted(
+        MenuBarFormatting.sliceFormatted(SliceDisplayInfo(
             sliceSeconds: sliceSeconds,
             outerFormattedTime: outerTime,
             focusName: focusName,
@@ -65,7 +65,7 @@ struct MenuBarFormattingTests {
             format: format,
             showTimer: showTimer,
             showFocus: showFocus
-        )
+        ))
     }
 
     @Test func sliceOnlyFormat() {
