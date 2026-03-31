@@ -78,6 +78,7 @@ struct MenuBarView<GearContent: View>: View {
     private var keyboardShortcuts: some View {
         if timer.phase == .idle {
             shortcutButton(.return, modifiers: [], action: timer.start)
+            shortcutButton(.return, modifiers: .command, action: timer.start)
             shortcutButton(.space, modifiers: [], action: timer.start)
         } else {
             shortcutButton(.return, modifiers: [], action: togglePlayPause)
