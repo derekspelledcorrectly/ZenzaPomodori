@@ -1,23 +1,33 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
   <rect width="1200" height="630" fill="#0c0b0e"/>
 
-  <!-- Decorative circles -->
-  <circle cx="600" cy="280" r="120" fill="none" stroke="#d4a853" stroke-width="3" opacity="0.4"/>
-  <circle cx="600" cy="280" r="90" fill="none" stroke="#d4a853" stroke-width="2" opacity="0.2"/>
-  <path d="M600 160 L600 280 L690 280" fill="none" stroke="#d4a853" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
-  <circle cx="600" cy="160" r="5" fill="#d4a853" opacity="0.6"/>
+  <!-- Track rings -->
+  <circle cx="600" cy="260" r="120" fill="none" stroke="#2a2833" stroke-width="2.5"/>
+  <circle cx="600" cy="260" r="88" fill="none" stroke="#2a2833" stroke-width="2"/>
+
+  <!-- Outer arc (orange) ~70% -->
+  <circle cx="600" cy="260" r="120" fill="none"
+    stroke="#e8943a" stroke-width="5"
+    stroke-dasharray="528 754" stroke-linecap="round"
+    transform="rotate(-90 600 260)"/>
+
+  <!-- Inner arc (teal) ~55% -->
+  <circle cx="600" cy="260" r="88" fill="none"
+    stroke="#59c8b3" stroke-width="4.5"
+    stroke-dasharray="304 553" stroke-linecap="round"
+    transform="rotate(-90 600 260)"/>
 
   <!-- Title -->
-  <text x="600" y="460" text-anchor="middle"
+  <text x="600" y="440" text-anchor="middle"
         font-family="Charter, Palatino, Georgia, serif"
         font-size="52" font-weight="700" fill="#ede9e3">
     Zenza Pomodori
   </text>
 
   <!-- Subtitle -->
-  <text x="600" y="510" text-anchor="middle"
+  <text x="600" y="490" text-anchor="middle"
         font-family="-apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif"
         font-size="24" fill="#8a8694">
-    A tomato-free focus timer for macOS
+    A tomato-free focus timer for the agentic era
   </text>
 </svg>
