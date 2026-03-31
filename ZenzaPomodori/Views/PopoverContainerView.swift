@@ -78,10 +78,6 @@ struct PopoverContainerView: View {
         }
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 10))
-        .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
-        )
     }
 
     private var isEditingActiveRotation: Bool {
