@@ -17,8 +17,24 @@ A tomato-free focus timer for macOS, built for humans in the agentic era.
 The Mac App Store listing is not live yet. In the meantime, you can grab an unsigned build from [Releases](https://github.com/derekspelledcorrectly/ZenzaPomodori/releases):
 
 1. Download the latest `.zip` and unzip it
-2. Move `Zenza Pomodori.app` to `/Applications`
-3. Right-click the app > **Open** on first launch (required for unsigned builds)
+2. Move `Zenza Pomodori.app` to `/Applications` or `~/Applications`
+3. Open the app -- macOS will block it because it's unsigned. To allow it:
+
+**Via System Settings:**
+
+1. Open **System Settings > Privacy & Security**
+2. Scroll down to find *"Zenza Pomodori.app was blocked to protect your Mac"*
+3. Click **Open Anyway** and authenticate if prompted
+
+**Via Terminal:**
+
+```bash
+xattr -dr com.apple.quarantine /Applications/Zenza\ Pomodori.app
+# or
+xattr -dr com.apple.quarantine ~/Applications/Zenza\ Pomodori.app
+```
+
+> **Note:** Right-click > Open no longer works for unsigned apps on modern macOS.
 
 ### Build from source
 
