@@ -345,14 +345,21 @@ final class PopoverManager: NSObject {
     private func updateStatusItem() {
         guard let button = statusItem?.button else { return }
 
+        let isSlicing = router.sliceEngine?.isActive == true
+
         let iconName: String
-        switch timer.phase {
-        case .idle: iconName = "timer"
-        case .focus: iconName = "circle.fill"
-        case .shortBreak, .longBreak: iconName = "leaf.fill"
+        if isSlicing {
+            iconName = "menubar-slices"
+        } else {
+            switch timer.phase {
+            case .idle, .focus: iconName = "menubar-focus"
+            case .shortBreak, .longBreak: iconName = "menubar-break"
+            }
         }
 
-        button.image = NSImage(systemSymbolName: iconName, accessibilityDescription: nil)
+        let icon = NSImage(named: iconName)
+        icon?.isTemplate = true
+        button.image = icon
 
         let title = NSMutableAttributedString()
 
