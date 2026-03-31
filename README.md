@@ -1,4 +1,4 @@
-# Zenza Pomodori
+# [Zenza Pomodori](https://zenzapomodori.com)
 
 A tomato-free focus timer for macOS, built for humans in the agentic era.
 
@@ -18,7 +18,7 @@ The Mac App Store listing is not live yet. In the meantime, you can grab an unsi
 
 1. Download the latest `.zip` and unzip it
 2. Move `Zenza Pomodori.app` to `/Applications` or `~/Applications`
-3. Open the app -- macOS will block it because it's unsigned. To allow it:
+3. Open the app. macOS will block it because it's unsigned. To allow it:
 
 **Via System Settings:**
 
