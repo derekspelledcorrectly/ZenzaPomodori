@@ -5,9 +5,7 @@ import Testing
 @Suite("Slice Settings")
 struct SliceSettingsTests {
     private func makeStore() -> SettingsStore {
-        let suiteName = "test-settings-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suiteName)!
-        return SettingsStore(defaults: defaults)
+        makeTestSettingsStore()
     }
 
     @Test func defaultSlicesEnabled() {
@@ -49,8 +47,7 @@ struct SliceSettingsTests {
         #expect(store.sliceRotationInterval == 600)
     }
     @Test func sliceSettingsPersist() {
-        let suiteName = "test-settings-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suiteName)!
+        let defaults = makeTestDefaults()
         let store1 = SettingsStore(defaults: defaults)
         store1.slicesEnabled = true
         store1.sliceRotationInterval = 120

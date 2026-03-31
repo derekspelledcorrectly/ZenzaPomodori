@@ -89,7 +89,7 @@ struct SliceEngineTests {
     @Test func tickToZeroAdvancesToNextItem() {
         let engine = makeEngine(interval: 3)
         engine.activate()
-        for _ in 0..<3 { engine.tick() }
+        advanceEngine(engine, ticks: 3)
         #expect(engine.currentIndex == 1)
         #expect(engine.currentItemName == "CI")
         #expect(engine.sliceSecondsRemaining == 3)
@@ -99,7 +99,7 @@ struct SliceEngineTests {
     @Test func rotationLoopsBackToFirst() {
         let engine = makeEngine(interval: 1)
         engine.activate()
-        for _ in 0..<3 { engine.tick() }
+        advanceEngine(engine, ticks: 3)
         #expect(engine.currentIndex == 0)
         #expect(engine.currentItemName == "API")
         engine.deactivate()
@@ -194,7 +194,7 @@ struct SliceEngineTests {
         let engine = makeEngine(interval: 100)
         engine.activate()
         #expect(engine.progress == 0.0)
-        for _ in 0..<50 { engine.tick() }
+        advanceEngine(engine, ticks: 50)
         #expect(engine.progress == 0.5)
         engine.deactivate()
     }
@@ -251,7 +251,7 @@ struct SliceEngineTests {
     @Test func restartSliceResetsCountdown() {
         let engine = makeEngine(interval: 180)
         engine.activate()
-        for _ in 0..<50 { engine.tick() }
+        advanceEngine(engine, ticks: 50)
         #expect(engine.sliceSecondsRemaining == 130)
         engine.restartSlice()
         #expect(engine.sliceSecondsRemaining == 180)

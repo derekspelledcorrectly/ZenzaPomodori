@@ -8,8 +8,7 @@ struct FocusNameStoreTests {
     private func makeStore(
         defaults: UserDefaults? = nil
     ) -> FocusNameStore {
-        let d = defaults ?? UserDefaults(suiteName: "test-focus-\(UUID().uuidString)")!
-        return FocusNameStore(defaults: d)
+        FocusNameStore(defaults: defaults ?? makeTestDefaults())
     }
 
     // MARK: - Defaults
@@ -164,8 +163,7 @@ struct FocusNameStoreTests {
     // MARK: - Persistence
 
     @Test func entriesPersistAcrossInstances() {
-        let suiteName = "test-focus-persist-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suiteName)!
+        let defaults = makeTestDefaults()
 
         let store1 = FocusNameStore(defaults: defaults)
         store1.draftName = "Deep Work"
@@ -179,8 +177,7 @@ struct FocusNameStoreTests {
     }
 
     @Test func draftNamePersistsAcrossInstances() {
-        let suiteName = "test-focus-draft-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suiteName)!
+        let defaults = makeTestDefaults()
 
         let store1 = FocusNameStore(defaults: defaults)
         store1.draftName = "In Progress"

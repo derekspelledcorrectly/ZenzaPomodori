@@ -6,8 +6,7 @@ import Testing
 @MainActor
 struct RotationStoreTests {
     private func makeStore(defaults: UserDefaults? = nil) -> RotationStore {
-        let d = defaults ?? UserDefaults(suiteName: "test-rotation-\(UUID().uuidString)")!
-        return RotationStore(defaults: d)
+        RotationStore(defaults: defaults ?? makeTestDefaults())
     }
 
     @Test func startsWithNoSavedRotations() {
@@ -55,8 +54,7 @@ struct RotationStoreTests {
     }
 
     @Test func rotationsPersistAcrossInstances() {
-        let suiteName = "test-rotation-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suiteName)!
+        let defaults = makeTestDefaults()
         let store1 = RotationStore(defaults: defaults)
         store1.saveRotation(name: "Persisted", items: [
             RotationItem(name: "X"),

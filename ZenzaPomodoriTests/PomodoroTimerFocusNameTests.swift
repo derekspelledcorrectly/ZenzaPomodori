@@ -9,7 +9,7 @@ struct PomodoroTimerFocusNameTests {
         focusName: String = "",
         configure: ((SettingsStore) -> Void)? = nil
     ) -> PomodoroTimer {
-        let defaults = UserDefaults(suiteName: "test-\(UUID().uuidString)")!
+        let defaults = makeTestDefaults()
         let settings = SettingsStore(defaults: defaults)
         configure?(settings)
         let focusStore = FocusNameStore(defaults: defaults)

@@ -6,8 +6,7 @@ import Testing
 @MainActor
 struct HotkeyServiceTests {
     private func makeSettings() -> SettingsStore {
-        let defaults = UserDefaults(suiteName: "test-hotkey-\(UUID().uuidString)")!
-        return SettingsStore(defaults: defaults)
+        makeTestSettingsStore()
     }
 
     @Test func defaultHotkeySettings() {
@@ -18,8 +17,7 @@ struct HotkeyServiceTests {
     }
 
     @Test func hotkeySettingsPersist() {
-        let suiteName = "test-hotkey-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suiteName)!
+        let defaults = makeTestDefaults()
         let store1 = SettingsStore(defaults: defaults)
         store1.globalHotkeyEnabled = true
         store1.globalHotkeyKeyCode = 0

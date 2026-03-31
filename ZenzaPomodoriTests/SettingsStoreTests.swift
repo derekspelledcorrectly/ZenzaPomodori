@@ -10,9 +10,7 @@ private final class MutableBox<T>: @unchecked Sendable {
 @Suite("SettingsStore")
 struct SettingsStoreTests {
     private func makeStore() -> SettingsStore {
-        let suiteName = "test-settings-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suiteName)!
-        return SettingsStore(defaults: defaults)
+        makeTestSettingsStore()
     }
 
     // MARK: - Default Values
@@ -110,8 +108,7 @@ struct SettingsStoreTests {
     // MARK: - Persistence
 
     @Test func valuesPersistInUserDefaults() {
-        let suiteName = "test-settings-persist-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suiteName)!
+        let defaults = makeTestDefaults()
 
         let store1 = SettingsStore(defaults: defaults)
         store1.focusDuration = 45 * 60
@@ -125,8 +122,7 @@ struct SettingsStoreTests {
     }
 
     @Test func showFocusInMenuBarPersists() {
-        let suiteName = "test-settings-persist-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suiteName)!
+        let defaults = makeTestDefaults()
 
         let store1 = SettingsStore(defaults: defaults)
         store1.showFocusInMenuBar = false
@@ -163,8 +159,7 @@ struct SettingsStoreTests {
     }
 
     @Test func focusEndSoundPersists() {
-        let suiteName = "test-settings-persist-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suiteName)!
+        let defaults = makeTestDefaults()
         let store1 = SettingsStore(defaults: defaults)
         store1.focusEndSound = "Sharp"
         let store2 = SettingsStore(defaults: defaults)
@@ -185,8 +180,7 @@ struct SettingsStoreTests {
     }
 
     @Test func breakEndSoundPersists() {
-        let suiteName = "test-settings-persist-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suiteName)!
+        let defaults = makeTestDefaults()
         let store1 = SettingsStore(defaults: defaults)
         store1.breakEndSound = "Reverie"
         let store2 = SettingsStore(defaults: defaults)
@@ -207,8 +201,7 @@ struct SettingsStoreTests {
     }
 
     @Test func notificationsEnabledPersists() {
-        let suiteName = "test-settings-persist-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suiteName)!
+        let defaults = makeTestDefaults()
         let store1 = SettingsStore(defaults: defaults)
         store1.notificationsEnabled = true
         let store2 = SettingsStore(defaults: defaults)
@@ -241,8 +234,7 @@ struct SettingsStoreTests {
     }
 
     @Test func autoDismissSecondsPersists() {
-        let suiteName = "test-settings-persist-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suiteName)!
+        let defaults = makeTestDefaults()
         let store1 = SettingsStore(defaults: defaults)
         store1.autoDismissSeconds = 15
         let store2 = SettingsStore(defaults: defaults)

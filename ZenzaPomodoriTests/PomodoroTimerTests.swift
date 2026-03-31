@@ -8,10 +8,7 @@ struct PomodoroTimerTests {
     private func makeTimer(
         configure: ((SettingsStore) -> Void)? = nil
     ) -> PomodoroTimer {
-        let defaults = UserDefaults(suiteName: "test-\(UUID().uuidString)")!
-        let store = SettingsStore(defaults: defaults)
-        configure?(store)
-        return PomodoroTimer(settings: store)
+        PomodoroTimer(settings: makeTestSettingsStore(configure: configure))
     }
 
     @Test func startsIdle() {
@@ -125,7 +122,7 @@ struct PomodoroTimerTests {
         let timer = makeTimer { $0.focusDuration = 60 }
         timer.start()
         timer.pause()
-        for _ in 0..<30 { timer.tick() }
+        advanceTimer(timer, ticks: 30)
         #expect(timer.secondsRemaining == 30)
         timer.restartPhase()
         #expect(timer.secondsRemaining == 60)
@@ -139,7 +136,7 @@ struct PomodoroTimerTests {
         timer.start()
         timer.next() // -> short break
         timer.pause()
-        for _ in 0..<20 { timer.tick() }
+        advanceTimer(timer, ticks: 20)
         #expect(timer.secondsRemaining == 40)
         timer.restartPhase()
         #expect(timer.secondsRemaining == 60)
@@ -243,8 +240,7 @@ struct PomodoroTimerTests {
     }
 
     @Test func settingsSnapshotOnStart() {
-        let defaults = UserDefaults(suiteName: "test-\(UUID().uuidString)")!
-        let store = SettingsStore(defaults: defaults)
+        let store = makeTestSettingsStore()
         store.focusDuration = 10 * 60
         let timer = PomodoroTimer(settings: store)
 
@@ -258,8 +254,7 @@ struct PomodoroTimerTests {
     }
 
     @Test func settingsApplyOnNextSession() {
-        let defaults = UserDefaults(suiteName: "test-\(UUID().uuidString)")!
-        let store = SettingsStore(defaults: defaults)
+        let store = makeTestSettingsStore()
         let timer = PomodoroTimer(settings: store)
 
         // Start with defaults (25 min focus)
@@ -276,8 +271,7 @@ struct PomodoroTimerTests {
     }
 
     @Test func settingsApplyOnNextPhase() {
-        let defaults = UserDefaults(suiteName: "test-\(UUID().uuidString)")!
-        let store = SettingsStore(defaults: defaults)
+        let store = makeTestSettingsStore()
         let timer = PomodoroTimer(settings: store)
 
         timer.start() // focus block 1, 25 min
@@ -362,11 +356,11 @@ struct PomodoroTimerTests {
         timer.pause()
 
         // Tick through focus block 1
-        for _ in 0..<60 { timer.tick() }
+        advanceTimer(timer, ticks: 60)
         #expect(timer.phase == .longBreak)
 
         // Tick through long break
-        for _ in 0..<60 { timer.tick() }
+        advanceTimer(timer, ticks: 60)
         #expect(timer.phase == .idle)
         #expect(timer.isRunning == false)
     }
@@ -380,7 +374,7 @@ struct PomodoroTimerTests {
         timer.start()
         timer.pause()
 
-        for _ in 0..<60 { timer.tick() }
+        advanceTimer(timer, ticks: 60)
 
         #expect(completedPhases.count == 1)
         #expect(completedPhases[0] == .focus(block: 1))
@@ -394,7 +388,7 @@ struct PomodoroTimerTests {
         timer.start()
         timer.pause()
 
-        for _ in 0..<60 { timer.tick() }
+        advanceTimer(timer, ticks: 60)
 
         #expect(completedPhases.count == 1)
         #expect(completedPhases[0] == .focus(block: 1))
@@ -409,12 +403,12 @@ struct PomodoroTimerTests {
         timer.pause()
 
         // Tick through focus
-        for _ in 0..<60 { timer.tick() }
+        advanceTimer(timer, ticks: 60)
         // Manually advance to short break
         timer.next()
         timer.pause()
         // Tick through short break
-        for _ in 0..<60 { timer.tick() }
+        advanceTimer(timer, ticks: 60)
 
         #expect(completedPhases.count == 2)
         #expect(completedPhases[0] == .focus(block: 1))
@@ -435,9 +429,9 @@ struct PomodoroTimerTests {
         timer.pause()
 
         // Tick through focus -> auto-advances to long break
-        for _ in 0..<60 { timer.tick() }
+        advanceTimer(timer, ticks: 60)
         // Tick through long break -> auto-advances to idle
-        for _ in 0..<60 { timer.tick() }
+        advanceTimer(timer, ticks: 60)
 
         #expect(completedPhases.count == 2)
         #expect(completedPhases[0] == .focus(block: 1))

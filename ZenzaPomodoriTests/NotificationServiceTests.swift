@@ -6,10 +6,7 @@ import Testing
 @MainActor
 struct NotificationServiceTests {
     private func makeStore(soundEnabled: Bool = true) -> SettingsStore {
-        let defaults = UserDefaults(suiteName: "test-\(UUID().uuidString)")!
-        let store = SettingsStore(defaults: defaults)
-        store.soundEnabled = soundEnabled
-        return store
+        makeTestSettingsStore { $0.soundEnabled = soundEnabled }
     }
 
     @Test func notificationContentNeverIncludesSound() {
