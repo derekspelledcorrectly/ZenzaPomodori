@@ -1,3 +1,4 @@
+import os
 import UserNotifications
 
 @MainActor
@@ -20,6 +21,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
                     options: [.alert]
                 )
             } catch {
+                Logger.services.warning("Notification permission denied: \(error.localizedDescription)")
                 isAuthorized = false
             }
         }

@@ -1,4 +1,5 @@
 import AppKit
+import os
 
 @MainActor
 final class SoundService {
@@ -13,8 +14,14 @@ final class SoundService {
 
     func play(_ name: String) {
         currentSound?.stop()
-        guard let url = Bundle.main.url(forResource: name, withExtension: "wav"),
-              let sound = NSSound(contentsOf: url, byReference: true) else { return }
+        guard let url = Bundle.main.url(forResource: name, withExtension: "wav") else {
+            Logger.services.warning("Sound file not found: \(name)")
+            return
+        }
+        guard let sound = NSSound(contentsOf: url, byReference: true) else {
+            Logger.services.warning("Could not load sound: \(name)")
+            return
+        }
         currentSound = sound
         sound.play()
     }

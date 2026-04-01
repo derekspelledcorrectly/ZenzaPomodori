@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import os
 
 @Observable
 @MainActor
@@ -34,7 +35,7 @@ final class RotationStore {
             let data = try JSONEncoder().encode(savedRotations)
             defaults.set(data, forKey: SettingsKeys.savedRotations)
         } catch {
-            assertionFailure("[RotationStore] Failed to encode rotations: \(error)")
+            Logger.storage.error("Failed to encode rotations: \(error.localizedDescription)")
         }
     }
 
@@ -45,7 +46,7 @@ final class RotationStore {
         do {
             return try JSONDecoder().decode([SavedRotation].self, from: data)
         } catch {
-            assertionFailure("[RotationStore] Failed to decode saved rotations: \(error)")
+            Logger.storage.error("Failed to decode saved rotations: \(error.localizedDescription)")
             return []
         }
     }

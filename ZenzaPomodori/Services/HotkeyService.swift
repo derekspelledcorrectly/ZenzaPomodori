@@ -1,6 +1,7 @@
 import Carbon
 import Foundation
 import Observation
+import os
 
 @Observable
 @MainActor
@@ -49,6 +50,7 @@ final class HotkeyService {
             } else {
                 registrationError = "Hotkey registration failed (status \(status)). "
                     + "Check System Settings > Privacy & Security > Accessibility."
+                Logger.services.error("Hotkey registration failed (status \(status)). Check Accessibility permissions.")
             }
         }
 
@@ -159,6 +161,7 @@ final class HotkeyService {
             return true
         } else {
             registrationError = "Could not install hotkey handler (status \(status))."
+            Logger.services.error("Could not install hotkey handler (status \(status)).")
             return false
         }
     }
