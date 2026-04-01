@@ -246,22 +246,22 @@ final class PopoverManager: NSObject {
             switch popoverPanel {
             case .timer:
                 if self.timer.phase == .idle,
-                   let textField = self.firstTextField(in: contentView) {
+                   let textField = self.firstSubview(of: NSTextField.self, in: contentView, where: \.isEditable) {
                     self.panel.makeFirstResponder(textField)
                     textField.selectText(nil)
-                } else if let button = self.firstBorderedButton(in: contentView) {
+                } else if let button = self.firstSubview(of: NSButton.self, in: contentView, where: \.isBordered) {
                     self.panel.makeFirstResponder(button)
                 }
             case .settings:
-                if let picker = self.firstPopUpButton(in: contentView) {
+                if let picker = self.firstSubview(of: NSPopUpButton.self, in: contentView) {
                     self.panel.makeFirstResponder(picker)
                 }
             case .sliceSetup, .sliceActive:
-                if let button = self.firstBorderedButton(in: contentView) {
+                if let button = self.firstSubview(of: NSButton.self, in: contentView, where: \.isBordered) {
                     self.panel.makeFirstResponder(button)
                 }
             case .shortcuts:
-                if let button = self.firstBorderedButton(in: contentView) {
+                if let button = self.firstSubview(of: NSButton.self, in: contentView, where: \.isBordered) {
                     self.panel.makeFirstResponder(button)
                 }
             }
@@ -278,44 +278,24 @@ final class PopoverManager: NSObject {
         guard let contentView = hostingView else { return }
         panel.autorecalculatesKeyViewLoop = true
         panel.recalculateKeyViewLoop()
-        if timer.phase == .idle, let textField = firstTextField(in: contentView) {
+        if timer.phase == .idle, let textField = firstSubview(of: NSTextField.self, in: contentView, where: \.isEditable) {
             panel.makeFirstResponder(textField)
             textField.selectText(nil)
-        } else if let button = firstBorderedButton(in: contentView) {
+        } else if let button = firstSubview(of: NSButton.self, in: contentView, where: \.isBordered) {
             panel.makeFirstResponder(button)
         }
     }
 
-    private func firstBorderedButton(in view: NSView) -> NSButton? {
-        if let button = view as? NSButton, button.isBordered {
-            return button
+    private func firstSubview<T: NSView>(
+        of type: T.Type,
+        in view: NSView,
+        where predicate: (T) -> Bool = { _ in true }
+    ) -> T? {
+        if let match = view as? T, predicate(match) {
+            return match
         }
         for subview in view.subviews {
-            if let found = firstBorderedButton(in: subview) {
-                return found
-            }
-        }
-        return nil
-    }
-
-    private func firstTextField(in view: NSView) -> NSTextField? {
-        if let field = view as? NSTextField, field.isEditable {
-            return field
-        }
-        for subview in view.subviews {
-            if let found = firstTextField(in: subview) {
-                return found
-            }
-        }
-        return nil
-    }
-
-    private func firstPopUpButton(in view: NSView) -> NSPopUpButton? {
-        if let popup = view as? NSPopUpButton {
-            return popup
-        }
-        for subview in view.subviews {
-            if let found = firstPopUpButton(in: subview) {
+            if let found = firstSubview(of: type, in: subview, where: predicate) {
                 return found
             }
         }
