@@ -352,7 +352,8 @@ final class PopoverManager: NSObject {
             iconName = "menubar-slices"
         } else {
             switch timer.phase {
-            case .idle, .focus: iconName = "menubar-focus"
+            case .idle: iconName = "menubar-slices"
+            case .focus: iconName = "menubar-focus"
             case .shortBreak, .longBreak: iconName = "menubar-break"
             }
         }
