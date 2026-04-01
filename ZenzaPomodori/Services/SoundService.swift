@@ -14,7 +14,7 @@ final class SoundService {
 
     func play(_ name: String) {
         currentSound?.stop()
-        guard let url = Bundle.main.url(forResource: name, withExtension: "wav") else {
+        guard let url = Bundle.main.url(forResource: name, withExtension: "m4a") else {
             Logger.services.warning("Sound file not found: \(name)")
             return
         }
