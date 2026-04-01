@@ -6,7 +6,7 @@ struct RotationListEditor: View {
     var body: some View {
         List {
             if items.isEmpty {
-                Text("Add focus areas above to build your rotation")
+                Text("Add 2 or more focus areas to build your rotation")
                     .foregroundStyle(.tertiary)
                     .font(.system(size: 11))
                     .listRowSeparator(.hidden)

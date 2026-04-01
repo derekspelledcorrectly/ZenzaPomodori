@@ -110,12 +110,12 @@ struct SliceSetupView: View {
                         .font(.system(size: 12, weight: .semibold))
                         .padding(.horizontal, 16)
                         .padding(.vertical, 6)
-                        .background(workingItems.isEmpty ? Color.secondary.opacity(0.3) : Color.accentColor)
+                        .background(workingItems.count < 2 ? Color.secondary.opacity(0.3) : Color.accentColor)
                         .foregroundStyle(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
                 .buttonStyle(.plain)
-                .disabled(workingItems.isEmpty)
+                .disabled(workingItems.count < 2)
                 .keyboardShortcut(.return)
             }
             .padding(.top, 2)
