@@ -550,10 +550,27 @@ final class PopoverManager: NSObject {
 
     private func startObservingTimer() {
         Task { @MainActor [weak self] in
-            while let self {
-                self.updateStatusItem()
-                try? await Task.sleep(for: .milliseconds(100))
+            guard let self else { return }
+            withObservationTracking {
+                _ = self.timer.phase
+                _ = self.timer.formattedTime
+                _ = self.timer.isRunning
+                _ = self.timer.isOvertime
+                _ = self.timer.activeFocusName
+                _ = self.settings.showTimerInMenuBar
+                _ = self.settings.showFocusInMenuBar
+                _ = self.settings.sliceMenuBarFormat
+                _ = self.router.sliceEngine?.isActive
+                _ = self.router.sliceEngine?.sliceSecondsRemaining
+                _ = self.router.sliceEngine?.currentItemName
+                _ = self.router.sliceEngine?.currentIndex
+            } onChange: {
+                Task { @MainActor [weak self] in
+                    self?.updateStatusItem()
+                    self?.startObservingTimer()
+                }
             }
+            self.updateStatusItem()
         }
     }
 }
