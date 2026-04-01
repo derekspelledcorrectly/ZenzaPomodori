@@ -265,17 +265,6 @@ struct PopoverContainerView: View {
         }
     }
 
-    private func hiddenShortcut(
-        _ key: KeyEquivalent,
-        modifiers: EventModifiers,
-        action: @escaping () -> Void
-    ) -> some View {
-        Button(action: action) { EmptyView() }
-            .keyboardShortcut(key, modifiers: modifiers)
-            .frame(width: 0, height: 0)
-            .opacity(0)
-    }
-
     // MARK: - Panels
 
     private var sliceIdlePanel: some View {

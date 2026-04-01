@@ -165,152 +165,101 @@ final class SettingsStore {
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
 
-        let focus = defaults.integer(forKey: SettingsKeys.focusDuration)
-        self.focusDuration = focus > 0 ? focus : Defaults.focusDuration
+        // Durations (must be positive)
+        self.focusDuration = Self.loadInt(from: defaults, key: SettingsKeys.focusDuration, default: Defaults.focusDuration)
+        self.shortBreakDuration = Self.loadInt(from: defaults, key: SettingsKeys.shortBreakDuration, default: Defaults.shortBreakDuration)
+        self.longBreakDuration = Self.loadInt(from: defaults, key: SettingsKeys.longBreakDuration, default: Defaults.longBreakDuration)
+        self.blocksBeforeLongBreak = Self.loadInt(from: defaults, key: SettingsKeys.blocksBeforeLongBreak, default: Defaults.blocksBeforeLongBreak)
 
-        let shortBreak = defaults.integer(forKey: SettingsKeys.shortBreakDuration)
-        self.shortBreakDuration = shortBreak > 0 ? shortBreak : Defaults.shortBreakDuration
+        // Booleans
+        self.autoAdvance = Self.loadBool(from: defaults, key: SettingsKeys.autoAdvance, default: Defaults.autoAdvance)
+        self.soundEnabled = Self.loadBool(from: defaults, key: SettingsKeys.soundEnabled, default: Defaults.soundEnabled)
+        self.showTimerInMenuBar = Self.loadBool(from: defaults, key: SettingsKeys.showTimerInMenuBar, default: Defaults.showTimerInMenuBar)
+        self.popOnComplete = Self.loadBool(from: defaults, key: SettingsKeys.popOnComplete, default: Defaults.popOnComplete)
+        self.showFocusInMenuBar = Self.loadBool(from: defaults, key: SettingsKeys.showFocusInMenuBar, default: Defaults.showFocusInMenuBar)
+        self.notificationsEnabled = Self.loadBool(from: defaults, key: SettingsKeys.notificationsEnabled, default: Defaults.notificationsEnabled)
+        self.slicesEnabled = Self.loadBool(from: defaults, key: SettingsKeys.slicesEnabled, default: Defaults.slicesEnabled)
+        self.sliceSoundEnabled = Self.loadBool(from: defaults, key: SettingsKeys.sliceSoundEnabled, default: Defaults.sliceSoundEnabled)
+        self.stealFocusOnRotation = Self.loadBool(from: defaults, key: SettingsKeys.stealFocusOnRotation, default: Defaults.stealFocusOnRotation)
+        self.globalHotkeyEnabled = Self.loadBool(from: defaults, key: SettingsKeys.globalHotkeyEnabled, default: Defaults.globalHotkeyEnabled)
+        self.rotationHotkeyEnabled = Self.loadBool(from: defaults, key: SettingsKeys.rotationHotkeyEnabled, default: Defaults.rotationHotkeyEnabled)
 
-        let longBreak = defaults.integer(forKey: SettingsKeys.longBreakDuration)
-        self.longBreakDuration = longBreak > 0 ? longBreak : Defaults.longBreakDuration
+        // Strings
+        self.focusEndSound = Self.loadString(from: defaults, key: SettingsKeys.focusEndSound, default: Defaults.focusEndSound)
+        self.breakEndSound = Self.loadString(from: defaults, key: SettingsKeys.breakEndSound, default: Defaults.breakEndSound)
+        self.sliceEndSound = Self.loadString(from: defaults, key: SettingsKeys.sliceEndSound, default: Defaults.sliceEndSound)
 
-        let blocks = defaults.integer(forKey: SettingsKeys.blocksBeforeLongBreak)
-        self.blocksBeforeLongBreak = blocks > 0 ? blocks : Defaults.blocksBeforeLongBreak
+        // Clamped integers
+        self.autoDismissSeconds = Self.loadInt(from: defaults, key: SettingsKeys.autoDismissSeconds, default: Defaults.autoDismissSeconds, min: 0, max: 30)
+        self.sliceRotationInterval = Self.loadInt(from: defaults, key: SettingsKeys.sliceRotationInterval, default: Defaults.sliceRotationInterval)
 
-        if defaults.object(forKey: SettingsKeys.autoAdvance) != nil {
-            self.autoAdvance = defaults.bool(forKey: SettingsKeys.autoAdvance)
-        } else {
-            self.autoAdvance = Defaults.autoAdvance
+        // Enum-backed
+        self.sliceMenuBarFormat = Self.loadRawRepresentable(from: defaults, key: SettingsKeys.sliceMenuBarFormat, default: Defaults.sliceMenuBarFormat)
+        self.lastBlockType = Self.loadRawRepresentable(from: defaults, key: SettingsKeys.lastBlockType, default: Defaults.lastBlockType)
+
+        // UInt32 (hotkey codes)
+        self.globalHotkeyKeyCode = Self.loadUInt32(from: defaults, key: SettingsKeys.globalHotkeyKeyCode, default: Defaults.globalHotkeyKeyCode)
+        self.globalHotkeyModifiers = Self.loadUInt32(from: defaults, key: SettingsKeys.globalHotkeyModifiers, default: Defaults.globalHotkeyModifiers)
+        self.rotationHotkeyKeyCode = Self.loadUInt32(from: defaults, key: SettingsKeys.rotationHotkeyKeyCode, default: Defaults.rotationHotkeyKeyCode)
+        self.rotationHotkeyModifiers = Self.loadUInt32(from: defaults, key: SettingsKeys.rotationHotkeyModifiers, default: Defaults.rotationHotkeyModifiers)
+    }
+
+    // MARK: - UserDefaults Helpers
+
+    private static func loadInt(
+        from defaults: UserDefaults,
+        key: String,
+        default defaultValue: Int,
+        min minValue: Int? = nil,
+        max maxValue: Int? = nil
+    ) -> Int {
+        let raw = defaults.integer(forKey: key)
+        guard raw > 0 || defaults.object(forKey: key) != nil else {
+            return defaultValue
         }
+        var value = raw > 0 ? raw : defaultValue
+        if let minValue { value = Swift.max(minValue, value) }
+        if let maxValue { value = Swift.min(maxValue, value) }
+        return value
+    }
 
-        if defaults.object(forKey: SettingsKeys.soundEnabled) != nil {
-            self.soundEnabled = defaults.bool(forKey: SettingsKeys.soundEnabled)
-        } else {
-            self.soundEnabled = Defaults.soundEnabled
+    private static func loadBool(
+        from defaults: UserDefaults,
+        key: String,
+        default defaultValue: Bool
+    ) -> Bool {
+        defaults.object(forKey: key) != nil
+            ? defaults.bool(forKey: key)
+            : defaultValue
+    }
+
+    private static func loadString(
+        from defaults: UserDefaults,
+        key: String,
+        default defaultValue: String
+    ) -> String {
+        defaults.string(forKey: key) ?? defaultValue
+    }
+
+    private static func loadUInt32(
+        from defaults: UserDefaults,
+        key: String,
+        default defaultValue: UInt32
+    ) -> UInt32 {
+        defaults.object(forKey: key) != nil
+            ? UInt32(defaults.integer(forKey: key))
+            : defaultValue
+    }
+
+    private static func loadRawRepresentable<T: RawRepresentable>(
+        from defaults: UserDefaults,
+        key: String,
+        default defaultValue: T
+    ) -> T where T.RawValue == String {
+        if let raw = defaults.string(forKey: key),
+           let value = T(rawValue: raw) {
+            return value
         }
-
-        if defaults.object(forKey: SettingsKeys.showTimerInMenuBar) != nil {
-            self.showTimerInMenuBar = defaults.bool(forKey: SettingsKeys.showTimerInMenuBar)
-        } else {
-            self.showTimerInMenuBar = Defaults.showTimerInMenuBar
-        }
-
-        if defaults.object(forKey: SettingsKeys.popOnComplete) != nil {
-            self.popOnComplete = defaults.bool(forKey: SettingsKeys.popOnComplete)
-        } else {
-            self.popOnComplete = Defaults.popOnComplete
-        }
-
-        if defaults.object(forKey: SettingsKeys.showFocusInMenuBar) != nil {
-            self.showFocusInMenuBar = defaults.bool(forKey: SettingsKeys.showFocusInMenuBar)
-        } else {
-            self.showFocusInMenuBar = Defaults.showFocusInMenuBar
-        }
-
-        if let sound = defaults.string(forKey: SettingsKeys.focusEndSound) {
-            self.focusEndSound = sound
-        } else {
-            self.focusEndSound = Defaults.focusEndSound
-        }
-
-        if let sound = defaults.string(forKey: SettingsKeys.breakEndSound) {
-            self.breakEndSound = sound
-        } else {
-            self.breakEndSound = Defaults.breakEndSound
-        }
-
-        if defaults.object(forKey: SettingsKeys.notificationsEnabled) != nil {
-            self.notificationsEnabled = defaults.bool(forKey: SettingsKeys.notificationsEnabled)
-        } else {
-            self.notificationsEnabled = Defaults.notificationsEnabled
-        }
-
-        let dismiss = defaults.integer(forKey: SettingsKeys.autoDismissSeconds)
-        if defaults.object(forKey: SettingsKeys.autoDismissSeconds) != nil {
-            self.autoDismissSeconds = max(0, min(30, dismiss))
-        } else {
-            self.autoDismissSeconds = Defaults.autoDismissSeconds
-        }
-
-        if defaults.object(forKey: SettingsKeys.slicesEnabled) != nil {
-            self.slicesEnabled = defaults.bool(forKey: SettingsKeys.slicesEnabled)
-        } else {
-            self.slicesEnabled = Defaults.slicesEnabled
-        }
-
-        let sliceInterval = defaults.integer(forKey: SettingsKeys.sliceRotationInterval)
-        self.sliceRotationInterval = sliceInterval > 0 ? sliceInterval : Defaults.sliceRotationInterval
-
-        if defaults.object(forKey: SettingsKeys.sliceSoundEnabled) != nil {
-            self.sliceSoundEnabled = defaults.bool(forKey: SettingsKeys.sliceSoundEnabled)
-        } else {
-            self.sliceSoundEnabled = Defaults.sliceSoundEnabled
-        }
-
-        if let sound = defaults.string(forKey: SettingsKeys.sliceEndSound) {
-            self.sliceEndSound = sound
-        } else {
-            self.sliceEndSound = Defaults.sliceEndSound
-        }
-
-        if defaults.object(forKey: SettingsKeys.stealFocusOnRotation) != nil {
-            self.stealFocusOnRotation = defaults.bool(forKey: SettingsKeys.stealFocusOnRotation)
-        } else {
-            self.stealFocusOnRotation = Defaults.stealFocusOnRotation
-        }
-
-        if let raw = defaults.string(forKey: SettingsKeys.sliceMenuBarFormat),
-           let format = SliceMenuBarFormat(rawValue: raw) {
-            self.sliceMenuBarFormat = format
-        } else {
-            self.sliceMenuBarFormat = Defaults.sliceMenuBarFormat
-        }
-
-        if let raw = defaults.string(forKey: SettingsKeys.lastBlockType),
-           let blockType = BlockType(rawValue: raw) {
-            self.lastBlockType = blockType
-        } else {
-            self.lastBlockType = Defaults.lastBlockType
-        }
-
-        if defaults.object(forKey: SettingsKeys.globalHotkeyEnabled) != nil {
-            self.globalHotkeyEnabled = defaults.bool(forKey: SettingsKeys.globalHotkeyEnabled)
-        } else {
-            self.globalHotkeyEnabled = Defaults.globalHotkeyEnabled
-        }
-
-        let keyCode = defaults.object(forKey: SettingsKeys.globalHotkeyKeyCode)
-        if keyCode != nil {
-            self.globalHotkeyKeyCode = UInt32(defaults.integer(forKey: SettingsKeys.globalHotkeyKeyCode))
-        } else {
-            self.globalHotkeyKeyCode = Defaults.globalHotkeyKeyCode
-        }
-
-        let modifiers = defaults.object(forKey: SettingsKeys.globalHotkeyModifiers)
-        if modifiers != nil {
-            self.globalHotkeyModifiers = UInt32(defaults.integer(forKey: SettingsKeys.globalHotkeyModifiers))
-        } else {
-            self.globalHotkeyModifiers = Defaults.globalHotkeyModifiers
-        }
-
-        if defaults.object(forKey: SettingsKeys.rotationHotkeyEnabled) != nil {
-            self.rotationHotkeyEnabled = defaults.bool(forKey: SettingsKeys.rotationHotkeyEnabled)
-        } else {
-            self.rotationHotkeyEnabled = Defaults.rotationHotkeyEnabled
-        }
-
-        let rotKeyCode = defaults.object(forKey: SettingsKeys.rotationHotkeyKeyCode)
-        if rotKeyCode != nil {
-            self.rotationHotkeyKeyCode = UInt32(defaults.integer(forKey: SettingsKeys.rotationHotkeyKeyCode))
-        } else {
-            self.rotationHotkeyKeyCode = Defaults.rotationHotkeyKeyCode
-        }
-
-        let rotModifiers = defaults.object(forKey: SettingsKeys.rotationHotkeyModifiers)
-        if rotModifiers != nil {
-            self.rotationHotkeyModifiers = UInt32(defaults.integer(forKey: SettingsKeys.rotationHotkeyModifiers))
-        } else {
-            self.rotationHotkeyModifiers = Defaults.rotationHotkeyModifiers
-        }
+        return defaultValue
     }
 }

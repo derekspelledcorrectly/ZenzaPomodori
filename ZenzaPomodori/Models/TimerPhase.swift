@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 enum TimerPhase: Equatable, Sendable {
     case idle
@@ -28,6 +29,15 @@ enum TimerPhase: Equatable, Sendable {
         switch self {
         case .shortBreak, .longBreak: true
         default: false
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .idle: .secondary
+        case .focus: .accentColor
+        case .shortBreak: .green
+        case .longBreak: .teal
         }
     }
 }

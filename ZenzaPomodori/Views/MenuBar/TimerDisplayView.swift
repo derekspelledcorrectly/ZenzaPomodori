@@ -15,7 +15,7 @@ struct TimerDisplayView: View {
 
                 Circle()
                     .trim(from: 0, to: progress)
-                    .stroke(ringColor, style: StrokeStyle(lineWidth: 6, lineCap: .round))
+                    .stroke(phase.color, style: StrokeStyle(lineWidth: 6, lineCap: .round))
                     .rotationEffect(.degrees(-90))
                     .animation(.linear(duration: 0.3), value: progress)
                     .transaction { t in
@@ -39,14 +39,6 @@ struct TimerDisplayView: View {
         }
     }
 
-    private var ringColor: Color {
-        switch phase {
-        case .idle: .secondary
-        case .focus: .accentColor
-        case .shortBreak: .green
-        case .longBreak: .teal
-        }
-    }
 }
 
 #Preview("Focus") {

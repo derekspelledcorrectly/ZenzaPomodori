@@ -77,12 +77,12 @@ struct MenuBarView<GearContent: View>: View {
     @ViewBuilder
     private var keyboardShortcuts: some View {
         if timer.phase == .idle {
-            shortcutButton(.return, modifiers: [], action: timer.start)
-            shortcutButton(.return, modifiers: .command, action: timer.start)
-            shortcutButton(.space, modifiers: [], action: timer.start)
+            hiddenShortcut(.return, modifiers: [], action: timer.start)
+            hiddenShortcut(.return, modifiers: .command, action: timer.start)
+            hiddenShortcut(.space, modifiers: [], action: timer.start)
         } else {
-            shortcutButton(.return, modifiers: [], action: togglePlayPause)
-            shortcutButton(.space, modifiers: [], action: togglePlayPause)
+            hiddenShortcut(.return, modifiers: [], action: togglePlayPause)
+            hiddenShortcut(.space, modifiers: [], action: togglePlayPause)
         }
     }
 
@@ -92,16 +92,5 @@ struct MenuBarView<GearContent: View>: View {
         } else {
             timer.resume()
         }
-    }
-
-    private func shortcutButton(
-        _ key: KeyEquivalent,
-        modifiers: EventModifiers = [],
-        action: @escaping () -> Void
-    ) -> some View {
-        Button(action: action) { EmptyView() }
-            .keyboardShortcut(key, modifiers: modifiers)
-            .frame(width: 0, height: 0)
-            .opacity(0)
     }
 }

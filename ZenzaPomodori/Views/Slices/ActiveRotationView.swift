@@ -17,7 +17,7 @@ struct ActiveRotationView: View {
                 sliceTimeFormatted: TimeFormatting.formatted(seconds: engine.sliceSecondsRemaining),
                 outerTimeFormatted: timer.formattedTime,
                 outerColor: .orange,
-                innerColor: phaseColor
+                innerColor: timer.phase.color
             )
 
             // Current focus, metadata, next focus
@@ -82,17 +82,9 @@ struct ActiveRotationView: View {
 
     @ViewBuilder
     private var keyboardShortcuts: some View {
-        Button(action: { onPause() }) { EmptyView() }
-            .keyboardShortcut(.space, modifiers: [])
-            .frame(width: 0, height: 0).opacity(0)
-
-        Button(action: { onNext() }) { EmptyView() }
-            .keyboardShortcut(.return, modifiers: [])
-            .frame(width: 0, height: 0).opacity(0)
-
-        Button(action: { onFinishBlock() }) { EmptyView() }
-            .keyboardShortcut(.return, modifiers: .command)
-            .frame(width: 0, height: 0).opacity(0)
+        hiddenShortcut(.space, modifiers: [], action: onPause)
+        hiddenShortcut(.return, modifiers: [], action: onNext)
+        hiddenShortcut(.return, modifiers: .command, action: onFinishBlock)
     }
 
     private var blockLabel: String {
@@ -104,13 +96,5 @@ struct ActiveRotationView: View {
         }
     }
 
-    private var phaseColor: Color {
-        switch timer.phase {
-        case .idle: .secondary
-        case .focus: .accentColor
-        case .shortBreak: .green
-        case .longBreak: .teal
-        }
-    }
 }
 

@@ -140,10 +140,6 @@ struct FocusNameInputView: View {
         }
         .padding(.horizontal, 4)
         .padding(.vertical, 3)
-        .background(
-            RoundedRectangle(cornerRadius: 4)
-                .fill(.clear)
-        )
     }
 }
 
