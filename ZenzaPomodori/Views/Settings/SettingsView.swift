@@ -25,6 +25,7 @@ struct SettingsView: View {
                         Image(systemName: "chevron.left")
                     }
                     .buttonStyle(.borderless)
+                    .accessibilityLabel("Back")
                     Text("Settings")
                         .font(.headline)
                     Spacer()
@@ -91,25 +92,11 @@ struct SettingsView: View {
                     }
                 }
 
-                HStack {
-                    Text("Blocks before long break")
-                    Spacer()
-                    HStack(spacing: 4) {
-                        Button(action: { settings.blocksBeforeLongBreak -= 1 }) {
-                            Image(systemName: "minus")
-                        }
-                        .disabled(settings.blocksBeforeLongBreak <= 1)
-
-                        Text("\(settings.blocksBeforeLongBreak)")
-                            .monospacedDigit()
-                            .frame(minWidth: 20, alignment: .center)
-
-                        Button(action: { settings.blocksBeforeLongBreak += 1 }) {
-                            Image(systemName: "plus")
-                        }
-                        .disabled(settings.blocksBeforeLongBreak >= 10)
-                    }
-                }
+                StepperRow(
+                    label: "Blocks before long break",
+                    value: $settings.blocksBeforeLongBreak,
+                    range: 1...10
+                )
             }
 
             Section("Sound") {
@@ -155,27 +142,12 @@ struct SettingsView: View {
                 ))
 
                 if settings.popOnComplete {
-                    HStack {
-                        Text("Auto-dismiss after")
-                        Spacer()
-                        HStack(spacing: 4) {
-                            Button(action: { settings.autoDismissSeconds -= 1 }) {
-                                Image(systemName: "minus")
-                            }
-                            .disabled(settings.autoDismissSeconds <= 0)
-
-                            Text(settings.autoDismissSeconds == 0
-                                 ? "Off"
-                                 : "\(settings.autoDismissSeconds)s")
-                                .monospacedDigit()
-                                .frame(minWidth: 30, alignment: .center)
-
-                            Button(action: { settings.autoDismissSeconds += 1 }) {
-                                Image(systemName: "plus")
-                            }
-                            .disabled(settings.autoDismissSeconds >= 30)
-                        }
-                    }
+                    StepperRow(
+                        label: "Auto-dismiss after",
+                        value: $settings.autoDismissSeconds,
+                        range: 0...30,
+                        formatter: { $0 == 0 ? "Off" : "\($0)s" }
+                    )
                 }
             }
 
@@ -295,6 +267,7 @@ struct SettingsView: View {
             }
             .buttonStyle(.borderless)
             .help("Preview sound")
+            .accessibilityLabel("Preview \(sound.wrappedValue) sound")
         }
     }
 

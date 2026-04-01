@@ -59,5 +59,8 @@ struct ConcentricTimerView: View {
             }
         }
         .frame(width: size, height: size)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Slice timer")
+        .accessibilityValue("\(sliceTimeFormatted) slice, \(outerTimeFormatted) block")
     }
 }

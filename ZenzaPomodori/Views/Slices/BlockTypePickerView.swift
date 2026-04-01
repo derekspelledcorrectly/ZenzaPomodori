@@ -11,5 +11,7 @@ struct BlockTypePickerView: View {
         .pickerStyle(.segmented)
         .controlSize(.small)
         .labelsHidden()
+        .accessibilityLabel("Block mode")
+        .accessibilityHint("Choose between Focus and Slices mode")
     }
 }

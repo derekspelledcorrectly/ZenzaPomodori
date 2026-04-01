@@ -58,12 +58,14 @@ struct ActiveRotationView: View {
                         .frame(width: 20)
                 }
                 .help(engine.isPaused ? "Resume (Space)" : "Pause (Space)")
+                .accessibilityLabel(engine.isPaused ? "Resume" : "Pause")
 
                 Button(action: { onNext() }) {
                     Image(systemName: "forward.end.fill")
                         .frame(width: 20)
                 }
                 .help("Next Slice (Return)")
+                .accessibilityLabel("Skip to next slice")
 
                 if !autoAdvance && timer.isOvertime {
                     Button(action: { onFinishBlock() }) {
@@ -71,6 +73,7 @@ struct ActiveRotationView: View {
                             .frame(width: 20)
                     }
                     .help("Finish Block (\u{2318}\u{21A9}\u{FE0E})")
+                    .accessibilityLabel("Finish block")
                 }
             }
             .buttonStyle(.bordered)

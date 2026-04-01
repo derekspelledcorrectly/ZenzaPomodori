@@ -39,6 +39,7 @@ struct FocusNameInputView: View {
                     .foregroundStyle(.primary)
                     .lineLimit(2)
                     .frame(maxWidth: .infinity)
+                    .accessibilityLabel("Current focus: \(name)")
             }
         }
     }
@@ -49,6 +50,8 @@ struct FocusNameInputView: View {
                 .textFieldStyle(.plain)
                 .font(.system(size: 12))
                 .focused($isTextFieldFocused)
+                .accessibilityLabel("Focus name")
+                .accessibilityHint("Enter what you will focus on")
                 .onSubmit {
                     isTextFieldFocused = false
                     onSubmit()
@@ -66,6 +69,7 @@ struct FocusNameInputView: View {
                         .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Recent focus names")
                 .popover(isPresented: $showingDropdown, arrowEdge: .bottom) {
                     dropdownContent
                 }
@@ -130,6 +134,7 @@ struct FocusNameInputView: View {
                     .foregroundStyle(entry.isFavorite ? .yellow : .secondary)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel(entry.isFavorite ? "Remove from favorites" : "Add to favorites")
 
             Button(action: { onDelete(entry.id) }) {
                 Image(systemName: "xmark")
@@ -137,6 +142,7 @@ struct FocusNameInputView: View {
                     .foregroundStyle(.secondary)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Remove \(entry.name) from history")
         }
         .padding(.horizontal, 4)
         .padding(.vertical, 3)

@@ -197,6 +197,7 @@ struct PopoverContainerView: View {
         .menuStyle(.borderlessButton)
         .menuIndicator(.hidden)
         .fixedSize()
+        .accessibilityLabel("Actions menu")
         .padding(8)
         .background { gearMenuShortcuts }
     }

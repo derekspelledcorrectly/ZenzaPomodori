@@ -45,6 +45,7 @@ struct KeyboardShortcutsView: View {
                         Image(systemName: "chevron.left")
                     }
                     .buttonStyle(.borderless)
+                    .accessibilityLabel("Back")
                     Text("Keyboard Shortcuts")
                         .font(.headline)
                     Spacer()

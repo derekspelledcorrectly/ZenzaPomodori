@@ -18,6 +18,7 @@ struct RotationListEditor: View {
                         Image(systemName: "line.3.horizontal")
                             .font(.caption2)
                             .foregroundStyle(.quaternary)
+                            .accessibilityHidden(true)
 
                         Text("\(index + 1)")
                             .font(.system(size: 11, weight: .semibold, design: .rounded))
@@ -38,7 +39,10 @@ struct RotationListEditor: View {
                                 .foregroundStyle(.tertiary)
                         }
                         .buttonStyle(.borderless)
+                        .accessibilityLabel("Remove \(item.name) from rotation")
                     }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("\(item.name), position \(index + 1)")
                     .listRowSeparator(.hidden)
                     .listRowInsets(EdgeInsets(top: 3, leading: 4, bottom: 3, trailing: 4))
                     .listRowBackground(Color.clear)

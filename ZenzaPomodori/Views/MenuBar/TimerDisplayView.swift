@@ -36,9 +36,11 @@ struct TimerDisplayView: View {
                 }
             }
             .frame(width: 140, height: 140)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(isOvertime ? "Overtime timer" : "\(phase.label(totalBlocks: totalBlocks)) timer")
+            .accessibilityValue(formattedTime)
         }
     }
-
 }
 
 #Preview("Focus") {

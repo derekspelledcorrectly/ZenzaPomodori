@@ -23,6 +23,7 @@ struct TimerControlsView: View {
             }
             .controlSize(phase == .idle ? .large : .regular)
             .help(isRunning ? "Pause (Space / Return)" : (phase == .idle ? "Start (Return)" : "Resume (Space / Return)"))
+            .accessibilityLabel(isRunning ? "Pause" : (phase == .idle ? "Start timer" : "Resume"))
 
             if phase != .idle && !autoAdvance && isOvertime {
                 Button(action: onNext) {
@@ -30,6 +31,7 @@ struct TimerControlsView: View {
                         .frame(width: 20)
                 }
                 .help("\(phase.isFocus ? "Finish Block" : "Finish Break") (\u{2318}\u{21A9}\u{FE0E})")
+                .accessibilityLabel(phase.isFocus ? "Finish block" : "Finish break")
             }
         }
         .buttonStyle(.bordered)

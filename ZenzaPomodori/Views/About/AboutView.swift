@@ -16,6 +16,7 @@ struct AboutView: View {
             Image(nsImage: NSApp.applicationIconImage)
                 .resizable()
                 .frame(width: 96, height: 96)
+                .accessibilityLabel("Zenza Pomodori app icon")
 
             Text("Zenza Pomodori")
                 .font(.system(size: 20, weight: .semibold))
