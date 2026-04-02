@@ -111,7 +111,10 @@ final class PopoverManager: NSObject {
         timer.onPhaseChange = { [weak self] _, newPhase in
             guard let self else { return }
             if !newPhase.isFocus {
-                self.router.sliceEngine?.deactivate()
+                if let engine = self.router.sliceEngine {
+                    self.rotationStore.lastUsedItems = engine.rotationItems
+                    engine.deactivate()
+                }
                 self.router.sliceEngine = nil
             }
         }
