@@ -394,6 +394,7 @@ final class PopoverManager: NSObject {
     // MARK: - Slices
 
     private func startSlices(with items: [RotationItem]) {
+        rotationStore.lastUsedItems = items
         let engine = SliceEngine(
             items: items,
             interval: settings.sliceRotationInterval

@@ -10,6 +10,7 @@ struct PopoverContainerView: View {
     let rotationStore: RotationStore
     let focusNameStore: FocusNameStore
     @State private var workingItems: [RotationItem] = []
+    @State private var hasRestoredLastUsed = false
     var onSliceStart: (([RotationItem]) -> Void)?
 
     var body: some View {
@@ -78,6 +79,12 @@ struct PopoverContainerView: View {
         }
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 10))
+        .onAppear {
+            if !hasRestoredLastUsed {
+                hasRestoredLastUsed = true
+                workingItems = rotationStore.lastUsedItems
+            }
+        }
     }
 
     private var isEditingActiveRotation: Bool {
