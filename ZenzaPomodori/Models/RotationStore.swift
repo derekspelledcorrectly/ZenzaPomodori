@@ -11,9 +11,14 @@ final class RotationStore {
         didSet { persist() }
     }
 
+    var lastUsedItems: [RotationItem] {
+        didSet { persistLastUsed() }
+    }
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         self.savedRotations = Self.load(from: defaults)
+        self.lastUsedItems = Self.loadLastUsed(from: defaults)
     }
 
     func saveRotation(name: String, items: [RotationItem]) {
@@ -39,6 +44,15 @@ final class RotationStore {
         }
     }
 
+    private func persistLastUsed() {
+        do {
+            let data = try JSONEncoder().encode(lastUsedItems)
+            defaults.set(data, forKey: SettingsKeys.lastUsedRotationItems)
+        } catch {
+            Logger.storage.error("Failed to encode last used items: \(error.localizedDescription)")
+        }
+    }
+
     private static func load(from defaults: UserDefaults) -> [SavedRotation] {
         guard let data = defaults.data(forKey: SettingsKeys.savedRotations) else {
             return [] // No data yet, legitimate empty state
@@ -47,6 +61,18 @@ final class RotationStore {
             return try JSONDecoder().decode([SavedRotation].self, from: data)
         } catch {
             Logger.storage.error("Failed to decode saved rotations: \(error.localizedDescription)")
+            return []
+        }
+    }
+
+    private static func loadLastUsed(from defaults: UserDefaults) -> [RotationItem] {
+        guard let data = defaults.data(forKey: SettingsKeys.lastUsedRotationItems) else {
+            return []
+        }
+        do {
+            return try JSONDecoder().decode([RotationItem].self, from: data)
+        } catch {
+            Logger.storage.error("Failed to decode last used items: \(error.localizedDescription)")
             return []
         }
     }

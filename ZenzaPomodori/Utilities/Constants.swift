@@ -60,4 +60,5 @@ enum SettingsKeys {
     static let rotationHotkeyEnabled = "rotationHotkeyEnabled"
     static let rotationHotkeyKeyCode = "rotationHotkeyKeyCode"
     static let rotationHotkeyModifiers = "rotationHotkeyModifiers"
+    static let lastUsedRotationItems = "lastUsedRotationItems"
 }
