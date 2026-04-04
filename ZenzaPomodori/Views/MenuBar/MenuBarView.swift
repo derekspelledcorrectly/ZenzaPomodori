@@ -18,6 +18,16 @@ struct MenuBarView<GearContent: View>: View {
                 formattedTime: timer.formattedTime,
                 isOvertime: timer.isOvertime
             )
+            #if DEBUG
+            .onTapGesture {
+                let flags = NSEvent.modifierFlags
+                if flags.contains(.option), flags.contains(.shift) {
+                    timer.debugAddTime(10)
+                } else if flags.contains(.option) {
+                    timer.debugSkipToEnd()
+                }
+            }
+            #endif
 
             if timer.phase == .idle && timer.settings.slicesEnabled {
                 BlockTypePickerView(

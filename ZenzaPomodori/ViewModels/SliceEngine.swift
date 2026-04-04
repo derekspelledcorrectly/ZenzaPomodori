@@ -96,6 +96,20 @@ final class SliceEngine {
         isPaused = false
     }
 
+    // MARK: - Debug
+
+    #if DEBUG
+    func debugSkipToEnd() {
+        guard isActive else { return }
+        sliceSecondsRemaining = 10
+    }
+
+    func debugAddTime(_ seconds: Int) {
+        guard isActive else { return }
+        sliceSecondsRemaining += seconds
+    }
+    #endif
+
     private func advanceToNext() {
         guard !rotationItems.isEmpty else { return }
         currentIndex = (currentIndex + 1) % rotationItems.count

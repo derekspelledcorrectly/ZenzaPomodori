@@ -8,6 +8,10 @@ struct ConcentricTimerView: View {
     var outerColor: Color = .secondary
     var innerColor: Color = .orange
     var size: CGFloat = 140
+    #if DEBUG
+    var onSliceTap: (() -> Void)?
+    var onBlockTap: (() -> Void)?
+    #endif
 
     private var scale: CGFloat { size / 140 }
     private var outerRadius: CGFloat { 66 * scale }
@@ -53,9 +57,23 @@ struct ConcentricTimerView: View {
                     .font(.system(size: mainFontSize, weight: .medium, design: .rounded))
                     .monospacedDigit()
                     .foregroundStyle(.primary)
+                    #if DEBUG
+                    .onTapGesture {
+                        guard NSEvent.modifierFlags.contains(.option) else { return }
+                        onSliceTap?()
+                    }
+                    #endif
                 Text(outerTimeFormatted)
                     .font(.system(size: subFontSize, weight: .medium))
                     .foregroundStyle(.secondary)
+                    .padding(.horizontal, 8)
+                    .contentShape(Rectangle())
+                    #if DEBUG
+                    .onTapGesture {
+                        guard NSEvent.modifierFlags.contains(.option) else { return }
+                        onBlockTap?()
+                    }
+                    #endif
             }
         }
         .frame(width: size, height: size)

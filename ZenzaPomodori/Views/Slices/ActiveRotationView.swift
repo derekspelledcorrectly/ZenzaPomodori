@@ -11,14 +11,7 @@ struct ActiveRotationView: View {
     var body: some View {
         VStack(spacing: 12) {
             // Concentric rings: outer = slice (hero), inner = block (context)
-            ConcentricTimerView(
-                sliceProgress: timer.progress,
-                outerProgress: engine.progress,
-                sliceTimeFormatted: TimeFormatting.formatted(seconds: engine.sliceSecondsRemaining),
-                outerTimeFormatted: timer.formattedTime,
-                outerColor: .orange,
-                innerColor: timer.phase.color
-            )
+            concentricTimer
 
             // Current focus, metadata, next focus
             VStack(spacing: 4) {
@@ -88,6 +81,34 @@ struct ActiveRotationView: View {
         hiddenShortcut(.space, modifiers: [], action: onPause)
         hiddenShortcut(.return, modifiers: [], action: onNext)
         hiddenShortcut(.return, modifiers: .command, action: onFinishBlock)
+    }
+
+    private var concentricTimer: ConcentricTimerView {
+        var view = ConcentricTimerView(
+            sliceProgress: timer.progress,
+            outerProgress: engine.progress,
+            sliceTimeFormatted: TimeFormatting.formatted(seconds: engine.sliceSecondsRemaining),
+            outerTimeFormatted: timer.formattedTime,
+            outerColor: .orange,
+            innerColor: timer.phase.color
+        )
+        #if DEBUG
+        view.onSliceTap = {
+            if NSEvent.modifierFlags.contains(.shift) {
+                engine.debugAddTime(10)
+            } else {
+                engine.debugSkipToEnd()
+            }
+        }
+        view.onBlockTap = {
+            if NSEvent.modifierFlags.contains(.shift) {
+                timer.debugAddTime(10)
+            } else {
+                timer.debugSkipToEnd()
+            }
+        }
+        #endif
+        return view
     }
 
     private var blockLabel: String {
