@@ -108,6 +108,8 @@ final class SliceEngine {
 
     func restartSlice() {
         guard isActive else { return }
+        isOvertime = false
+        overtimeSeconds = 0
         sliceSecondsRemaining = interval
     }
 

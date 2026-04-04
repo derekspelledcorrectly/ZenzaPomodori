@@ -280,6 +280,21 @@ struct SliceEngineTests {
         engine.deactivate()
     }
 
+    @Test func restartSliceDuringOvertimeClearsOvertime() {
+        let engine = makeEngine(interval: 2, autoAdvance: false)
+        engine.activate()
+        advanceEngine(engine, ticks: 2) // enter overtime
+        #expect(engine.isOvertime == true)
+        engine.restartSlice()
+        #expect(engine.isOvertime == false)
+        #expect(engine.overtimeSeconds == 0)
+        #expect(engine.sliceSecondsRemaining == 2)
+        // Verify ticking works normally after restart
+        engine.tick()
+        #expect(engine.sliceSecondsRemaining == 1)
+        engine.deactivate()
+    }
+
     // MARK: - Overtime (auto-advance off)
 
     @Test func noAutoAdvanceEntersOvertimeAtZero() {

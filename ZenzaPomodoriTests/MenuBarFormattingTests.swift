@@ -99,4 +99,38 @@ struct MenuBarFormattingTests {
     @Test func showTimerFalseNoFocusReturnsEmpty() {
         #expect(sliceFormatted(showTimer: false, showFocus: false) == "")
     }
+
+    @Test func sliceOvertimeShowsPlusPrefix() {
+        let info = SliceDisplayInfo(
+            sliceSeconds: 0,
+            outerFormattedTime: "20:00",
+            focusName: "API",
+            position: 1,
+            total: 3,
+            format: .sliceOnly,
+            showTimer: true,
+            showFocus: true,
+            isOvertime: true,
+            overtimeSeconds: 45
+        )
+        let result = MenuBarFormatting.sliceFormatted(info)
+        #expect(result == "+00:45 [API]")
+    }
+
+    @Test func sliceOvertimeDualTimerFormat() {
+        let info = SliceDisplayInfo(
+            sliceSeconds: 0,
+            outerFormattedTime: "20:00",
+            focusName: "API",
+            position: 1,
+            total: 3,
+            format: .dualTimer,
+            showTimer: true,
+            showFocus: true,
+            isOvertime: true,
+            overtimeSeconds: 45
+        )
+        let result = MenuBarFormatting.sliceFormatted(info)
+        #expect(result == "+00:45/20:00 [API]")
+    }
 }

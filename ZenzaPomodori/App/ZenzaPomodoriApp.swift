@@ -132,6 +132,9 @@ final class PopoverManager: NSObject {
             }
             self.notificationService.sendCompletionNotification(for: phase)
         }
+        timer.onOvertimeReminder = { [weak self] phase in
+            self?.handleFocusOvertimeReminder(phase: phase)
+        }
     }
 
     func showPanel(activate: Bool = false) {
@@ -399,10 +402,18 @@ final class PopoverManager: NSObject {
         rotationStore.lastUsedItems = items
         let engine = SliceEngine(
             items: items,
-            interval: settings.sliceRotationInterval
+            interval: settings.sliceRotationInterval,
+            autoAdvance: settings.sliceAutoAdvance
         )
         engine.onRotationComplete = { [weak self] in
             self?.handleSliceRotation()
+        }
+        engine.onOvertimeStart = { [weak self] in
+            self?.handleSliceOvertimeStart()
+        }
+        engine.reminderInterval = settings.sliceOvertimeReminderInterval
+        engine.onOvertimeReminder = { [weak self] in
+            self?.handleSliceOvertimeReminder()
         }
         router.sliceEngine = engine
         settings.lastBlockType = .slices
@@ -422,6 +433,34 @@ final class PopoverManager: NSObject {
         showPanel(activate: settings.stealFocusOnRotation)
 
         startAutoDismissTimer()
+    }
+
+    private func handleSliceOvertimeStart() {
+        guard router.sliceEngine != nil else { return }
+        cancelAutoDismissTimer()
+        router.activePanel = .sliceActive
+        showPanel(activate: settings.stealFocusOnRotation)
+    }
+
+    private func handleSliceOvertimeReminder() {
+        guard router.sliceEngine != nil else { return }
+
+        if settings.sliceOvertimeReminderEnabled {
+            soundService.play(settings.sliceOvertimeReminderSound)
+        }
+
+        router.activePanel = .sliceActive
+        showPanel(activate: settings.stealFocusOnRotation)
+    }
+
+    private func handleFocusOvertimeReminder(phase: TimerPhase) {
+        if settings.focusOvertimeReminderEnabled {
+            soundService.play(settings.focusOvertimeReminderSound)
+        }
+
+        if settings.popOnComplete {
+            showPanel(activate: false)
+        }
     }
 
     // MARK: - Global Hotkey
