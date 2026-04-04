@@ -157,15 +157,14 @@ final class PopoverManager: NSObject {
             panel.setFrameOrigin(NSPoint(x: x, y: y))
             panel.orderFront(nil)
             installDismissMonitors()
-
-            DispatchQueue.main.async { [weak self] in
-                self?.focusDefaultButton()
-            }
         }
 
         if activate {
             NSApp.activate()
             panel.makeKey()
+            DispatchQueue.main.async { [weak self] in
+                self?.focusDefaultButton()
+            }
         }
     }
 
@@ -447,10 +446,14 @@ final class PopoverManager: NSObject {
     }
 
     private func handleHotkey() {
-        if panel.isVisible {
-            hidePanel()
-        } else {
+        switch hotkeyToggleAction(panelVisible: panel.isVisible, panelIsKey: panel.isKeyWindow) {
+        case .showActivated:
             showPanel(activate: true)
+        case .activate:
+            cancelAutoDismissTimer()
+            showPanel(activate: true)
+        case .hide:
+            hidePanel()
         }
     }
 
