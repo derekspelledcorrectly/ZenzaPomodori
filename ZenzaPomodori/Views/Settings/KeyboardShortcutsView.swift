@@ -14,6 +14,8 @@ enum ShortcutData {
     static let sections: [ShortcutSection] = [
         ShortcutSection(title: "General", shortcuts: [
             ShortcutEntry(action: "Start timer", keys: "Space / ↩"),
+            ShortcutEntry(action: "Start Short Break", keys: "⌘B"),
+            ShortcutEntry(action: "Start Long Break", keys: "⇧⌘B"),
             ShortcutEntry(action: "Pause / Resume", keys: "Space / ↩"),
             ShortcutEntry(action: "Settings", keys: "⌘,"),
             ShortcutEntry(action: "Keyboard Shortcuts", keys: "⌘/"),

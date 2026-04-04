@@ -520,4 +520,103 @@ struct PomodoroTimerTests {
         timer.abandonBlock()
         #expect(timer.phase.isBreak) // unchanged
     }
+
+    // MARK: - startBreak
+
+    @Test func startShortBreakFromIdle() {
+        let timer = makeTimer()
+        timer.startBreak(.short)
+        #expect(timer.phase == .shortBreak(afterBlock: 1))
+        #expect(timer.secondsRemaining == Defaults.shortBreakDuration)
+        #expect(timer.completedBlocks == 1)
+        #expect(timer.isRunning == true)
+        timer.reset()
+    }
+
+    @Test func startLongBreakFromIdle() {
+        let timer = makeTimer()
+        timer.startBreak(.long)
+        #expect(timer.phase == .longBreak)
+        #expect(timer.secondsRemaining == Defaults.longBreakDuration)
+        #expect(timer.completedBlocks == Defaults.blocksBeforeLongBreak)
+        #expect(timer.isRunning == true)
+        timer.reset()
+    }
+
+    @Test func startShortBreakUsesPendingBlock() {
+        let timer = makeTimer()
+        timer.start()
+        timer.abandonBlock() // sets pendingBlock = 1
+        timer.startBreak(.short)
+        #expect(timer.phase == .shortBreak(afterBlock: 1))
+        #expect(timer.completedBlocks == 1)
+        #expect(timer.pendingBlock == nil)
+        timer.reset()
+    }
+
+    @Test func startBreakWhileRunningIsNoOp() {
+        let timer = makeTimer()
+        timer.start()
+        timer.startBreak(.short)
+        #expect(timer.phase == .focus(block: 1))
+        timer.reset()
+    }
+
+    @Test func shortBreakAdvancesToNextFocusBlock() {
+        let timer = makeTimer { $0.autoAdvance = true }
+        timer.startBreak(.short)
+        #expect(timer.phase == .shortBreak(afterBlock: 1))
+        // Drain the break timer
+        advanceTimer(timer, ticks: Defaults.shortBreakDuration)
+        #expect(timer.phase == .focus(block: 2))
+        #expect(timer.isRunning == true)
+        timer.reset()
+    }
+
+    @Test func longBreakReturnsToIdle() {
+        let timer = makeTimer { $0.autoAdvance = true }
+        timer.startBreak(.long)
+        #expect(timer.phase == .longBreak)
+        advanceTimer(timer, ticks: Defaults.longBreakDuration)
+        #expect(timer.phase == .idle)
+        #expect(timer.isRunning == false)
+        timer.reset()
+    }
+
+    @Test func startLongBreakClearsPendingBlock() {
+        let timer = makeTimer()
+        timer.start()
+        timer.abandonBlock() // sets pendingBlock = 1
+        timer.startBreak(.long)
+        #expect(timer.phase == .longBreak)
+        #expect(timer.pendingBlock == nil)
+        #expect(timer.completedBlocks == Defaults.blocksBeforeLongBreak)
+        timer.reset()
+    }
+
+    @Test func startShortBreakUsesPendingBlockGreaterThanOne() {
+        let timer = makeTimer()
+        timer.start()         // focus(block: 1)
+        timer.next()          // short break
+        timer.next()          // idle, pendingBlock = 2
+        timer.startBreak(.short)
+        #expect(timer.phase == .shortBreak(afterBlock: 2))
+        #expect(timer.completedBlocks == 2)
+        #expect(timer.pendingBlock == nil)
+        timer.reset()
+    }
+
+    @Test func startBreakRespectsCustomDurations() {
+        let timer = makeTimer { store in
+            store.shortBreakDuration = 120
+            store.longBreakDuration = 1200
+        }
+        timer.startBreak(.short)
+        #expect(timer.secondsRemaining == 120)
+        timer.reset()
+
+        timer.startBreak(.long)
+        #expect(timer.secondsRemaining == 1200)
+        timer.reset()
+    }
 }

@@ -19,6 +19,8 @@ struct KeyboardShortcutsViewTests {
         #expect(actions.contains("Settings"))
         #expect(actions.contains("Keyboard Shortcuts"))
         #expect(actions.contains("Dismiss / Go back"))
+        #expect(actions.contains("Start Short Break"))
+        #expect(actions.contains("Start Long Break"))
     }
 
     @Test func timerRunningSectionHasExpectedShortcuts() {

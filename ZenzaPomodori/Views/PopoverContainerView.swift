@@ -163,6 +163,24 @@ struct PopoverContainerView: View {
                 Divider()
             }
 
+            if timer.phase == .idle {
+                Button(action: {
+                    timer.startBreak(.short)
+                }) {
+                    Label("Start Short Break", systemImage: "cup.and.saucer")
+                }
+                .keyboardShortcut("b", modifiers: .command)
+
+                Button(action: {
+                    timer.startBreak(.long)
+                }) {
+                    Label("Start Long Break", systemImage: "sun.max")
+                }
+                .keyboardShortcut("b", modifiers: [.command, .shift])
+
+                Divider()
+            }
+
             Button(action: {
                 router.activePanel = .settings
             }) {
@@ -258,6 +276,14 @@ struct PopoverContainerView: View {
             }
             hiddenShortcut(.rightArrow, modifiers: .command) {
                 settings.lastBlockType = .slices
+            }
+        }
+        if timer.phase == .idle {
+            hiddenShortcut("b", modifiers: .command) {
+                timer.startBreak(.short)
+            }
+            hiddenShortcut("b", modifiers: [.command, .shift]) {
+                timer.startBreak(.long)
             }
         }
         hiddenShortcut(",", modifiers: .command) {

@@ -70,13 +70,30 @@ final class PomodoroTimer {
             pendingBlock = nil
             transitionTo(.focus(block: block))
         } else {
-            focusDuration = settings.focusDuration
-            shortBreakDuration = settings.shortBreakDuration
-            longBreakDuration = settings.longBreakDuration
-            blocksBeforeLongBreak = settings.blocksBeforeLongBreak
-            autoAdvance = settings.autoAdvance
+            snapshotSettings()
             completedBlocks = 0
             transitionTo(.focus(block: 1))
+        }
+        resume()
+    }
+
+    func startBreak(_ kind: BreakKind) {
+        guard phase == .idle else { return }
+        snapshotSettings()
+
+        switch kind {
+        case .short:
+            // If no pendingBlock is set (fresh state or after a long break),
+            // assume block 1 was just completed. This preserves the cycle
+            // position when the user manually triggers a break.
+            let block = pendingBlock ?? 1
+            pendingBlock = nil
+            completedBlocks = block
+            transitionTo(.shortBreak(afterBlock: block))
+        case .long:
+            pendingBlock = nil
+            completedBlocks = blocksBeforeLongBreak
+            transitionTo(.longBreak)
         }
         resume()
     }
@@ -142,6 +159,11 @@ final class PomodoroTimer {
     }
 
     // MARK: - Internal
+
+    private func snapshotSettings() {
+        blocksBeforeLongBreak = settings.blocksBeforeLongBreak
+        autoAdvance = settings.autoAdvance
+    }
 
     func tick() {
         if isOvertime {
