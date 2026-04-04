@@ -619,4 +619,59 @@ struct PomodoroTimerTests {
         #expect(timer.secondsRemaining == 1200)
         timer.reset()
     }
+
+    // MARK: - Focus Overtime Reminder
+
+    @Test func focusOvertimeReminderFiresAtInterval() {
+        let timer = makeTimer { $0.autoAdvance = false; $0.focusDuration = 60 }
+        timer.focusOvertimeReminderInterval = 10
+        var reminderCount = 0
+        timer.onOvertimeReminder = { _ in reminderCount += 1 }
+        timer.start()
+        timer.pause()
+        advanceTimer(timer, ticks: 60) // enter overtime
+        advanceTimer(timer, ticks: 10) // 10s overtime
+        #expect(reminderCount == 1)
+        advanceTimer(timer, ticks: 10) // 20s overtime
+        #expect(reminderCount == 2)
+        timer.reset()
+    }
+
+    @Test func focusOvertimeReminderDoesNotFireAtZero() {
+        let timer = makeTimer { $0.autoAdvance = false; $0.focusDuration = 60 }
+        timer.focusOvertimeReminderInterval = 10
+        var reminderCount = 0
+        timer.onOvertimeReminder = { _ in reminderCount += 1 }
+        timer.start()
+        timer.pause()
+        advanceTimer(timer, ticks: 60) // enter overtime (overtimeSeconds == 0)
+        #expect(reminderCount == 0)
+        timer.reset()
+    }
+
+    @Test func focusOvertimeReminderNotFiredWhenIntervalIsZero() {
+        let timer = makeTimer { $0.autoAdvance = false; $0.focusDuration = 60 }
+        timer.focusOvertimeReminderInterval = 0
+        var reminderCount = 0
+        timer.onOvertimeReminder = { _ in reminderCount += 1 }
+        timer.start()
+        timer.pause()
+        advanceTimer(timer, ticks: 60)
+        advanceTimer(timer, ticks: 30)
+        #expect(reminderCount == 0)
+        timer.reset()
+    }
+
+    @Test func focusOvertimeReminderIncludesPhase() {
+        let timer = makeTimer { $0.autoAdvance = false; $0.focusDuration = 60 }
+        timer.focusOvertimeReminderInterval = 5
+        var receivedPhase: TimerPhase?
+        timer.onOvertimeReminder = { phase in receivedPhase = phase }
+        timer.start()
+        timer.pause()
+        advanceTimer(timer, ticks: 60)
+        advanceTimer(timer, ticks: 5)
+        #expect(receivedPhase == .focus(block: 1))
+        timer.reset()
+    }
 }

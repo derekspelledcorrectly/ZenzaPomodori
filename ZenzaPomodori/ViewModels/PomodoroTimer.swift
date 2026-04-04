@@ -60,6 +60,8 @@ final class PomodoroTimer {
     var onPhaseChange: ((TimerPhase, TimerPhase) -> Void)?
     var onOvertimeStart: ((TimerPhase) -> Void)?
     var onTimerComplete: ((TimerPhase) -> Void)?
+    var onOvertimeReminder: ((TimerPhase) -> Void)?
+    var focusOvertimeReminderInterval: Int = 0
 
     // MARK: - Actions
 
@@ -168,6 +170,9 @@ final class PomodoroTimer {
     func tick() {
         if isOvertime {
             overtimeSeconds += 1
+            if focusOvertimeReminderInterval > 0 && overtimeSeconds > 0 && overtimeSeconds % focusOvertimeReminderInterval == 0 {
+                onOvertimeReminder?(phase)
+            }
             return
         }
         guard secondsRemaining > 0 else { return }
