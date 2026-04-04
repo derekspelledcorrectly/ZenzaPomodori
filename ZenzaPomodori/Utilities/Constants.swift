@@ -23,7 +23,7 @@ enum Defaults {
     static let sliceMenuBarFormat: SliceMenuBarFormat = .sliceOnly
     static let lastBlockType: BlockType = .focus
     static let globalHotkeyEnabled: Bool = false
-    static let globalHotkeyKeyCode: UInt32 = 6 // Z
+    static let globalHotkeyKeyCode: UInt32 = 42 // \
     static let globalHotkeyModifiers: UInt32 = 4608 // controlKey + shiftKey
     static let rotationHotkeyEnabled: Bool = false
     static let rotationHotkeyKeyCode: UInt32 = 36 // Return

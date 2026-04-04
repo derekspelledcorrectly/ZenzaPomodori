@@ -12,7 +12,7 @@ struct HotkeyServiceTests {
     @Test func defaultHotkeySettings() {
         let settings = makeSettings()
         #expect(settings.globalHotkeyEnabled == false)
-        #expect(settings.globalHotkeyKeyCode == 6)
+        #expect(settings.globalHotkeyKeyCode == 42)
         #expect(settings.globalHotkeyModifiers == 4608)
     }
 
