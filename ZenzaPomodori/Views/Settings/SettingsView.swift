@@ -163,6 +163,29 @@ struct SettingsView: View {
                 ))
             }
 
+            if !settings.autoAdvance {
+                Section("Overtime Reminder") {
+                    Toggle("Repeat reminder sound", isOn: $settings.focusOvertimeReminderEnabled)
+
+                    if settings.focusOvertimeReminderEnabled {
+                        Picker("Every", selection: focusReminderMinutesBinding) {
+                            Text("1 min").tag(1)
+                            Text("2 min").tag(2)
+                            Text("3 min").tag(3)
+                            Text("5 min").tag(5)
+                            Text("10 min").tag(10)
+                            Text("15 min").tag(15)
+                            Text("20 min").tag(20)
+                        }
+
+                        soundPicker("Reminder sound", sound: Binding(
+                            get: { settings.focusOvertimeReminderSound },
+                            set: { settings.focusOvertimeReminderSound = $0 }
+                        ))
+                    }
+                }
+            }
+
             Section("Global Hotkey") {
                 Toggle("Show/hide timer hotkey", isOn: $settings.globalHotkeyEnabled)
 
@@ -196,6 +219,8 @@ struct SettingsView: View {
                     }
 
                     Toggle("Steal focus on rotation", isOn: $settings.stealFocusOnRotation)
+
+                    Toggle("Auto-advance slices", isOn: $settings.sliceAutoAdvance)
                 }
             }
 
@@ -208,6 +233,29 @@ struct SettingsView: View {
                             get: { settings.sliceEndSound },
                             set: { settings.sliceEndSound = $0 }
                         ))
+                    }
+                }
+
+                if !settings.sliceAutoAdvance {
+                    Section("Overtime Reminder") {
+                        Toggle("Repeat reminder sound", isOn: $settings.sliceOvertimeReminderEnabled)
+
+                        if settings.sliceOvertimeReminderEnabled {
+                            Picker("Every", selection: $settings.sliceOvertimeReminderInterval) {
+                                Text("5s").tag(5)
+                                Text("10s").tag(10)
+                                Text("15s").tag(15)
+                                Text("20s").tag(20)
+                                Text("30s").tag(30)
+                                Text("45s").tag(45)
+                                Text("60s").tag(60)
+                            }
+
+                            soundPicker("Reminder sound", sound: Binding(
+                                get: { settings.sliceOvertimeReminderSound },
+                                set: { settings.sliceOvertimeReminderSound = $0 }
+                            ))
+                        }
                     }
                 }
 
@@ -245,6 +293,13 @@ struct SettingsView: View {
         Binding(
             get: { settings.sliceRotationInterval / 60 },
             set: { settings.sliceRotationInterval = $0 * 60 }
+        )
+    }
+
+    private var focusReminderMinutesBinding: Binding<Int> {
+        Binding(
+            get: { settings.focusOvertimeReminderInterval / 60 },
+            set: { settings.focusOvertimeReminderInterval = $0 * 60 }
         )
     }
 

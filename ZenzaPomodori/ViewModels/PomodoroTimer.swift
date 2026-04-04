@@ -248,8 +248,12 @@ final class PomodoroTimer {
     }
 
     func debugAddTime(_ seconds: Int) {
-        guard phase != .idle, !isOvertime else { return }
-        secondsRemaining += seconds
+        guard phase != .idle else { return }
+        if isOvertime {
+            overtimeSeconds += seconds
+        } else {
+            secondsRemaining += seconds
+        }
     }
     #endif
 

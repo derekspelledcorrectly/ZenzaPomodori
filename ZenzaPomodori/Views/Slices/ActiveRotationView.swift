@@ -57,8 +57,8 @@ struct ActiveRotationView: View {
                     Image(systemName: "forward.end.fill")
                         .frame(width: 20)
                 }
-                .help("Next Slice (Return)")
-                .accessibilityLabel("Skip to next slice")
+                .help(engine.isOvertime ? "Start Next Slice (Return)" : "Next Slice (Return)")
+                .accessibilityLabel(engine.isOvertime ? "Start next slice" : "Skip to next slice")
 
                 if !autoAdvance && timer.isOvertime {
                     Button(action: { onFinishBlock() }) {
@@ -87,10 +87,13 @@ struct ActiveRotationView: View {
         var view = ConcentricTimerView(
             sliceProgress: timer.progress,
             outerProgress: engine.progress,
-            sliceTimeFormatted: TimeFormatting.formatted(seconds: engine.sliceSecondsRemaining),
+            sliceTimeFormatted: engine.isOvertime
+                ? "+\(TimeFormatting.formatted(seconds: engine.overtimeSeconds))"
+                : TimeFormatting.formatted(seconds: engine.sliceSecondsRemaining),
             outerTimeFormatted: timer.formattedTime,
             outerColor: .orange,
-            innerColor: timer.phase.color
+            innerColor: timer.phase.color,
+            sliceIsOvertime: engine.isOvertime
         )
         #if DEBUG
         view.onSliceTap = {
@@ -102,7 +105,7 @@ struct ActiveRotationView: View {
         }
         view.onBlockTap = {
             if NSEvent.modifierFlags.contains(.shift) {
-                timer.debugAddTime(10)
+                timer.debugAddTime(20)
             } else {
                 timer.debugSkipToEnd()
             }

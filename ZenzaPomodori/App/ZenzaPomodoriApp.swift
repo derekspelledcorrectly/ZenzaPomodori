@@ -358,7 +358,9 @@ final class PopoverManager: NSObject {
                 total: engine.rotationItems.count,
                 format: settings.sliceMenuBarFormat,
                 showTimer: settings.showTimerInMenuBar,
-                showFocus: settings.showFocusInMenuBar
+                showFocus: settings.showFocusInMenuBar,
+                isOvertime: engine.isOvertime,
+                overtimeSeconds: engine.overtimeSeconds
             ))
             if !formatted.isEmpty {
                 let monoFont = NSFont.monospacedDigitSystemFont(
@@ -411,7 +413,8 @@ final class PopoverManager: NSObject {
         engine.onOvertimeStart = { [weak self] in
             self?.handleSliceOvertimeStart()
         }
-        engine.reminderInterval = settings.sliceOvertimeReminderInterval
+        engine.reminderInterval = settings.sliceOvertimeReminderEnabled
+            ? settings.sliceOvertimeReminderInterval : 0
         engine.onOvertimeReminder = { [weak self] in
             self?.handleSliceOvertimeReminder()
         }
@@ -437,9 +440,9 @@ final class PopoverManager: NSObject {
 
     private func handleSliceOvertimeStart() {
         guard router.sliceEngine != nil else { return }
-        cancelAutoDismissTimer()
         router.activePanel = .sliceActive
         showPanel(activate: settings.stealFocusOnRotation)
+        startAutoDismissTimer()
     }
 
     private func handleSliceOvertimeReminder() {
@@ -451,6 +454,7 @@ final class PopoverManager: NSObject {
 
         router.activePanel = .sliceActive
         showPanel(activate: settings.stealFocusOnRotation)
+        startAutoDismissTimer()
     }
 
     private func handleFocusOvertimeReminder(phase: TimerPhase) {
@@ -460,6 +464,7 @@ final class PopoverManager: NSObject {
 
         if settings.popOnComplete {
             showPanel(activate: false)
+            startAutoDismissTimer()
         }
     }
 
@@ -610,6 +615,8 @@ final class PopoverManager: NSObject {
                 _ = self.router.sliceEngine?.sliceSecondsRemaining
                 _ = self.router.sliceEngine?.currentItemName
                 _ = self.router.sliceEngine?.currentIndex
+                _ = self.router.sliceEngine?.isOvertime
+                _ = self.router.sliceEngine?.overtimeSeconds
             } onChange: {
                 Task { @MainActor [weak self] in
                     self?.updateStatusItem()

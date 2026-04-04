@@ -9,6 +9,8 @@ struct SliceDisplayInfo {
     let format: SliceMenuBarFormat
     let showTimer: Bool
     let showFocus: Bool
+    var isOvertime: Bool = false
+    var overtimeSeconds: Int = 0
 }
 
 enum MenuBarFormatting {
@@ -28,7 +30,9 @@ enum MenuBarFormatting {
             return ""
         }
 
-        let slice = TimeFormatting.formatted(seconds: info.sliceSeconds)
+        let slice = info.isOvertime
+            ? "+\(TimeFormatting.formatted(seconds: info.overtimeSeconds))"
+            : TimeFormatting.formatted(seconds: info.sliceSeconds)
         let name: String
         if info.showFocus, let focusName = info.focusName {
             name = " [\(truncatedFocusName(focusName, maxLength: 15))]"

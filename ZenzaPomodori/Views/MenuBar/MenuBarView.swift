@@ -22,7 +22,7 @@ struct MenuBarView<GearContent: View>: View {
             .onTapGesture {
                 let flags = NSEvent.modifierFlags
                 if flags.contains(.option), flags.contains(.shift) {
-                    timer.debugAddTime(10)
+                    timer.debugAddTime(20)
                 } else if flags.contains(.option) {
                     timer.debugSkipToEnd()
                 }

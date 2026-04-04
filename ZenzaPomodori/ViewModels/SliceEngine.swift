@@ -133,7 +133,11 @@ final class SliceEngine {
 
     func debugAddTime(_ seconds: Int) {
         guard isActive else { return }
-        sliceSecondsRemaining += seconds
+        if isOvertime {
+            overtimeSeconds += seconds
+        } else {
+            sliceSecondsRemaining += seconds
+        }
     }
     #endif
 
