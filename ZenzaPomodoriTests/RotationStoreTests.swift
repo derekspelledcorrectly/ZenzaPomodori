@@ -122,4 +122,34 @@ struct RotationStoreTests {
         let store2 = RotationStore(defaults: defaults)
         #expect(store2.lastUsedItems.isEmpty)
     }
+
+    // MARK: - Corrupt Data Resilience
+
+    @Test func corruptSavedRotationsReturnsEmpty() {
+        let defaults = makeTestDefaults()
+        defaults.set(Data("not json".utf8), forKey: SettingsKeys.savedRotations)
+        let store = RotationStore(defaults: defaults)
+        #expect(store.savedRotations.isEmpty)
+    }
+
+    @Test func corruptSavedRotationsClearsKey() {
+        let defaults = makeTestDefaults()
+        defaults.set(Data("not json".utf8), forKey: SettingsKeys.savedRotations)
+        _ = RotationStore(defaults: defaults)
+        #expect(defaults.data(forKey: SettingsKeys.savedRotations) == nil)
+    }
+
+    @Test func corruptLastUsedItemsReturnsEmpty() {
+        let defaults = makeTestDefaults()
+        defaults.set(Data("not json".utf8), forKey: SettingsKeys.lastUsedRotationItems)
+        let store = RotationStore(defaults: defaults)
+        #expect(store.lastUsedItems.isEmpty)
+    }
+
+    @Test func corruptLastUsedItemsClearsKey() {
+        let defaults = makeTestDefaults()
+        defaults.set(Data("not json".utf8), forKey: SettingsKeys.lastUsedRotationItems)
+        _ = RotationStore(defaults: defaults)
+        #expect(defaults.data(forKey: SettingsKeys.lastUsedRotationItems) == nil)
+    }
 }

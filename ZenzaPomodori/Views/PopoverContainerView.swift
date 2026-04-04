@@ -148,6 +148,7 @@ struct PopoverContainerView: View {
                     Button(role: .destructive, action: {
                         let wasSlicing = router.sliceEngine?.isActive == true
                         if let engine = router.sliceEngine, engine.isActive {
+                            rotationStore.lastUsedItems = engine.rotationItems
                             engine.deactivate()
                             router.sliceEngine = nil
                         }
@@ -242,6 +243,7 @@ struct PopoverContainerView: View {
                 hiddenShortcut(.delete, modifiers: .command) {
                     let wasSlicing = router.sliceEngine?.isActive == true
                     if let engine = router.sliceEngine, engine.isActive {
+                        rotationStore.lastUsedItems = engine.rotationItems
                         engine.deactivate()
                         router.sliceEngine = nil
                     }

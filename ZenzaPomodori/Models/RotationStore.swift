@@ -61,6 +61,7 @@ final class RotationStore {
             return try JSONDecoder().decode([SavedRotation].self, from: data)
         } catch {
             Logger.storage.error("Failed to decode saved rotations: \(error.localizedDescription)")
+            defaults.removeObject(forKey: SettingsKeys.savedRotations)
             return []
         }
     }
@@ -73,6 +74,7 @@ final class RotationStore {
             return try JSONDecoder().decode([RotationItem].self, from: data)
         } catch {
             Logger.storage.error("Failed to decode last used items: \(error.localizedDescription)")
+            defaults.removeObject(forKey: SettingsKeys.lastUsedRotationItems)
             return []
         }
     }
