@@ -256,4 +256,119 @@ struct SettingsStoreTests {
         store.focusDuration = 30 * 60
         #expect(changed.value == true)
     }
+
+    // MARK: - Slice Auto-Advance
+
+    @Test func defaultSliceAutoAdvance() {
+        let store = makeStore()
+        #expect(store.sliceAutoAdvance == true)
+    }
+
+    @Test func setSliceAutoAdvance() {
+        let store = makeStore()
+        store.sliceAutoAdvance = false
+        #expect(store.sliceAutoAdvance == false)
+    }
+
+    @Test func sliceAutoAdvancePersists() {
+        let defaults = makeTestDefaults()
+        let store1 = SettingsStore(defaults: defaults)
+        store1.sliceAutoAdvance = false
+        let store2 = SettingsStore(defaults: defaults)
+        #expect(store2.sliceAutoAdvance == false)
+    }
+
+    // MARK: - Focus Overtime Reminder
+
+    @Test func defaultFocusOvertimeReminderEnabled() {
+        let store = makeStore()
+        #expect(store.focusOvertimeReminderEnabled == false)
+    }
+
+    @Test func setFocusOvertimeReminderEnabled() {
+        let store = makeStore()
+        store.focusOvertimeReminderEnabled = true
+        #expect(store.focusOvertimeReminderEnabled == true)
+    }
+
+    @Test func defaultFocusOvertimeReminderInterval() {
+        let store = makeStore()
+        #expect(store.focusOvertimeReminderInterval == 300)
+    }
+
+    @Test func setFocusOvertimeReminderInterval() {
+        let store = makeStore()
+        store.focusOvertimeReminderInterval = 600
+        #expect(store.focusOvertimeReminderInterval == 600)
+    }
+
+    @Test func focusOvertimeReminderIntervalClampsLow() {
+        let store = makeStore()
+        store.focusOvertimeReminderInterval = 30
+        #expect(store.focusOvertimeReminderInterval == 60)
+    }
+
+    @Test func focusOvertimeReminderIntervalClampsHigh() {
+        let store = makeStore()
+        store.focusOvertimeReminderInterval = 2000
+        #expect(store.focusOvertimeReminderInterval == 1200)
+    }
+
+    @Test func defaultFocusOvertimeReminderSound() {
+        let store = makeStore()
+        #expect(store.focusOvertimeReminderSound == "Glass")
+    }
+
+    @Test func setFocusOvertimeReminderSound() {
+        let store = makeStore()
+        store.focusOvertimeReminderSound = "Sharp"
+        #expect(store.focusOvertimeReminderSound == "Sharp")
+    }
+
+    // MARK: - Slice Overtime Reminder
+
+    @Test func defaultSliceOvertimeReminderEnabled() {
+        let store = makeStore()
+        #expect(store.sliceOvertimeReminderEnabled == false)
+    }
+
+    @Test func setSliceOvertimeReminderEnabled() {
+        let store = makeStore()
+        store.sliceOvertimeReminderEnabled = true
+        #expect(store.sliceOvertimeReminderEnabled == true)
+    }
+
+    @Test func defaultSliceOvertimeReminderInterval() {
+        let store = makeStore()
+        #expect(store.sliceOvertimeReminderInterval == 20)
+    }
+
+    @Test func setSliceOvertimeReminderInterval() {
+        let store = makeStore()
+        store.sliceOvertimeReminderInterval = 30
+        #expect(store.sliceOvertimeReminderInterval == 30)
+    }
+
+    @Test func sliceOvertimeReminderIntervalClampsLow() {
+        let store = makeStore()
+        store.sliceOvertimeReminderInterval = 2
+        #expect(store.sliceOvertimeReminderInterval == 5)
+    }
+
+    @Test func sliceOvertimeReminderIntervalClampsHigh() {
+        let store = makeStore()
+        store.sliceOvertimeReminderInterval = 120
+        #expect(store.sliceOvertimeReminderInterval == 60)
+    }
+
+    @Test func defaultSliceOvertimeReminderSound() {
+        let store = makeStore()
+        #expect(store.sliceOvertimeReminderSound == "Sharp")
+    }
+
+    @Test func setSliceOvertimeReminderSound() {
+        let store = makeStore()
+        store.sliceOvertimeReminderSound = "Glass"
+        #expect(store.sliceOvertimeReminderSound == "Glass")
+    }
 }

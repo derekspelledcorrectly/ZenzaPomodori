@@ -106,6 +106,42 @@ final class SettingsStore {
         didSet { defaults.set(stealFocusOnRotation, forKey: SettingsKeys.stealFocusOnRotation) }
     }
 
+    var sliceAutoAdvance: Bool {
+        didSet { defaults.set(sliceAutoAdvance, forKey: SettingsKeys.sliceAutoAdvance) }
+    }
+
+    var focusOvertimeReminderEnabled: Bool {
+        didSet { defaults.set(focusOvertimeReminderEnabled, forKey: SettingsKeys.focusOvertimeReminderEnabled) }
+    }
+
+    var focusOvertimeReminderInterval: Int {
+        didSet {
+            let validated = max(60, min(1200, focusOvertimeReminderInterval))
+            defaults.set(validated, forKey: SettingsKeys.focusOvertimeReminderInterval)
+            if focusOvertimeReminderInterval != validated { focusOvertimeReminderInterval = validated }
+        }
+    }
+
+    var focusOvertimeReminderSound: String {
+        didSet { defaults.set(focusOvertimeReminderSound, forKey: SettingsKeys.focusOvertimeReminderSound) }
+    }
+
+    var sliceOvertimeReminderEnabled: Bool {
+        didSet { defaults.set(sliceOvertimeReminderEnabled, forKey: SettingsKeys.sliceOvertimeReminderEnabled) }
+    }
+
+    var sliceOvertimeReminderInterval: Int {
+        didSet {
+            let validated = max(5, min(60, sliceOvertimeReminderInterval))
+            defaults.set(validated, forKey: SettingsKeys.sliceOvertimeReminderInterval)
+            if sliceOvertimeReminderInterval != validated { sliceOvertimeReminderInterval = validated }
+        }
+    }
+
+    var sliceOvertimeReminderSound: String {
+        didSet { defaults.set(sliceOvertimeReminderSound, forKey: SettingsKeys.sliceOvertimeReminderSound) }
+    }
+
     var sliceMenuBarFormat: SliceMenuBarFormat {
         didSet {
             defaults.set(sliceMenuBarFormat.rawValue, forKey: SettingsKeys.sliceMenuBarFormat)
@@ -181,6 +217,9 @@ final class SettingsStore {
         self.slicesEnabled = Self.loadBool(from: defaults, key: SettingsKeys.slicesEnabled, default: Defaults.slicesEnabled)
         self.sliceSoundEnabled = Self.loadBool(from: defaults, key: SettingsKeys.sliceSoundEnabled, default: Defaults.sliceSoundEnabled)
         self.stealFocusOnRotation = Self.loadBool(from: defaults, key: SettingsKeys.stealFocusOnRotation, default: Defaults.stealFocusOnRotation)
+        self.sliceAutoAdvance = Self.loadBool(from: defaults, key: SettingsKeys.sliceAutoAdvance, default: Defaults.sliceAutoAdvance)
+        self.focusOvertimeReminderEnabled = Self.loadBool(from: defaults, key: SettingsKeys.focusOvertimeReminderEnabled, default: Defaults.focusOvertimeReminderEnabled)
+        self.sliceOvertimeReminderEnabled = Self.loadBool(from: defaults, key: SettingsKeys.sliceOvertimeReminderEnabled, default: Defaults.sliceOvertimeReminderEnabled)
         self.globalHotkeyEnabled = Self.loadBool(from: defaults, key: SettingsKeys.globalHotkeyEnabled, default: Defaults.globalHotkeyEnabled)
         self.rotationHotkeyEnabled = Self.loadBool(from: defaults, key: SettingsKeys.rotationHotkeyEnabled, default: Defaults.rotationHotkeyEnabled)
 
@@ -188,10 +227,14 @@ final class SettingsStore {
         self.focusEndSound = Self.loadString(from: defaults, key: SettingsKeys.focusEndSound, default: Defaults.focusEndSound)
         self.breakEndSound = Self.loadString(from: defaults, key: SettingsKeys.breakEndSound, default: Defaults.breakEndSound)
         self.sliceEndSound = Self.loadString(from: defaults, key: SettingsKeys.sliceEndSound, default: Defaults.sliceEndSound)
+        self.focusOvertimeReminderSound = Self.loadString(from: defaults, key: SettingsKeys.focusOvertimeReminderSound, default: Defaults.focusOvertimeReminderSound)
+        self.sliceOvertimeReminderSound = Self.loadString(from: defaults, key: SettingsKeys.sliceOvertimeReminderSound, default: Defaults.sliceOvertimeReminderSound)
 
         // Clamped integers
         self.autoDismissSeconds = Self.loadInt(from: defaults, key: SettingsKeys.autoDismissSeconds, default: Defaults.autoDismissSeconds, min: 0, max: 30)
         self.sliceRotationInterval = Self.loadInt(from: defaults, key: SettingsKeys.sliceRotationInterval, default: Defaults.sliceRotationInterval)
+        self.focusOvertimeReminderInterval = Self.loadInt(from: defaults, key: SettingsKeys.focusOvertimeReminderInterval, default: Defaults.focusOvertimeReminderInterval, min: 60, max: 1200)
+        self.sliceOvertimeReminderInterval = Self.loadInt(from: defaults, key: SettingsKeys.sliceOvertimeReminderInterval, default: Defaults.sliceOvertimeReminderInterval, min: 5, max: 60)
 
         // Enum-backed
         self.sliceMenuBarFormat = Self.loadRawRepresentable(from: defaults, key: SettingsKeys.sliceMenuBarFormat, default: Defaults.sliceMenuBarFormat)

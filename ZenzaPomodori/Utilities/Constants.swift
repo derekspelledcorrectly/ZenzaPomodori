@@ -21,6 +21,13 @@ enum Defaults {
     static let sliceEndSound: String = "Polite"
     static let stealFocusOnRotation: Bool = false
     static let sliceMenuBarFormat: SliceMenuBarFormat = .sliceOnly
+    static let sliceAutoAdvance: Bool = true
+    static let focusOvertimeReminderEnabled: Bool = false
+    static let focusOvertimeReminderInterval: Int = 300
+    static let focusOvertimeReminderSound: String = "Glass"
+    static let sliceOvertimeReminderEnabled: Bool = false
+    static let sliceOvertimeReminderInterval: Int = 20
+    static let sliceOvertimeReminderSound: String = "Sharp"
     static let lastBlockType: BlockType = .focus
     static let globalHotkeyEnabled: Bool = false
     static let globalHotkeyKeyCode: UInt32 = 42 // \
@@ -52,6 +59,13 @@ enum SettingsKeys {
     static let sliceEndSound = "sliceEndSound"
     static let stealFocusOnRotation = "stealFocusOnRotation"
     static let sliceMenuBarFormat = "sliceMenuBarFormat"
+    static let sliceAutoAdvance = "sliceAutoAdvance"
+    static let focusOvertimeReminderEnabled = "focusOvertimeReminderEnabled"
+    static let focusOvertimeReminderInterval = "focusOvertimeReminderInterval"
+    static let focusOvertimeReminderSound = "focusOvertimeReminderSound"
+    static let sliceOvertimeReminderEnabled = "sliceOvertimeReminderEnabled"
+    static let sliceOvertimeReminderInterval = "sliceOvertimeReminderInterval"
+    static let sliceOvertimeReminderSound = "sliceOvertimeReminderSound"
     static let lastBlockType = "lastBlockType"
     static let savedRotations = "savedRotations"
     static let globalHotkeyEnabled = "globalHotkeyEnabled"
