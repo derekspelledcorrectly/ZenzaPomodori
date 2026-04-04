@@ -14,7 +14,7 @@ struct RotationListEditor: View {
                     .listRowBackground(Color.clear)
             } else {
                 ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
-                    HStack(spacing: 8) {
+                    HStack(alignment: .lastTextBaseline, spacing: 8) {
                         Image(systemName: "line.3.horizontal")
                             .font(.caption2)
                             .foregroundStyle(.quaternary)
@@ -22,7 +22,7 @@ struct RotationListEditor: View {
 
                         Text("\(index + 1)")
                             .font(.system(size: 11, weight: .semibold, design: .rounded))
-                            .foregroundColor(.accentColor)
+                            .foregroundStyle(.tertiary)
                             .frame(width: 16)
 
                         Text(item.name)
