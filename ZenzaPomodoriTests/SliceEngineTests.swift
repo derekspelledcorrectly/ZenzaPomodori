@@ -7,14 +7,15 @@ import Testing
 struct SliceEngineTests {
     private func makeEngine(
         items: [RotationItem]? = nil,
-        interval: Int = 180
+        interval: Int = 180,
+        autoAdvance: Bool = true
     ) -> SliceEngine {
         let defaultItems = items ?? [
             RotationItem(name: "API"),
             RotationItem(name: "CI"),
             RotationItem(name: "Frontend"),
         ]
-        return SliceEngine(items: defaultItems, interval: interval)
+        return SliceEngine(items: defaultItems, interval: interval, autoAdvance: autoAdvance)
     }
 
     // MARK: - Initial State
@@ -276,6 +277,138 @@ struct SliceEngineTests {
         engine.activate()
         engine.updateItems([])
         #expect(engine.rotationItems.count == 3)
+        engine.deactivate()
+    }
+
+    // MARK: - Overtime (auto-advance off)
+
+    @Test func noAutoAdvanceEntersOvertimeAtZero() {
+        let engine = makeEngine(interval: 3, autoAdvance: false)
+        engine.activate()
+        advanceEngine(engine, ticks: 3)
+        #expect(engine.isOvertime == true)
+        #expect(engine.overtimeSeconds == 0)
+        #expect(engine.currentIndex == 0) // did NOT advance
+        engine.deactivate()
+    }
+
+    @Test func overtimeCountsUp() {
+        let engine = makeEngine(interval: 2, autoAdvance: false)
+        engine.activate()
+        advanceEngine(engine, ticks: 2) // reach zero, enter overtime
+        advanceEngine(engine, ticks: 3) // 3 overtime ticks
+        #expect(engine.overtimeSeconds == 3)
+        #expect(engine.isOvertime == true)
+        engine.deactivate()
+    }
+
+    @Test func overtimeFiresRotationCompleteOnce() {
+        let engine = makeEngine(interval: 2, autoAdvance: false)
+        var completeCount = 0
+        engine.onRotationComplete = { completeCount += 1 }
+        engine.activate()
+        advanceEngine(engine, ticks: 2) // enter overtime
+        advanceEngine(engine, ticks: 3) // keep ticking in overtime
+        #expect(completeCount == 1)
+        engine.deactivate()
+    }
+
+    @Test func overtimeFiresOvertimeStartCallback() {
+        let engine = makeEngine(interval: 2, autoAdvance: false)
+        var started = false
+        engine.onOvertimeStart = { started = true }
+        engine.activate()
+        advanceEngine(engine, ticks: 2)
+        #expect(started == true)
+        engine.deactivate()
+    }
+
+    @Test func skipDuringOvertimeAdvancesAndClearsOvertime() {
+        let engine = makeEngine(interval: 2, autoAdvance: false)
+        engine.activate()
+        advanceEngine(engine, ticks: 2) // enter overtime
+        #expect(engine.isOvertime == true)
+        engine.skip()
+        #expect(engine.isOvertime == false)
+        #expect(engine.overtimeSeconds == 0)
+        #expect(engine.currentIndex == 1)
+        #expect(engine.sliceSecondsRemaining == 2)
+        engine.deactivate()
+    }
+
+    @Test func deactivateClearsOvertime() {
+        let engine = makeEngine(interval: 2, autoAdvance: false)
+        engine.activate()
+        advanceEngine(engine, ticks: 2)
+        #expect(engine.isOvertime == true)
+        engine.deactivate()
+        #expect(engine.isOvertime == false)
+        #expect(engine.overtimeSeconds == 0)
+    }
+
+    @Test func autoAdvanceOnStillAdvancesImmediately() {
+        let engine = makeEngine(interval: 3, autoAdvance: true)
+        engine.activate()
+        advanceEngine(engine, ticks: 3)
+        #expect(engine.isOvertime == false)
+        #expect(engine.currentIndex == 1)
+        #expect(engine.sliceSecondsRemaining == 3)
+        engine.deactivate()
+    }
+
+    @Test func progressClampsAtOneInOvertime() {
+        let engine = makeEngine(interval: 2, autoAdvance: false)
+        engine.activate()
+        advanceEngine(engine, ticks: 2)
+        #expect(engine.progress == 1.0)
+        engine.deactivate()
+    }
+
+    @Test func formattedOvertimeTime() {
+        let engine = makeEngine(interval: 2, autoAdvance: false)
+        engine.activate()
+        advanceEngine(engine, ticks: 2) // enter overtime
+        advanceEngine(engine, ticks: 65) // 65 seconds overtime
+        #expect(engine.overtimeSeconds == 65)
+        engine.deactivate()
+    }
+
+    // MARK: - Overtime Reminder
+
+    @Test func overtimeReminderFiresAtInterval() {
+        let engine = makeEngine(interval: 2, autoAdvance: false)
+        engine.reminderInterval = 5
+        var reminderCount = 0
+        engine.onOvertimeReminder = { reminderCount += 1 }
+        engine.activate()
+        advanceEngine(engine, ticks: 2) // enter overtime
+        advanceEngine(engine, ticks: 5) // 5 seconds overtime
+        #expect(reminderCount == 1)
+        advanceEngine(engine, ticks: 5) // 10 seconds overtime
+        #expect(reminderCount == 2)
+        engine.deactivate()
+    }
+
+    @Test func overtimeReminderDoesNotFireAtZero() {
+        let engine = makeEngine(interval: 2, autoAdvance: false)
+        engine.reminderInterval = 5
+        var reminderCount = 0
+        engine.onOvertimeReminder = { reminderCount += 1 }
+        engine.activate()
+        advanceEngine(engine, ticks: 2) // enter overtime (overtimeSeconds == 0)
+        #expect(reminderCount == 0)
+        engine.deactivate()
+    }
+
+    @Test func overtimeReminderNotFiredWhenIntervalIsZero() {
+        let engine = makeEngine(interval: 2, autoAdvance: false)
+        engine.reminderInterval = 0
+        var reminderCount = 0
+        engine.onOvertimeReminder = { reminderCount += 1 }
+        engine.activate()
+        advanceEngine(engine, ticks: 2)
+        advanceEngine(engine, ticks: 10)
+        #expect(reminderCount == 0)
         engine.deactivate()
     }
 }

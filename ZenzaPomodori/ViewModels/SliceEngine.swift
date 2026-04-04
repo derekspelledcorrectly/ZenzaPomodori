@@ -6,11 +6,14 @@ import Observation
 final class SliceEngine {
     private(set) var rotationItems: [RotationItem]
     let interval: Int
+    let autoAdvance: Bool
 
     private(set) var currentIndex: Int = 0
     private(set) var sliceSecondsRemaining: Int = 0
     private(set) var isActive: Bool = false
     private(set) var isPaused: Bool = false
+    private(set) var isOvertime: Bool = false
+    private(set) var overtimeSeconds: Int = 0
 
     private var timerTask: Task<Void, Never>?
 
@@ -27,15 +30,20 @@ final class SliceEngine {
 
     var progress: Double {
         guard interval > 0 else { return 0 }
+        if isOvertime { return 1.0 }
         return 1.0 - Double(sliceSecondsRemaining) / Double(interval)
     }
 
     var onRotationChange: ((Int, String) -> Void)?
     var onRotationComplete: (() -> Void)?
+    var onOvertimeStart: (() -> Void)?
+    var onOvertimeReminder: (() -> Void)?
+    var reminderInterval: Int = 0
 
-    init(items: [RotationItem], interval: Int) {
+    init(items: [RotationItem], interval: Int, autoAdvance: Bool = true) {
         self.rotationItems = items
         self.interval = interval
+        self.autoAdvance = autoAdvance
     }
 
     func activate() {
@@ -53,19 +61,36 @@ final class SliceEngine {
         isPaused = false
         currentIndex = 0
         sliceSecondsRemaining = 0
+        isOvertime = false
+        overtimeSeconds = 0
     }
 
     func tick() {
-        guard isActive, !isPaused, sliceSecondsRemaining > 0 else { return }
+        guard isActive, !isPaused else { return }
+        if isOvertime {
+            overtimeSeconds += 1
+            if reminderInterval > 0 && overtimeSeconds > 0 && overtimeSeconds % reminderInterval == 0 {
+                onOvertimeReminder?()
+            }
+            return
+        }
+        guard sliceSecondsRemaining > 0 else { return }
         sliceSecondsRemaining -= 1
         if sliceSecondsRemaining == 0 {
             onRotationComplete?()
-            advanceToNext()
+            if autoAdvance {
+                advanceToNext()
+            } else {
+                isOvertime = true
+                onOvertimeStart?()
+            }
         }
     }
 
     func skip() {
         guard isActive else { return }
+        isOvertime = false
+        overtimeSeconds = 0
         advanceToNext()
     }
 
