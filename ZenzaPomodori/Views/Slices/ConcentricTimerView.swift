@@ -45,7 +45,7 @@ struct ConcentricTimerView: View {
             Circle()
                 .trim(from: 0, to: sliceProgress)
                 .stroke(
-                    sliceIsOvertime ? .red : innerColor,
+                    innerColor,
                     style: StrokeStyle(lineWidth: innerStroke, lineCap: .round)
                 )
                 .frame(width: innerRadius * 2, height: innerRadius * 2)
@@ -57,7 +57,7 @@ struct ConcentricTimerView: View {
                 Text(sliceTimeFormatted)
                     .font(.system(size: mainFontSize, weight: .medium, design: .rounded))
                     .monospacedDigit()
-                    .foregroundStyle(sliceIsOvertime ? .red : .primary)
+                    .foregroundStyle(sliceIsOvertime ? Color(red: 0.7, green: 0.18, blue: 0.15) : .primary)
                     #if DEBUG
                     .onTapGesture {
                         guard NSEvent.modifierFlags.contains(.option) else { return }
