@@ -403,7 +403,8 @@ final class PopoverManager: NSObject {
         let engine = SliceEngine(
             items: items,
             interval: settings.sliceRotationInterval,
-            autoAdvance: settings.sliceAutoAdvance
+            autoAdvance: settings.sliceAutoAdvance,
+            settings: settings
         )
         engine.onRotationComplete = { [weak self] in
             self?.handleSliceRotation()
@@ -411,8 +412,6 @@ final class PopoverManager: NSObject {
         engine.onOvertimeStart = { [weak self] in
             self?.handleSliceOvertimeStart()
         }
-        engine.reminderInterval = settings.sliceOvertimeReminderEnabled
-            ? settings.sliceOvertimeReminderInterval : 0
         engine.onOvertimeReminder = { [weak self] in
             self?.handleSliceOvertimeReminder()
         }

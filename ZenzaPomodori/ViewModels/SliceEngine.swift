@@ -7,6 +7,7 @@ final class SliceEngine {
     private(set) var rotationItems: [RotationItem]
     let interval: Int
     let autoAdvance: Bool
+    let settings: SettingsStore
 
     private(set) var currentIndex: Int = 0
     private(set) var sliceSecondsRemaining: Int = 0
@@ -45,12 +46,12 @@ final class SliceEngine {
     var onRotationComplete: (() -> Void)?
     var onOvertimeStart: (() -> Void)?
     var onOvertimeReminder: (() -> Void)?
-    var reminderInterval: Int = 0
 
-    init(items: [RotationItem], interval: Int, autoAdvance: Bool = true) {
+    init(items: [RotationItem], interval: Int, autoAdvance: Bool = true, settings: SettingsStore) {
         self.rotationItems = items
         self.interval = interval
         self.autoAdvance = autoAdvance
+        self.settings = settings
     }
 
     func activate() {
@@ -76,6 +77,8 @@ final class SliceEngine {
         guard isActive, !isPaused else { return }
         if isOvertime {
             overtimeSeconds += 1
+            let reminderInterval = settings.sliceOvertimeReminderEnabled
+                ? settings.sliceOvertimeReminderInterval : 0
             if reminderInterval > 0 && overtimeSeconds > 0 && overtimeSeconds % reminderInterval == 0 {
                 onOvertimeReminder?()
             }

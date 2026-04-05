@@ -8,14 +8,20 @@ struct SliceEngineTests {
     private func makeEngine(
         items: [RotationItem]? = nil,
         interval: Int = 180,
-        autoAdvance: Bool = true
+        autoAdvance: Bool = true,
+        settings: SettingsStore? = nil
     ) -> SliceEngine {
         let defaultItems = items ?? [
             RotationItem(name: "API"),
             RotationItem(name: "CI"),
             RotationItem(name: "Frontend"),
         ]
-        return SliceEngine(items: defaultItems, interval: interval, autoAdvance: autoAdvance)
+        return SliceEngine(
+            items: defaultItems,
+            interval: interval,
+            autoAdvance: autoAdvance,
+            settings: settings ?? makeTestSettingsStore()
+        )
     }
 
     // MARK: - Initial State
@@ -173,7 +179,7 @@ struct SliceEngineTests {
     }
 
     @Test func emptyItemsActivateIsNoOp() {
-        let engine = SliceEngine(items: [], interval: 180)
+        let engine = SliceEngine(items: [], interval: 180, settings: makeTestSettingsStore())
         engine.activate()
         #expect(engine.isActive == false)
         #expect(engine.currentItemName == nil)
@@ -215,7 +221,7 @@ struct SliceEngineTests {
             RotationItem(name: "CI"),
             RotationItem(name: "Frontend"),
         ]
-        let engine = SliceEngine(items: items, interval: 180)
+        let engine = SliceEngine(items: items, interval: 180, settings: makeTestSettingsStore())
         engine.activate()
         engine.skip() // now on CI (index 1)
         #expect(engine.currentItemName == "CI")
@@ -234,7 +240,7 @@ struct SliceEngineTests {
             RotationItem(name: "CI"),
             RotationItem(name: "Frontend"),
         ]
-        let engine = SliceEngine(items: items, interval: 180)
+        let engine = SliceEngine(items: items, interval: 180, settings: makeTestSettingsStore())
         engine.activate()
         engine.skip() // now on CI (index 1)
         engine.skip() // now on Frontend (index 2)
@@ -411,11 +417,22 @@ struct SliceEngineTests {
         #expect(engine.formattedTime == "00:00")
     }
 
+    @Test func formattedTimeAtOvertimeBoundary() {
+        let engine = makeEngine(interval: 2, autoAdvance: false)
+        engine.activate()
+        advanceEngine(engine, ticks: 2) // enter overtime, overtimeSeconds == 0
+        #expect(engine.formattedTime == "+00:00")
+        engine.deactivate()
+    }
+
     // MARK: - Overtime Reminder
 
     @Test func overtimeReminderFiresAtInterval() {
-        let engine = makeEngine(interval: 2, autoAdvance: false)
-        engine.reminderInterval = 5
+        let settings = makeTestSettingsStore {
+            $0.sliceOvertimeReminderEnabled = true
+            $0.sliceOvertimeReminderInterval = 5
+        }
+        let engine = makeEngine(interval: 2, autoAdvance: false, settings: settings)
         var reminderCount = 0
         engine.onOvertimeReminder = { reminderCount += 1 }
         engine.activate()
@@ -428,8 +445,11 @@ struct SliceEngineTests {
     }
 
     @Test func overtimeReminderDoesNotFireAtZero() {
-        let engine = makeEngine(interval: 2, autoAdvance: false)
-        engine.reminderInterval = 5
+        let settings = makeTestSettingsStore {
+            $0.sliceOvertimeReminderEnabled = true
+            $0.sliceOvertimeReminderInterval = 5
+        }
+        let engine = makeEngine(interval: 2, autoAdvance: false, settings: settings)
         var reminderCount = 0
         engine.onOvertimeReminder = { reminderCount += 1 }
         engine.activate()
@@ -438,15 +458,89 @@ struct SliceEngineTests {
         engine.deactivate()
     }
 
-    @Test func overtimeReminderNotFiredWhenIntervalIsZero() {
-        let engine = makeEngine(interval: 2, autoAdvance: false)
-        engine.reminderInterval = 0
+    @Test func overtimeReminderNotFiredWhenDisabled() {
+        let settings = makeTestSettingsStore {
+            $0.sliceOvertimeReminderEnabled = false
+        }
+        let engine = makeEngine(interval: 2, autoAdvance: false, settings: settings)
         var reminderCount = 0
         engine.onOvertimeReminder = { reminderCount += 1 }
         engine.activate()
         advanceEngine(engine, ticks: 2)
         advanceEngine(engine, ticks: 10)
         #expect(reminderCount == 0)
+        engine.deactivate()
+    }
+
+    // MARK: - Live Settings
+
+    @Test func overtimeReminderRespectsLiveSettingsChanges() {
+        let settings = makeTestSettingsStore {
+            $0.sliceOvertimeReminderEnabled = true
+            $0.sliceOvertimeReminderInterval = 5
+        }
+        let engine = SliceEngine(
+            items: [RotationItem(name: "API"), RotationItem(name: "CI")],
+            interval: 2,
+            autoAdvance: false,
+            settings: settings
+        )
+        var reminderCount = 0
+        engine.onOvertimeReminder = { reminderCount += 1 }
+        engine.activate()
+        advanceEngine(engine, ticks: 2) // enter overtime
+        advanceEngine(engine, ticks: 5) // 5s overtime, fires at 5
+        #expect(reminderCount == 1)
+        // Change interval mid-overtime (min valid value is 5, so use 10)
+        settings.sliceOvertimeReminderInterval = 10
+        advanceEngine(engine, ticks: 5) // 10s overtime (divisible by 10)
+        #expect(reminderCount == 2)
+        engine.deactivate()
+    }
+
+    @Test func overtimeReminderDisabledLiveStopsReminders() {
+        let settings = makeTestSettingsStore {
+            $0.sliceOvertimeReminderEnabled = true
+            $0.sliceOvertimeReminderInterval = 5
+        }
+        let engine = SliceEngine(
+            items: [RotationItem(name: "API"), RotationItem(name: "CI")],
+            interval: 2,
+            autoAdvance: false,
+            settings: settings
+        )
+        var reminderCount = 0
+        engine.onOvertimeReminder = { reminderCount += 1 }
+        engine.activate()
+        advanceEngine(engine, ticks: 2) // enter overtime
+        advanceEngine(engine, ticks: 5) // fires
+        #expect(reminderCount == 1)
+        settings.sliceOvertimeReminderEnabled = false
+        advanceEngine(engine, ticks: 5) // should NOT fire
+        #expect(reminderCount == 1)
+        engine.deactivate()
+    }
+
+    @Test func overtimeReminderEnabledLiveStartsReminders() {
+        let settings = makeTestSettingsStore {
+            $0.sliceOvertimeReminderEnabled = false
+        }
+        let engine = SliceEngine(
+            items: [RotationItem(name: "API"), RotationItem(name: "CI")],
+            interval: 2,
+            autoAdvance: false,
+            settings: settings
+        )
+        var reminderCount = 0
+        engine.onOvertimeReminder = { reminderCount += 1 }
+        engine.activate()
+        advanceEngine(engine, ticks: 2) // enter overtime
+        advanceEngine(engine, ticks: 5) // no reminders (disabled)
+        #expect(reminderCount == 0)
+        settings.sliceOvertimeReminderEnabled = true
+        settings.sliceOvertimeReminderInterval = 5
+        advanceEngine(engine, ticks: 5) // 10s overtime, divisible by 5
+        #expect(reminderCount == 1)
         engine.deactivate()
     }
 }
