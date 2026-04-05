@@ -34,6 +34,13 @@ final class SliceEngine {
         return 1.0 - Double(sliceSecondsRemaining) / Double(interval)
     }
 
+    var formattedTime: String {
+        if isOvertime {
+            return "+\(TimeFormatting.formatted(seconds: overtimeSeconds))"
+        }
+        return TimeFormatting.formatted(seconds: sliceSecondsRemaining)
+    }
+
     var onRotationChange: ((Int, String) -> Void)?
     var onRotationComplete: (() -> Void)?
     var onOvertimeStart: (() -> Void)?

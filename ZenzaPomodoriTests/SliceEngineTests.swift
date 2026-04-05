@@ -388,6 +388,29 @@ struct SliceEngineTests {
         engine.deactivate()
     }
 
+    // MARK: - formattedTime
+
+    @Test func formattedTimeShowsCountdown() {
+        let engine = makeEngine(interval: 125)
+        engine.activate()
+        #expect(engine.formattedTime == "02:05")
+        engine.deactivate()
+    }
+
+    @Test func formattedTimeShowsOvertimePrefix() {
+        let engine = makeEngine(interval: 2, autoAdvance: false)
+        engine.activate()
+        advanceEngine(engine, ticks: 2) // enter overtime
+        advanceEngine(engine, ticks: 65) // 65s overtime
+        #expect(engine.formattedTime == "+01:05")
+        engine.deactivate()
+    }
+
+    @Test func formattedTimeWhenInactive() {
+        let engine = makeEngine(interval: 180)
+        #expect(engine.formattedTime == "00:00")
+    }
+
     // MARK: - Overtime Reminder
 
     @Test func overtimeReminderFiresAtInterval() {

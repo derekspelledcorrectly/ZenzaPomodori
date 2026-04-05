@@ -47,7 +47,7 @@ struct MenuBarFormattingTests {
     // MARK: - Slice Formatting
 
     private func sliceFormatted(
-        sliceSeconds: Int = 107,
+        sliceFormattedTime: String = "01:47",
         outerTime: String = "18:42",
         focusName: String? = "API Refactor",
         position: Int = 3,
@@ -57,7 +57,7 @@ struct MenuBarFormattingTests {
         showFocus: Bool = true
     ) -> String {
         MenuBarFormatting.sliceFormatted(SliceDisplayInfo(
-            sliceSeconds: sliceSeconds,
+            sliceFormattedTime: sliceFormattedTime,
             outerFormattedTime: outerTime,
             focusName: focusName,
             position: position,
@@ -102,16 +102,14 @@ struct MenuBarFormattingTests {
 
     @Test func sliceOvertimeShowsPlusPrefix() {
         let info = SliceDisplayInfo(
-            sliceSeconds: 0,
+            sliceFormattedTime: "+00:45",
             outerFormattedTime: "20:00",
             focusName: "API",
             position: 1,
             total: 3,
             format: .sliceOnly,
             showTimer: true,
-            showFocus: true,
-            isOvertime: true,
-            overtimeSeconds: 45
+            showFocus: true
         )
         let result = MenuBarFormatting.sliceFormatted(info)
         #expect(result == "+00:45 [API]")
@@ -119,16 +117,14 @@ struct MenuBarFormattingTests {
 
     @Test func sliceOvertimeDualTimerFormat() {
         let info = SliceDisplayInfo(
-            sliceSeconds: 0,
+            sliceFormattedTime: "+00:45",
             outerFormattedTime: "20:00",
             focusName: "API",
             position: 1,
             total: 3,
             format: .dualTimer,
             showTimer: true,
-            showFocus: true,
-            isOvertime: true,
-            overtimeSeconds: 45
+            showFocus: true
         )
         let result = MenuBarFormatting.sliceFormatted(info)
         #expect(result == "+00:45/20:00 [API]")

@@ -87,9 +87,7 @@ struct ActiveRotationView: View {
         var view = ConcentricTimerView(
             sliceProgress: timer.progress,
             outerProgress: engine.progress,
-            sliceTimeFormatted: engine.isOvertime
-                ? "+\(TimeFormatting.formatted(seconds: engine.overtimeSeconds))"
-                : TimeFormatting.formatted(seconds: engine.sliceSecondsRemaining),
+            sliceTimeFormatted: engine.formattedTime,
             outerTimeFormatted: timer.formattedTime,
             outerColor: .orange,
             innerColor: timer.phase.color,
