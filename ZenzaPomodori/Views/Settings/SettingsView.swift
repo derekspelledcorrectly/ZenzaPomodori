@@ -81,28 +81,33 @@ struct SettingsView: View {
                         Text("\(min) min").tag(min)
                     }
                 }
+                .help("How long each focus block lasts before a break")
 
                 Picker("Short Break", selection: minutesBinding(\.shortBreakDuration)) {
                     ForEach(Self.shortBreakOptions, id: \.self) { min in
                         Text("\(min) min").tag(min)
                     }
                 }
+                .help("Rest period between focus blocks")
 
                 Picker("Long Break", selection: minutesBinding(\.longBreakDuration)) {
                     ForEach(Self.longBreakOptions, id: \.self) { min in
                         Text("\(min) min").tag(min)
                     }
                 }
+                .help("Extended rest after completing a full cycle of focus blocks")
 
                 StepperRow(
                     label: "Blocks before long break",
                     value: $settings.blocksBeforeLongBreak,
-                    range: 1...10
+                    range: 1...10,
+                    helpText: "How many focus blocks to complete before earning a long break"
                 )
             }
 
             Section("Slices") {
                 Toggle("Enable Slices mode", isOn: $settings.slicesEnabled)
+                    .help("Split focus blocks into shorter intervals to rotate between tasks in your list")
 
                 if settings.slicesEnabled {
                     Picker("Max rotation interval", selection: sliceIntervalBinding) {
@@ -110,6 +115,7 @@ struct SettingsView: View {
                             Text("\(min) min").tag(min)
                         }
                     }
+                    .help("Maximum time on one slice before rotating to the next in your list")
                 }
             }
         }
@@ -126,6 +132,7 @@ struct SettingsView: View {
                     get: { settings.soundEnabled },
                     set: { settings.soundEnabled = $0 }
                 ))
+                .help("Play an audio cue when a focus block or break finishes")
 
                 if settings.soundEnabled {
                     soundPicker("Focus end", sound: Binding(
@@ -142,6 +149,7 @@ struct SettingsView: View {
             if settings.slicesEnabled {
                 Section("Slice Sounds") {
                     Toggle("Sound on rotation", isOn: $settings.sliceSoundEnabled)
+                        .help("Play a sound when rotating to the next task in your slice list")
 
                     if settings.sliceSoundEnabled {
                         soundPicker("Rotation sound", sound: Binding(
@@ -155,6 +163,7 @@ struct SettingsView: View {
             if !settings.autoAdvance {
                 Section("Focus Overtime Reminder") {
                     Toggle("Repeat reminder sound", isOn: $settings.focusOvertimeReminderEnabled)
+                        .help("Periodically nudge you with a sound when a focus block runs past its timer")
 
                     if settings.focusOvertimeReminderEnabled {
                         Picker("Every", selection: focusReminderMinutesBinding) {
@@ -166,6 +175,7 @@ struct SettingsView: View {
                             Text("15 min").tag(15)
                             Text("20 min").tag(20)
                         }
+                        .help("How often the reminder repeats during focus overtime")
 
                         soundPicker("Reminder sound", sound: Binding(
                             get: { settings.focusOvertimeReminderSound },
@@ -178,6 +188,7 @@ struct SettingsView: View {
             if settings.slicesEnabled && !settings.sliceAutoAdvance {
                 Section("Slice Overtime Reminder") {
                     Toggle("Repeat reminder sound", isOn: $settings.sliceOvertimeReminderEnabled)
+                        .help("Periodically nudge you with a sound when a slice runs past its rotation interval")
 
                     if settings.sliceOvertimeReminderEnabled {
                         Picker("Every", selection: $settings.sliceOvertimeReminderInterval) {
@@ -189,6 +200,7 @@ struct SettingsView: View {
                             Text("45s").tag(45)
                             Text("60s").tag(60)
                         }
+                        .help("How often the reminder repeats during slice overtime")
 
                         soundPicker("Reminder sound", sound: Binding(
                             get: { settings.sliceOvertimeReminderSound },
@@ -203,6 +215,7 @@ struct SettingsView: View {
                     get: { settings.notificationsEnabled },
                     set: { settings.notificationsEnabled = $0 }
                 ))
+                .help("Show macOS notifications when timers complete")
             }
         }
         .formStyle(.grouped)
@@ -218,26 +231,31 @@ struct SettingsView: View {
                     get: { settings.autoAdvance },
                     set: { settings.autoAdvance = $0 }
                 ))
+                .help("Automatically start the next block or break without waiting for you to click")
 
                 if settings.slicesEnabled {
                     Toggle("Auto-advance slices", isOn: $settings.sliceAutoAdvance)
+                        .help("Automatically rotate to the next task when the slice interval ends")
                 }
 
                 Toggle("Pop open on complete", isOn: Binding(
                     get: { settings.popOnComplete },
                     set: { settings.popOnComplete = $0 }
                 ))
+                .help("Open the timer popover when a block or break finishes")
 
                 if settings.popOnComplete {
                     StepperRow(
                         label: "Auto-dismiss after",
                         value: $settings.autoDismissSeconds,
                         range: 0...30,
-                        formatter: { $0 == 0 ? "Off" : "\($0)s" }
+                        formatter: { $0 == 0 ? "Off" : "\($0)s" },
+                        helpText: "Automatically close the popover after this many seconds (0 to keep it open)"
                     )
                 }
 
                 Toggle("Steal focus on pop open", isOn: $settings.stealFocusOnPop)
+                    .help("Bring the timer to the front when it pops open, switching away from your current app")
             }
 
             Section("Menu Bar") {
@@ -245,11 +263,13 @@ struct SettingsView: View {
                     get: { settings.showTimerInMenuBar },
                     set: { settings.showTimerInMenuBar = $0 }
                 ))
+                .help("Display the countdown timer next to the menu bar icon")
 
                 Toggle("Show focus in menu bar", isOn: Binding(
                     get: { settings.showFocusInMenuBar },
                     set: { settings.showFocusInMenuBar = $0 }
                 ))
+                .help("Display the current focus task name in the menu bar")
 
                 if settings.slicesEnabled {
                     Picker("Slice menu bar format", selection: $settings.sliceMenuBarFormat) {
@@ -258,11 +278,13 @@ struct SettingsView: View {
                         Text("Timer + position").tag(SliceMenuBarFormat.slicePosition)
                         Text("Compact").tag(SliceMenuBarFormat.compact)
                     }
+                    .help("How slice timing info appears in the menu bar alongside the block timer")
                 }
             }
 
             Section("Hotkeys") {
                 Toggle("Show/hide timer hotkey", isOn: $settings.globalHotkeyEnabled)
+                    .help("Register a global keyboard shortcut to toggle the timer popover from any app")
 
                 if settings.globalHotkeyEnabled {
                     HStack {
@@ -274,10 +296,12 @@ struct SettingsView: View {
                         )
                         .frame(width: 120, height: 24)
                     }
+                    .help("Click to record a new shortcut. Press Escape to cancel, Delete to clear.")
                 }
 
                 if settings.slicesEnabled {
                     Toggle("Next slice hotkey", isOn: $settings.rotationHotkeyEnabled)
+                        .help("Register a global keyboard shortcut to advance to the next slice from any app")
 
                     if settings.rotationHotkeyEnabled {
                         HStack {
@@ -289,6 +313,7 @@ struct SettingsView: View {
                             )
                             .frame(width: 120, height: 24)
                         }
+                        .help("Click to record a new shortcut. Press Escape to cancel, Delete to clear.")
                     }
                 }
             }

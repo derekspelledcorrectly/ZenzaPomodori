@@ -5,10 +5,12 @@ struct StepperRow: View {
     @Binding var value: Int
     let range: ClosedRange<Int>
     var formatter: ((Int) -> String)? = nil
+    var helpText: String? = nil
 
     var body: some View {
         HStack {
             Text(label)
+                .help(helpText ?? "")
             Spacer()
             HStack(spacing: 4) {
                 Button(action: { value -= 1 }) {
