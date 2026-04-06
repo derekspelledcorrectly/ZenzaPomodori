@@ -102,8 +102,8 @@ final class SettingsStore {
         didSet { defaults.set(sliceEndSound, forKey: SettingsKeys.sliceEndSound) }
     }
 
-    var stealFocusOnRotation: Bool {
-        didSet { defaults.set(stealFocusOnRotation, forKey: SettingsKeys.stealFocusOnRotation) }
+    var stealFocusOnPop: Bool {
+        didSet { defaults.set(stealFocusOnPop, forKey: SettingsKeys.stealFocusOnPop) }
     }
 
     var sliceAutoAdvance: Bool {
@@ -216,7 +216,7 @@ final class SettingsStore {
         self.notificationsEnabled = Self.loadBool(from: defaults, key: SettingsKeys.notificationsEnabled, default: Defaults.notificationsEnabled)
         self.slicesEnabled = Self.loadBool(from: defaults, key: SettingsKeys.slicesEnabled, default: Defaults.slicesEnabled)
         self.sliceSoundEnabled = Self.loadBool(from: defaults, key: SettingsKeys.sliceSoundEnabled, default: Defaults.sliceSoundEnabled)
-        self.stealFocusOnRotation = Self.loadBool(from: defaults, key: SettingsKeys.stealFocusOnRotation, default: Defaults.stealFocusOnRotation)
+        self.stealFocusOnPop = Self.loadBool(from: defaults, key: SettingsKeys.stealFocusOnPop, default: Defaults.stealFocusOnPop)
         self.sliceAutoAdvance = Self.loadBool(from: defaults, key: SettingsKeys.sliceAutoAdvance, default: Defaults.sliceAutoAdvance)
         self.focusOvertimeReminderEnabled = Self.loadBool(from: defaults, key: SettingsKeys.focusOvertimeReminderEnabled, default: Defaults.focusOvertimeReminderEnabled)
         self.sliceOvertimeReminderEnabled = Self.loadBool(from: defaults, key: SettingsKeys.sliceOvertimeReminderEnabled, default: Defaults.sliceOvertimeReminderEnabled)

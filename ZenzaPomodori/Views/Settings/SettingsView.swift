@@ -2,8 +2,8 @@ import SwiftUI
 
 enum SettingsTab: String, CaseIterable {
     case timer = "Timer"
+    case soundsAndAlerts = "Sounds"
     case behavior = "Behavior"
-    case slices = "Slices"
 }
 
 struct SettingsView: View {
@@ -63,13 +63,15 @@ struct SettingsView: View {
             switch selectedTab {
             case .timer:
                 timerTab
+            case .soundsAndAlerts:
+                soundsTab
             case .behavior:
                 behaviorTab
-            case .slices:
-                slicesTab
             }
         }
     }
+
+    // MARK: - Timer Tab
 
     private var timerTab: some View {
         Form {
@@ -99,7 +101,27 @@ struct SettingsView: View {
                 )
             }
 
-            Section("Sound") {
+            Section("Slices") {
+                Toggle("Enable Slices mode", isOn: $settings.slicesEnabled)
+
+                if settings.slicesEnabled {
+                    Picker("Max rotation interval", selection: sliceIntervalBinding) {
+                        ForEach([1, 2, 3, 4, 5, 7, 10], id: \.self) { min in
+                            Text("\(min) min").tag(min)
+                        }
+                    }
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+
+    // MARK: - Sounds & Alerts Tab
+
+    private var soundsTab: some View {
+        Form {
+            Section("Completion Sounds") {
                 Toggle("Play sound on complete", isOn: Binding(
                     get: { settings.soundEnabled },
                     set: { settings.soundEnabled = $0 }
@@ -117,54 +139,21 @@ struct SettingsView: View {
                 }
             }
 
-            Section("Notifications") {
-                Toggle("Send notifications", isOn: Binding(
-                    get: { settings.notificationsEnabled },
-                    set: { settings.notificationsEnabled = $0 }
-                ))
-            }
-        }
-        .formStyle(.grouped)
-        .fixedSize(horizontal: false, vertical: true)
-    }
+            if settings.slicesEnabled {
+                Section("Slice Sounds") {
+                    Toggle("Sound on rotation", isOn: $settings.sliceSoundEnabled)
 
-    private var behaviorTab: some View {
-        Form {
-            Section("Automation") {
-                Toggle("Auto-advance", isOn: Binding(
-                    get: { settings.autoAdvance },
-                    set: { settings.autoAdvance = $0 }
-                ))
-
-                Toggle("Pop open on complete", isOn: Binding(
-                    get: { settings.popOnComplete },
-                    set: { settings.popOnComplete = $0 }
-                ))
-
-                if settings.popOnComplete {
-                    StepperRow(
-                        label: "Auto-dismiss after",
-                        value: $settings.autoDismissSeconds,
-                        range: 0...30,
-                        formatter: { $0 == 0 ? "Off" : "\($0)s" }
-                    )
+                    if settings.sliceSoundEnabled {
+                        soundPicker("Rotation sound", sound: Binding(
+                            get: { settings.sliceEndSound },
+                            set: { settings.sliceEndSound = $0 }
+                        ))
+                    }
                 }
             }
 
-            Section("Menu Bar") {
-                Toggle("Show timer in menu bar", isOn: Binding(
-                    get: { settings.showTimerInMenuBar },
-                    set: { settings.showTimerInMenuBar = $0 }
-                ))
-
-                Toggle("Show focus in menu bar", isOn: Binding(
-                    get: { settings.showFocusInMenuBar },
-                    set: { settings.showFocusInMenuBar = $0 }
-                ))
-            }
-
             if !settings.autoAdvance {
-                Section("Overtime Reminder") {
+                Section("Focus Overtime Reminder") {
                     Toggle("Repeat reminder sound", isOn: $settings.focusOvertimeReminderEnabled)
 
                     if settings.focusOvertimeReminderEnabled {
@@ -186,7 +175,93 @@ struct SettingsView: View {
                 }
             }
 
-            Section("Global Hotkey") {
+            if settings.slicesEnabled && !settings.sliceAutoAdvance {
+                Section("Slice Overtime Reminder") {
+                    Toggle("Repeat reminder sound", isOn: $settings.sliceOvertimeReminderEnabled)
+
+                    if settings.sliceOvertimeReminderEnabled {
+                        Picker("Every", selection: $settings.sliceOvertimeReminderInterval) {
+                            Text("5s").tag(5)
+                            Text("10s").tag(10)
+                            Text("15s").tag(15)
+                            Text("20s").tag(20)
+                            Text("30s").tag(30)
+                            Text("45s").tag(45)
+                            Text("60s").tag(60)
+                        }
+
+                        soundPicker("Reminder sound", sound: Binding(
+                            get: { settings.sliceOvertimeReminderSound },
+                            set: { settings.sliceOvertimeReminderSound = $0 }
+                        ))
+                    }
+                }
+            }
+
+            Section("Notifications") {
+                Toggle("Send notifications", isOn: Binding(
+                    get: { settings.notificationsEnabled },
+                    set: { settings.notificationsEnabled = $0 }
+                ))
+            }
+        }
+        .formStyle(.grouped)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+
+    // MARK: - Behavior Tab
+
+    private var behaviorTab: some View {
+        Form {
+            Section("Automation") {
+                Toggle("Auto-advance blocks", isOn: Binding(
+                    get: { settings.autoAdvance },
+                    set: { settings.autoAdvance = $0 }
+                ))
+
+                if settings.slicesEnabled {
+                    Toggle("Auto-advance slices", isOn: $settings.sliceAutoAdvance)
+                }
+
+                Toggle("Pop open on complete", isOn: Binding(
+                    get: { settings.popOnComplete },
+                    set: { settings.popOnComplete = $0 }
+                ))
+
+                if settings.popOnComplete {
+                    StepperRow(
+                        label: "Auto-dismiss after",
+                        value: $settings.autoDismissSeconds,
+                        range: 0...30,
+                        formatter: { $0 == 0 ? "Off" : "\($0)s" }
+                    )
+                }
+
+                Toggle("Steal focus on pop open", isOn: $settings.stealFocusOnPop)
+            }
+
+            Section("Menu Bar") {
+                Toggle("Show timer in menu bar", isOn: Binding(
+                    get: { settings.showTimerInMenuBar },
+                    set: { settings.showTimerInMenuBar = $0 }
+                ))
+
+                Toggle("Show focus in menu bar", isOn: Binding(
+                    get: { settings.showFocusInMenuBar },
+                    set: { settings.showFocusInMenuBar = $0 }
+                ))
+
+                if settings.slicesEnabled {
+                    Picker("Slice menu bar format", selection: $settings.sliceMenuBarFormat) {
+                        Text("Slice timer only").tag(SliceMenuBarFormat.sliceOnly)
+                        Text("Both timers").tag(SliceMenuBarFormat.dualTimer)
+                        Text("Timer + position").tag(SliceMenuBarFormat.slicePosition)
+                        Text("Compact").tag(SliceMenuBarFormat.compact)
+                    }
+                }
+            }
+
+            Section("Hotkeys") {
                 Toggle("Show/hide timer hotkey", isOn: $settings.globalHotkeyEnabled)
 
                 if settings.globalHotkeyEnabled {
@@ -200,75 +275,8 @@ struct SettingsView: View {
                         .frame(width: 120, height: 24)
                     }
                 }
-            }
-        }
-        .formStyle(.grouped)
-        .fixedSize(horizontal: false, vertical: true)
-    }
-
-    private var slicesTab: some View {
-        Form {
-            Section("Slices Mode") {
-                Toggle("Enable Slices mode", isOn: $settings.slicesEnabled)
 
                 if settings.slicesEnabled {
-                    Picker("Max rotation interval", selection: sliceIntervalBinding) {
-                        ForEach([1, 2, 3, 4, 5, 7, 10], id: \.self) { min in
-                            Text("\(min) min").tag(min)
-                        }
-                    }
-
-                    Toggle("Steal focus on rotation", isOn: $settings.stealFocusOnRotation)
-
-                    Toggle("Auto-advance slices", isOn: $settings.sliceAutoAdvance)
-                }
-            }
-
-            if settings.slicesEnabled {
-                Section("Sound") {
-                    Toggle("Sound on rotation", isOn: $settings.sliceSoundEnabled)
-
-                    if settings.sliceSoundEnabled {
-                        soundPicker("Rotation sound", sound: Binding(
-                            get: { settings.sliceEndSound },
-                            set: { settings.sliceEndSound = $0 }
-                        ))
-                    }
-                }
-
-                if !settings.sliceAutoAdvance {
-                    Section("Overtime Reminder") {
-                        Toggle("Repeat reminder sound", isOn: $settings.sliceOvertimeReminderEnabled)
-
-                        if settings.sliceOvertimeReminderEnabled {
-                            Picker("Every", selection: $settings.sliceOvertimeReminderInterval) {
-                                Text("5s").tag(5)
-                                Text("10s").tag(10)
-                                Text("15s").tag(15)
-                                Text("20s").tag(20)
-                                Text("30s").tag(30)
-                                Text("45s").tag(45)
-                                Text("60s").tag(60)
-                            }
-
-                            soundPicker("Reminder sound", sound: Binding(
-                                get: { settings.sliceOvertimeReminderSound },
-                                set: { settings.sliceOvertimeReminderSound = $0 }
-                            ))
-                        }
-                    }
-                }
-
-                Section("Display") {
-                    Picker("Menu bar format", selection: $settings.sliceMenuBarFormat) {
-                        Text("Slice timer only").tag(SliceMenuBarFormat.sliceOnly)
-                        Text("Both timers").tag(SliceMenuBarFormat.dualTimer)
-                        Text("Timer + position").tag(SliceMenuBarFormat.slicePosition)
-                        Text("Compact").tag(SliceMenuBarFormat.compact)
-                    }
-                }
-
-                Section("Hotkey") {
                     Toggle("Next slice hotkey", isOn: $settings.rotationHotkeyEnabled)
 
                     if settings.rotationHotkeyEnabled {
@@ -288,6 +296,8 @@ struct SettingsView: View {
         .formStyle(.grouped)
         .fixedSize(horizontal: false, vertical: true)
     }
+
+    // MARK: - Bindings
 
     private var sliceIntervalBinding: Binding<Int> {
         Binding(

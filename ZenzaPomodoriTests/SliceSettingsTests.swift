@@ -24,9 +24,9 @@ struct SliceSettingsTests {
         let store = makeStore()
         #expect(store.sliceEndSound == "Polite")
     }
-    @Test func defaultStealFocusOnRotation() {
+    @Test func defaultStealFocusOnPop() {
         let store = makeStore()
-        #expect(store.stealFocusOnRotation == false)
+        #expect(store.stealFocusOnPop == false)
     }
     @Test func defaultSliceMenuBarFormat() {
         let store = makeStore()
@@ -45,6 +45,13 @@ struct SliceSettingsTests {
         let store = makeStore()
         store.sliceRotationInterval = 900
         #expect(store.sliceRotationInterval == 600)
+    }
+    @Test func stealFocusOnPopPersists() {
+        let defaults = makeTestDefaults()
+        let store1 = SettingsStore(defaults: defaults)
+        store1.stealFocusOnPop = true
+        let store2 = SettingsStore(defaults: defaults)
+        #expect(store2.stealFocusOnPop == true)
     }
     @Test func sliceSettingsPersist() {
         let defaults = makeTestDefaults()

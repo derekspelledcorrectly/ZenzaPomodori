@@ -127,7 +127,7 @@ final class PopoverManager: NSObject {
                 self.soundService.play(sound)
             }
             if self.settings.popOnComplete {
-                self.showPanel()
+                self.showPanel(activate: self.settings.stealFocusOnPop)
                 self.startAutoDismissTimer()
             }
             self.notificationService.sendCompletionNotification(for: phase)
@@ -430,7 +430,7 @@ final class PopoverManager: NSObject {
         }
 
         router.activePanel = .sliceActive
-        showPanel(activate: settings.stealFocusOnRotation)
+        showPanel(activate: settings.stealFocusOnPop)
 
         startAutoDismissTimer()
     }
@@ -438,7 +438,7 @@ final class PopoverManager: NSObject {
     private func handleSliceOvertimeStart() {
         guard router.sliceEngine != nil else { return }
         router.activePanel = .sliceActive
-        showPanel(activate: settings.stealFocusOnRotation)
+        showPanel(activate: settings.stealFocusOnPop)
         startAutoDismissTimer()
     }
 
@@ -450,7 +450,7 @@ final class PopoverManager: NSObject {
         }
 
         router.activePanel = .sliceActive
-        showPanel(activate: settings.stealFocusOnRotation)
+        showPanel(activate: settings.stealFocusOnPop)
         startAutoDismissTimer()
     }
 
@@ -460,7 +460,7 @@ final class PopoverManager: NSObject {
         }
 
         if settings.popOnComplete {
-            showPanel(activate: false)
+            showPanel(activate: settings.stealFocusOnPop)
             startAutoDismissTimer()
         }
     }
