@@ -41,10 +41,6 @@ final class SettingsStore {
         didSet { defaults.set(autoAdvance, forKey: SettingsKeys.autoAdvance) }
     }
 
-    var soundEnabled: Bool {
-        didSet { defaults.set(soundEnabled, forKey: SettingsKeys.soundEnabled) }
-    }
-
     var showTimerInMenuBar: Bool {
         didSet { defaults.set(showTimerInMenuBar, forKey: SettingsKeys.showTimerInMenuBar) }
     }
@@ -94,10 +90,6 @@ final class SettingsStore {
         }
     }
 
-    var sliceSoundEnabled: Bool {
-        didSet { defaults.set(sliceSoundEnabled, forKey: SettingsKeys.sliceSoundEnabled) }
-    }
-
     var sliceEndSound: String {
         didSet { defaults.set(sliceEndSound, forKey: SettingsKeys.sliceEndSound) }
     }
@@ -110,10 +102,6 @@ final class SettingsStore {
         didSet { defaults.set(sliceAutoAdvance, forKey: SettingsKeys.sliceAutoAdvance) }
     }
 
-    var focusOvertimeReminderEnabled: Bool {
-        didSet { defaults.set(focusOvertimeReminderEnabled, forKey: SettingsKeys.focusOvertimeReminderEnabled) }
-    }
-
     var focusOvertimeReminderInterval: Int {
         didSet {
             let validated = max(60, min(1200, focusOvertimeReminderInterval))
@@ -124,10 +112,6 @@ final class SettingsStore {
 
     var focusOvertimeReminderSound: String {
         didSet { defaults.set(focusOvertimeReminderSound, forKey: SettingsKeys.focusOvertimeReminderSound) }
-    }
-
-    var sliceOvertimeReminderEnabled: Bool {
-        didSet { defaults.set(sliceOvertimeReminderEnabled, forKey: SettingsKeys.sliceOvertimeReminderEnabled) }
     }
 
     var sliceOvertimeReminderInterval: Int {
@@ -223,17 +207,13 @@ final class SettingsStore {
 
         // Booleans
         self.autoAdvance = Self.loadBool(from: defaults, key: SettingsKeys.autoAdvance, default: Defaults.autoAdvance)
-        self.soundEnabled = Self.loadBool(from: defaults, key: SettingsKeys.soundEnabled, default: Defaults.soundEnabled)
         self.showTimerInMenuBar = Self.loadBool(from: defaults, key: SettingsKeys.showTimerInMenuBar, default: Defaults.showTimerInMenuBar)
         self.popOnComplete = Self.loadBool(from: defaults, key: SettingsKeys.popOnComplete, default: Defaults.popOnComplete)
         self.showFocusInMenuBar = Self.loadBool(from: defaults, key: SettingsKeys.showFocusInMenuBar, default: Defaults.showFocusInMenuBar)
         self.notificationsEnabled = Self.loadBool(from: defaults, key: SettingsKeys.notificationsEnabled, default: Defaults.notificationsEnabled)
         self.slicesEnabled = Self.loadBool(from: defaults, key: SettingsKeys.slicesEnabled, default: Defaults.slicesEnabled)
-        self.sliceSoundEnabled = Self.loadBool(from: defaults, key: SettingsKeys.sliceSoundEnabled, default: Defaults.sliceSoundEnabled)
         self.stealFocusOnPop = Self.loadBool(from: defaults, key: SettingsKeys.stealFocusOnPop, default: Defaults.stealFocusOnPop)
         self.sliceAutoAdvance = Self.loadBool(from: defaults, key: SettingsKeys.sliceAutoAdvance, default: Defaults.sliceAutoAdvance)
-        self.focusOvertimeReminderEnabled = Self.loadBool(from: defaults, key: SettingsKeys.focusOvertimeReminderEnabled, default: Defaults.focusOvertimeReminderEnabled)
-        self.sliceOvertimeReminderEnabled = Self.loadBool(from: defaults, key: SettingsKeys.sliceOvertimeReminderEnabled, default: Defaults.sliceOvertimeReminderEnabled)
         self.globalHotkeyEnabled = Self.loadBool(from: defaults, key: SettingsKeys.globalHotkeyEnabled, default: Defaults.globalHotkeyEnabled)
         self.rotationHotkeyEnabled = Self.loadBool(from: defaults, key: SettingsKeys.rotationHotkeyEnabled, default: Defaults.rotationHotkeyEnabled)
         self.bulkEditMode = Self.loadBool(from: defaults, key: SettingsKeys.bulkEditMode, default: Defaults.bulkEditMode)

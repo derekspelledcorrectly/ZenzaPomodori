@@ -6,7 +6,6 @@ enum Defaults {
     static let longBreakDuration: Int = 20 * 60
     static let blocksBeforeLongBreak: Int = 4
     static let autoAdvance: Bool = false
-    static let soundEnabled: Bool = true
     static let showTimerInMenuBar: Bool = true
     static let popOnComplete: Bool = true
     static let showFocusInMenuBar: Bool = true
@@ -17,7 +16,6 @@ enum Defaults {
     static let focusNameMaxRecents: Int = 25
     static let slicesEnabled: Bool = true
     static let sliceRotationInterval: Int = 120
-    static let sliceSoundEnabled: Bool = true
     static let sliceEndSound: String = "Polite"
     static let stealFocusOnPop: Bool = false
     static let showSliceTimerInMenuBar: Bool = true
@@ -25,10 +23,8 @@ enum Defaults {
     static let showSessionTimerInMenuBar: Bool = false
     static let showSlicePositionInMenuBar: Bool = false
     static let sliceAutoAdvance: Bool = true
-    static let focusOvertimeReminderEnabled: Bool = false
     static let focusOvertimeReminderInterval: Int = 300
     static let focusOvertimeReminderSound: String = "Glass"
-    static let sliceOvertimeReminderEnabled: Bool = false
     static let sliceOvertimeReminderInterval: Int = 20
     static let sliceOvertimeReminderSound: String = "Sharp"
     static let lastBlockType: BlockType = .focus
@@ -47,7 +43,6 @@ enum SettingsKeys {
     static let longBreakDuration = "longBreakDuration"
     static let blocksBeforeLongBreak = "blocksBeforeLongBreak"
     static let autoAdvance = "autoAdvance"
-    static let soundEnabled = "soundEnabled"
     static let showTimerInMenuBar = "showTimerInMenuBar"
     static let popOnComplete = "popOnComplete"
     static let showFocusInMenuBar = "showFocusInMenuBar"
@@ -59,7 +54,6 @@ enum SettingsKeys {
     static let focusNameDraft = "focusNameDraft"
     static let slicesEnabled = "slicesEnabled"
     static let sliceRotationInterval = "sliceRotationInterval"
-    static let sliceSoundEnabled = "sliceSoundEnabled"
     static let sliceEndSound = "sliceEndSound"
     static let stealFocusOnPop = "stealFocusOnRotation"
     static let showSliceTimerInMenuBar = "showSliceTimerInMenuBar"
@@ -67,10 +61,8 @@ enum SettingsKeys {
     static let showSessionTimerInMenuBar = "showSessionTimerInMenuBar"
     static let showSlicePositionInMenuBar = "showSlicePositionInMenuBar"
     static let sliceAutoAdvance = "sliceAutoAdvance"
-    static let focusOvertimeReminderEnabled = "focusOvertimeReminderEnabled"
     static let focusOvertimeReminderInterval = "focusOvertimeReminderInterval"
     static let focusOvertimeReminderSound = "focusOvertimeReminderSound"
-    static let sliceOvertimeReminderEnabled = "sliceOvertimeReminderEnabled"
     static let sliceOvertimeReminderInterval = "sliceOvertimeReminderInterval"
     static let sliceOvertimeReminderSound = "sliceOvertimeReminderSound"
     static let lastBlockType = "lastBlockType"

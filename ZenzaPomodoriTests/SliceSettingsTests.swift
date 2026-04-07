@@ -16,10 +16,6 @@ struct SliceSettingsTests {
         let store = makeStore()
         #expect(store.sliceRotationInterval == 120)
     }
-    @Test func defaultSliceSoundEnabled() {
-        let store = makeStore()
-        #expect(store.sliceSoundEnabled == true)
-    }
     @Test func defaultSliceEndSound() {
         let store = makeStore()
         #expect(store.sliceEndSound == "Polite")

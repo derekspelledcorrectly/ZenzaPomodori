@@ -40,11 +40,6 @@ struct SettingsStoreTests {
         #expect(store.autoAdvance == false)
     }
 
-    @Test func defaultSoundEnabled() {
-        let store = makeStore()
-        #expect(store.soundEnabled == true)
-    }
-
     @Test func defaultPopOnComplete() {
         let store = makeStore()
         #expect(store.popOnComplete == true)
@@ -85,12 +80,6 @@ struct SettingsStoreTests {
         let store = makeStore()
         store.autoAdvance = true
         #expect(store.autoAdvance == true)
-    }
-
-    @Test func setSoundEnabled() {
-        let store = makeStore()
-        store.soundEnabled = false
-        #expect(store.soundEnabled == false)
     }
 
     @Test func setPopOnComplete() {
@@ -280,17 +269,6 @@ struct SettingsStoreTests {
 
     // MARK: - Focus Overtime Reminder
 
-    @Test func defaultFocusOvertimeReminderEnabled() {
-        let store = makeStore()
-        #expect(store.focusOvertimeReminderEnabled == false)
-    }
-
-    @Test func setFocusOvertimeReminderEnabled() {
-        let store = makeStore()
-        store.focusOvertimeReminderEnabled = true
-        #expect(store.focusOvertimeReminderEnabled == true)
-    }
-
     @Test func defaultFocusOvertimeReminderInterval() {
         let store = makeStore()
         #expect(store.focusOvertimeReminderInterval == 300)
@@ -326,17 +304,6 @@ struct SettingsStoreTests {
     }
 
     // MARK: - Slice Overtime Reminder
-
-    @Test func defaultSliceOvertimeReminderEnabled() {
-        let store = makeStore()
-        #expect(store.sliceOvertimeReminderEnabled == false)
-    }
-
-    @Test func setSliceOvertimeReminderEnabled() {
-        let store = makeStore()
-        store.sliceOvertimeReminderEnabled = true
-        #expect(store.sliceOvertimeReminderEnabled == true)
-    }
 
     @Test func defaultSliceOvertimeReminderInterval() {
         let store = makeStore()
