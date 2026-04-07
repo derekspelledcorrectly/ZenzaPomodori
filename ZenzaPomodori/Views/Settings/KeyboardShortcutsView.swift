@@ -17,6 +17,7 @@ enum ShortcutData {
             ShortcutEntry(action: "Start Short Break", keys: "⌘B"),
             ShortcutEntry(action: "Start Long Break", keys: "⇧⌘B"),
             ShortcutEntry(action: "Pause / Resume", keys: "Space / ↩"),
+            ShortcutEntry(action: "Toggle Text Edit", keys: "⌘T"),
             ShortcutEntry(action: "Settings", keys: "⌘,"),
             ShortcutEntry(action: "Keyboard Shortcuts", keys: "⌘/"),
             ShortcutEntry(action: "Switch to Focus", keys: "⌘←"),

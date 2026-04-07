@@ -181,6 +181,20 @@ struct PopoverContainerView: View {
                 Divider()
             }
 
+            if router.activePanel == .sliceSetup {
+                Button(action: {
+                    settings.bulkEditMode.toggle()
+                }) {
+                    Label(
+                        settings.bulkEditMode ? "Switch to List View" : "Switch to Text Edit",
+                        systemImage: settings.bulkEditMode ? "list.bullet" : "text.alignleft"
+                    )
+                }
+                .keyboardShortcut("t", modifiers: .command)
+
+                Divider()
+            }
+
             Button(action: {
                 router.activePanel = .settings
             }) {
@@ -284,6 +298,11 @@ struct PopoverContainerView: View {
             }
             hiddenShortcut("b", modifiers: [.command, .shift]) {
                 timer.startBreak(.long)
+            }
+        }
+        if router.activePanel == .sliceSetup {
+            hiddenShortcut("t", modifiers: .command) {
+                settings.bulkEditMode.toggle()
             }
         }
         hiddenShortcut(",", modifiers: .command) {
