@@ -28,9 +28,21 @@ struct SliceSettingsTests {
         let store = makeStore()
         #expect(store.stealFocusOnPop == false)
     }
-    @Test func defaultSliceMenuBarFormat() {
+    @Test func defaultShowSliceTimerInMenuBar() {
         let store = makeStore()
-        #expect(store.sliceMenuBarFormat == .sliceOnly)
+        #expect(store.showSliceTimerInMenuBar == true)
+    }
+    @Test func defaultShowSliceFocusInMenuBar() {
+        let store = makeStore()
+        #expect(store.showSliceFocusInMenuBar == true)
+    }
+    @Test func defaultShowSessionTimerInMenuBar() {
+        let store = makeStore()
+        #expect(store.showSessionTimerInMenuBar == false)
+    }
+    @Test func defaultShowSlicePositionInMenuBar() {
+        let store = makeStore()
+        #expect(store.showSlicePositionInMenuBar == false)
     }
     @Test func defaultLastBlockType() {
         let store = makeStore()
@@ -60,12 +72,18 @@ struct SliceSettingsTests {
         store1.sliceRotationInterval = 120
         store1.sliceEndSound = "Glass"
         store1.lastBlockType = .slices
-        store1.sliceMenuBarFormat = .compact
+        store1.showSliceTimerInMenuBar = false
+        store1.showSliceFocusInMenuBar = false
+        store1.showSessionTimerInMenuBar = true
+        store1.showSlicePositionInMenuBar = true
         let store2 = SettingsStore(defaults: defaults)
         #expect(store2.slicesEnabled == true)
         #expect(store2.sliceRotationInterval == 120)
         #expect(store2.sliceEndSound == "Glass")
         #expect(store2.lastBlockType == .slices)
-        #expect(store2.sliceMenuBarFormat == .compact)
+        #expect(store2.showSliceTimerInMenuBar == false)
+        #expect(store2.showSliceFocusInMenuBar == false)
+        #expect(store2.showSessionTimerInMenuBar == true)
+        #expect(store2.showSlicePositionInMenuBar == true)
     }
 }

@@ -6,14 +6,16 @@ struct SliceDisplayInfo {
     let focusName: String?
     let position: Int
     let total: Int
-    let format: SliceMenuBarFormat
     let showTimer: Bool
+    let showSessionTimer: Bool
+    let showPosition: Bool
     let showFocus: Bool
 }
 
 struct SliceFormattedResult {
     let timerPart: String
     let focusPart: String?
+    let positionPart: String?
 }
 
 enum MenuBarFormatting {
@@ -34,24 +36,22 @@ enum MenuBarFormatting {
             focus = nil
         }
 
+        let position: String?
+        if info.showPosition {
+            position = "\(info.position)/\(info.total)"
+        } else {
+            position = nil
+        }
+
         guard info.showTimer else {
-            return SliceFormattedResult(timerPart: "", focusPart: focus)
+            return SliceFormattedResult(timerPart: "", focusPart: focus, positionPart: position)
         }
 
-        let slice = info.sliceFormattedTime
-
-        let timerPart: String
-        switch info.format {
-        case .sliceOnly:
-            timerPart = slice
-        case .dualTimer:
-            timerPart = "\(slice) · \(info.outerFormattedTime)"
-        case .slicePosition:
-            timerPart = "\(slice) · \(info.position)/\(info.total)"
-        case .compact:
-            return SliceFormattedResult(timerPart: slice, focusPart: nil)
+        var parts = [info.sliceFormattedTime]
+        if info.showSessionTimer {
+            parts.append(info.outerFormattedTime)
         }
 
-        return SliceFormattedResult(timerPart: timerPart, focusPart: focus)
+        return SliceFormattedResult(timerPart: parts.joined(separator: " · "), focusPart: focus, positionPart: position)
     }
 }

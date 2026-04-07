@@ -20,7 +20,10 @@ enum Defaults {
     static let sliceSoundEnabled: Bool = true
     static let sliceEndSound: String = "Polite"
     static let stealFocusOnPop: Bool = false
-    static let sliceMenuBarFormat: SliceMenuBarFormat = .sliceOnly
+    static let showSliceTimerInMenuBar: Bool = true
+    static let showSliceFocusInMenuBar: Bool = true
+    static let showSessionTimerInMenuBar: Bool = false
+    static let showSlicePositionInMenuBar: Bool = false
     static let sliceAutoAdvance: Bool = true
     static let focusOvertimeReminderEnabled: Bool = false
     static let focusOvertimeReminderInterval: Int = 300
@@ -58,7 +61,10 @@ enum SettingsKeys {
     static let sliceSoundEnabled = "sliceSoundEnabled"
     static let sliceEndSound = "sliceEndSound"
     static let stealFocusOnPop = "stealFocusOnRotation"
-    static let sliceMenuBarFormat = "sliceMenuBarFormat"
+    static let showSliceTimerInMenuBar = "showSliceTimerInMenuBar"
+    static let showSliceFocusInMenuBar = "showSliceFocusInMenuBar"
+    static let showSessionTimerInMenuBar = "showSessionTimerInMenuBar"
+    static let showSlicePositionInMenuBar = "showSlicePositionInMenuBar"
     static let sliceAutoAdvance = "sliceAutoAdvance"
     static let focusOvertimeReminderEnabled = "focusOvertimeReminderEnabled"
     static let focusOvertimeReminderInterval = "focusOvertimeReminderInterval"

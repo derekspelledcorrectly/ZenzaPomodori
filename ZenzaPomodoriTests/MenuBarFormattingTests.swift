@@ -52,8 +52,9 @@ struct MenuBarFormattingTests {
         focusName: String? = "API Refactor",
         position: Int = 3,
         total: Int = 5,
-        format: SliceMenuBarFormat = .dualTimer,
         showTimer: Bool = true,
+        showSessionTimer: Bool = false,
+        showPosition: Bool = false,
         showFocus: Bool = true
     ) -> SliceFormattedResult {
         MenuBarFormatting.sliceFormatted(SliceDisplayInfo(
@@ -62,44 +63,48 @@ struct MenuBarFormattingTests {
             focusName: focusName,
             position: position,
             total: total,
-            format: format,
             showTimer: showTimer,
+            showSessionTimer: showSessionTimer,
+            showPosition: showPosition,
             showFocus: showFocus
         ))
     }
 
-    @Test func sliceOnlyFormat() {
-        let result = sliceFormatted(format: .sliceOnly)
+    @Test func sliceTimerOnly() {
+        let result = sliceFormatted()
         #expect(result.timerPart == "01:47")
         #expect(result.focusPart == "API Refactor")
+        #expect(result.positionPart == nil)
     }
 
-    @Test func dualTimerFormat() {
-        let result = sliceFormatted(format: .dualTimer)
+    @Test func withSessionTimer() {
+        let result = sliceFormatted(showSessionTimer: true)
         #expect(result.timerPart == "01:47 · 18:42")
         #expect(result.focusPart == "API Refactor")
     }
 
-    @Test func slicePositionFormat() {
-        let result = sliceFormatted(format: .slicePosition)
-        #expect(result.timerPart == "01:47 · 3/5")
+    @Test func withPosition() {
+        let result = sliceFormatted(showPosition: true)
+        #expect(result.timerPart == "01:47")
         #expect(result.focusPart == "API Refactor")
+        #expect(result.positionPart == "3/5")
     }
 
-    @Test func compactFormat() {
-        let result = sliceFormatted(format: .compact)
-        #expect(result.timerPart == "01:47")
-        #expect(result.focusPart == nil)
+    @Test func withSessionTimerAndPosition() {
+        let result = sliceFormatted(showSessionTimer: true, showPosition: true)
+        #expect(result.timerPart == "01:47 · 18:42")
+        #expect(result.focusPart == "API Refactor")
+        #expect(result.positionPart == "3/5")
     }
 
     @Test func noFocusNameOmitsName() {
-        let result = sliceFormatted(focusName: nil, format: .dualTimer)
+        let result = sliceFormatted(focusName: nil, showSessionTimer: true)
         #expect(result.timerPart == "01:47 · 18:42")
         #expect(result.focusPart == nil)
     }
 
     @Test func showFocusFalseOmitsName() {
-        let result = sliceFormatted(format: .dualTimer, showFocus: false)
+        let result = sliceFormatted(showSessionTimer: true, showFocus: false)
         #expect(result.timerPart == "01:47 · 18:42")
         #expect(result.focusPart == nil)
     }
@@ -108,6 +113,13 @@ struct MenuBarFormattingTests {
         let result = sliceFormatted(showTimer: false)
         #expect(result.timerPart == "")
         #expect(result.focusPart == "API Refactor")
+    }
+
+    @Test func showTimerFalseWithPosition() {
+        let result = sliceFormatted(showTimer: false, showPosition: true)
+        #expect(result.timerPart == "")
+        #expect(result.focusPart == "API Refactor")
+        #expect(result.positionPart == "3/5")
     }
 
     @Test func showTimerFalseNoFocusReturnsEmpty() {
@@ -121,21 +133,20 @@ struct MenuBarFormattingTests {
             sliceFormattedTime: "+00:45",
             focusName: "API",
             position: 1,
-            total: 3,
-            format: .sliceOnly
+            total: 3
         )
         #expect(result.timerPart == "+00:45")
         #expect(result.focusPart == "API")
     }
 
-    @Test func sliceOvertimeDualTimerFormat() {
+    @Test func sliceOvertimeWithSessionTimer() {
         let result = sliceFormatted(
             sliceFormattedTime: "+00:45",
             outerTime: "20:00",
             focusName: "API",
             position: 1,
             total: 3,
-            format: .dualTimer
+            showSessionTimer: true
         )
         #expect(result.timerPart == "+00:45 · 20:00")
         #expect(result.focusPart == "API")

@@ -360,9 +360,10 @@ final class PopoverManager: NSObject {
                 focusName: engine.currentItemName,
                 position: engine.currentIndex + 1,
                 total: engine.rotationItems.count,
-                format: settings.sliceMenuBarFormat,
-                showTimer: settings.showTimerInMenuBar,
-                showFocus: settings.showFocusInMenuBar
+                showTimer: settings.showSliceTimerInMenuBar,
+                showSessionTimer: settings.showSessionTimerInMenuBar,
+                showPosition: settings.showSlicePositionInMenuBar,
+                showFocus: settings.showSliceFocusInMenuBar
             ))
             if !formatted.timerPart.isEmpty {
                 title.append(NSAttributedString(
@@ -374,6 +375,12 @@ final class PopoverManager: NSObject {
                 title.append(NSAttributedString(
                     string: " · \(focus)",
                     attributes: [.font: sysFont]
+                ))
+            }
+            if let position = formatted.positionPart {
+                title.append(NSAttributedString(
+                    string: " · \(position)",
+                    attributes: [.font: monoFont]
                 ))
             }
         } else if timer.phase != .idle {
@@ -616,7 +623,10 @@ final class PopoverManager: NSObject {
                 _ = self.timer.activeFocusName
                 _ = self.settings.showTimerInMenuBar
                 _ = self.settings.showFocusInMenuBar
-                _ = self.settings.sliceMenuBarFormat
+                _ = self.settings.showSliceTimerInMenuBar
+                _ = self.settings.showSliceFocusInMenuBar
+                _ = self.settings.showSessionTimerInMenuBar
+                _ = self.settings.showSlicePositionInMenuBar
                 _ = self.router.sliceEngine?.isActive
                 _ = self.router.sliceEngine?.sliceSecondsRemaining
                 _ = self.router.sliceEngine?.currentItemName

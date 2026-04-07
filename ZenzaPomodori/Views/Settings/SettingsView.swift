@@ -259,26 +259,42 @@ struct SettingsView: View {
             }
 
             Section("Menu Bar") {
-                Toggle("Show timer in menu bar", isOn: Binding(
-                    get: { settings.showTimerInMenuBar },
-                    set: { settings.showTimerInMenuBar = $0 }
-                ))
-                .help("Display the countdown timer next to the menu bar icon")
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Focus mode:")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
 
-                Toggle("Show focus in menu bar", isOn: Binding(
-                    get: { settings.showFocusInMenuBar },
-                    set: { settings.showFocusInMenuBar = $0 }
-                ))
-                .help("Display the current focus task name in the menu bar")
+                    Toggle("Show timer", isOn: Binding(
+                        get: { settings.showTimerInMenuBar },
+                        set: { settings.showTimerInMenuBar = $0 }
+                    ))
+                    .help("Display the countdown timer next to the menu bar icon during focus blocks")
 
-                if settings.slicesEnabled && settings.showTimerInMenuBar {
-                    Picker("Slice format", selection: $settings.sliceMenuBarFormat) {
-                        Text("Slice timer only").tag(SliceMenuBarFormat.sliceOnly)
-                        Text("Both timers").tag(SliceMenuBarFormat.dualTimer)
-                        Text("Timer + position").tag(SliceMenuBarFormat.slicePosition)
-                        Text("Compact").tag(SliceMenuBarFormat.compact)
+                    Toggle("Show focus name", isOn: Binding(
+                        get: { settings.showFocusInMenuBar },
+                        set: { settings.showFocusInMenuBar = $0 }
+                    ))
+                    .help("Display the focus task name in the menu bar during focus blocks")
+                }
+
+                if settings.slicesEnabled {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Slices mode:")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+
+                        Toggle("Show slice timer", isOn: $settings.showSliceTimerInMenuBar)
+                            .help("Display the slice countdown timer in the menu bar")
+
+                        Toggle("Show focus name", isOn: $settings.showSliceFocusInMenuBar)
+                            .help("Show the current slice item name in the menu bar")
+
+                        Toggle("Show slice position", isOn: $settings.showSlicePositionInMenuBar)
+                            .help("Show the current slice position (e.g. 2/5)")
+
+                        Toggle("Show session timer", isOn: $settings.showSessionTimerInMenuBar)
+                            .help("Show the overall block timer alongside the slice timer")
                     }
-                    .help("How slice timing info appears in the menu bar alongside the block timer")
                 }
             }
 

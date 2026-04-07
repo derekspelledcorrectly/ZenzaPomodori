@@ -142,10 +142,20 @@ final class SettingsStore {
         didSet { defaults.set(sliceOvertimeReminderSound, forKey: SettingsKeys.sliceOvertimeReminderSound) }
     }
 
-    var sliceMenuBarFormat: SliceMenuBarFormat {
-        didSet {
-            defaults.set(sliceMenuBarFormat.rawValue, forKey: SettingsKeys.sliceMenuBarFormat)
-        }
+    var showSliceTimerInMenuBar: Bool {
+        didSet { defaults.set(showSliceTimerInMenuBar, forKey: SettingsKeys.showSliceTimerInMenuBar) }
+    }
+
+    var showSliceFocusInMenuBar: Bool {
+        didSet { defaults.set(showSliceFocusInMenuBar, forKey: SettingsKeys.showSliceFocusInMenuBar) }
+    }
+
+    var showSessionTimerInMenuBar: Bool {
+        didSet { defaults.set(showSessionTimerInMenuBar, forKey: SettingsKeys.showSessionTimerInMenuBar) }
+    }
+
+    var showSlicePositionInMenuBar: Bool {
+        didSet { defaults.set(showSlicePositionInMenuBar, forKey: SettingsKeys.showSlicePositionInMenuBar) }
     }
 
     var lastBlockType: BlockType {
@@ -236,8 +246,12 @@ final class SettingsStore {
         self.focusOvertimeReminderInterval = Self.loadInt(from: defaults, key: SettingsKeys.focusOvertimeReminderInterval, default: Defaults.focusOvertimeReminderInterval, min: 60, max: 1200)
         self.sliceOvertimeReminderInterval = Self.loadInt(from: defaults, key: SettingsKeys.sliceOvertimeReminderInterval, default: Defaults.sliceOvertimeReminderInterval, min: 5, max: 60)
 
+        self.showSliceTimerInMenuBar = Self.loadBool(from: defaults, key: SettingsKeys.showSliceTimerInMenuBar, default: Defaults.showSliceTimerInMenuBar)
+        self.showSliceFocusInMenuBar = Self.loadBool(from: defaults, key: SettingsKeys.showSliceFocusInMenuBar, default: Defaults.showSliceFocusInMenuBar)
+        self.showSessionTimerInMenuBar = Self.loadBool(from: defaults, key: SettingsKeys.showSessionTimerInMenuBar, default: Defaults.showSessionTimerInMenuBar)
+        self.showSlicePositionInMenuBar = Self.loadBool(from: defaults, key: SettingsKeys.showSlicePositionInMenuBar, default: Defaults.showSlicePositionInMenuBar)
+
         // Enum-backed
-        self.sliceMenuBarFormat = Self.loadRawRepresentable(from: defaults, key: SettingsKeys.sliceMenuBarFormat, default: Defaults.sliceMenuBarFormat)
         self.lastBlockType = Self.loadRawRepresentable(from: defaults, key: SettingsKeys.lastBlockType, default: Defaults.lastBlockType)
 
         // UInt32 (hotkey codes)
