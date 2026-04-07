@@ -76,13 +76,13 @@ struct MenuBarFormattingTests {
 
     @Test func dualTimerFormat() {
         let result = sliceFormatted(format: .dualTimer)
-        #expect(result.timerPart == "01:47/18:42")
+        #expect(result.timerPart == "01:47 · 18:42")
         #expect(result.focusPart == "API Refactor")
     }
 
     @Test func slicePositionFormat() {
         let result = sliceFormatted(format: .slicePosition)
-        #expect(result.timerPart == "01:47 3/5")
+        #expect(result.timerPart == "01:47 · 3/5")
         #expect(result.focusPart == "API Refactor")
     }
 
@@ -94,13 +94,13 @@ struct MenuBarFormattingTests {
 
     @Test func noFocusNameOmitsName() {
         let result = sliceFormatted(focusName: nil, format: .dualTimer)
-        #expect(result.timerPart == "01:47/18:42")
+        #expect(result.timerPart == "01:47 · 18:42")
         #expect(result.focusPart == nil)
     }
 
     @Test func showFocusFalseOmitsName() {
         let result = sliceFormatted(format: .dualTimer, showFocus: false)
-        #expect(result.timerPart == "01:47/18:42")
+        #expect(result.timerPart == "01:47 · 18:42")
         #expect(result.focusPart == nil)
     }
 
@@ -137,7 +137,7 @@ struct MenuBarFormattingTests {
             total: 3,
             format: .dualTimer
         )
-        #expect(result.timerPart == "+00:45/20:00")
+        #expect(result.timerPart == "+00:45 · 20:00")
         #expect(result.focusPart == "API")
     }
 }

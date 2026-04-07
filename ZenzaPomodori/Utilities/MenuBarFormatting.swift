@@ -45,9 +45,9 @@ enum MenuBarFormatting {
         case .sliceOnly:
             timerPart = slice
         case .dualTimer:
-            timerPart = "\(slice)/\(info.outerFormattedTime)"
+            timerPart = "\(slice) · \(info.outerFormattedTime)"
         case .slicePosition:
-            timerPart = "\(slice) \(info.position)/\(info.total)"
+            timerPart = "\(slice) · \(info.position)/\(info.total)"
         case .compact:
             return SliceFormattedResult(timerPart: slice, focusPart: nil)
         }
