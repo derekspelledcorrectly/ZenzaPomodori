@@ -69,6 +69,29 @@ struct SettingsView: View {
             case .behavior:
                 behaviorTab
             }
+
+            tabCycleButtons
+        }
+    }
+
+    private var tabCycleButtons: some View {
+        Group {
+            Button("") { cycleTab(forward: false) }
+                .keyboardShortcut(.leftArrow, modifiers: .command)
+            Button("") { cycleTab(forward: true) }
+                .keyboardShortcut(.rightArrow, modifiers: .command)
+        }
+        .frame(width: 0, height: 0)
+        .opacity(0)
+    }
+
+    private func cycleTab(forward: Bool) {
+        let tabs = SettingsTab.allCases
+        guard let index = tabs.firstIndex(of: selectedTab) else { return }
+        if forward, index < tabs.count - 1 {
+            selectedTab = tabs[index + 1]
+        } else if !forward, index > 0 {
+            selectedTab = tabs[index - 1]
         }
     }
 
@@ -236,7 +259,7 @@ struct SettingsView: View {
                     get: { settings.autoAdvance },
                     set: { settings.autoAdvance = $0 }
                 ))
-                .help("Automatically start the next block or break without waiting for you to click")
+                .help("Automatically advance to the next block or break without waiting")
 
                 if settings.slicesEnabled {
                     Toggle("Auto-advance slices", isOn: $settings.sliceAutoAdvance)
@@ -401,7 +424,7 @@ struct SettingsView: View {
             }
         }
         .buttonStyle(.plain)
-        .foregroundStyle(.tertiary)
+        .foregroundStyle(advancedExpanded ? .primary : .tertiary)
     }
 
     private func minutesBinding(_ keyPath: ReferenceWritableKeyPath<SettingsStore, Int>) -> Binding<Int> {

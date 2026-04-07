@@ -20,8 +20,7 @@ enum ShortcutData {
             ShortcutEntry(action: "Toggle Text Edit", keys: "⌘T"),
             ShortcutEntry(action: "Settings", keys: "⌘,"),
             ShortcutEntry(action: "Keyboard Shortcuts", keys: "⌘/"),
-            ShortcutEntry(action: "Switch to Focus", keys: "⌘←"),
-            ShortcutEntry(action: "Switch to Slices", keys: "⌘→"),
+            ShortcutEntry(action: "Switch view / tab", keys: "⌘← / ⌘→"),
             ShortcutEntry(action: "Dismiss / Go back", keys: "Escape"),
         ]),
         ShortcutSection(title: "Timer Running", shortcuts: [
