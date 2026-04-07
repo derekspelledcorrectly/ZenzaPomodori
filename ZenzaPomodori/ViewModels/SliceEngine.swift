@@ -77,8 +77,7 @@ final class SliceEngine {
         guard isActive, !isPaused else { return }
         if isOvertime {
             overtimeSeconds += 1
-            let reminderInterval = settings.sliceOvertimeReminderEnabled
-                ? settings.sliceOvertimeReminderInterval : 0
+            let reminderInterval = settings.sliceOvertimeReminderInterval
             if reminderInterval > 0 && overtimeSeconds > 0 && overtimeSeconds % reminderInterval == 0 {
                 onOvertimeReminder?()
             }

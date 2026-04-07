@@ -625,7 +625,7 @@ struct PomodoroTimerTests {
     @Test func focusOvertimeReminderFiresAtInterval() {
         let timer = makeTimer {
             $0.autoAdvance = false; $0.focusDuration = 60
-            $0.focusOvertimeReminderEnabled = true; $0.focusOvertimeReminderInterval = 60
+            $0.focusOvertimeReminderInterval = 60
         }
         var reminderCount = 0
         timer.onOvertimeReminder = { _ in reminderCount += 1 }
@@ -642,7 +642,7 @@ struct PomodoroTimerTests {
     @Test func focusOvertimeReminderDoesNotFireAtZero() {
         let timer = makeTimer {
             $0.autoAdvance = false; $0.focusDuration = 60
-            $0.focusOvertimeReminderEnabled = true; $0.focusOvertimeReminderInterval = 60
+            $0.focusOvertimeReminderInterval = 60
         }
         var reminderCount = 0
         timer.onOvertimeReminder = { _ in reminderCount += 1 }
@@ -653,10 +653,10 @@ struct PomodoroTimerTests {
         timer.reset()
     }
 
-    @Test func focusOvertimeReminderNotFiredWhenDisabled() {
+    @Test func focusOvertimeReminderNotFiredWhenIntervalZero() {
         let timer = makeTimer {
             $0.autoAdvance = false; $0.focusDuration = 60
-            $0.focusOvertimeReminderEnabled = false; $0.focusOvertimeReminderInterval = 60
+            $0.focusOvertimeReminderInterval = 0
         }
         var reminderCount = 0
         timer.onOvertimeReminder = { _ in reminderCount += 1 }
@@ -671,7 +671,7 @@ struct PomodoroTimerTests {
     @Test func focusOvertimeReminderIncludesPhase() {
         let timer = makeTimer {
             $0.autoAdvance = false; $0.focusDuration = 60
-            $0.focusOvertimeReminderEnabled = true; $0.focusOvertimeReminderInterval = 60
+            $0.focusOvertimeReminderInterval = 60
         }
         var receivedPhase: TimerPhase?
         timer.onOvertimeReminder = { phase in receivedPhase = phase }
@@ -686,7 +686,7 @@ struct PomodoroTimerTests {
     @Test func focusOvertimeReminderRespectsRuntimeChanges() {
         let timer = makeTimer {
             $0.autoAdvance = false; $0.focusDuration = 60
-            $0.focusOvertimeReminderEnabled = true; $0.focusOvertimeReminderInterval = 120
+            $0.focusOvertimeReminderInterval = 120
         }
         var reminderCount = 0
         timer.onOvertimeReminder = { _ in reminderCount += 1 }

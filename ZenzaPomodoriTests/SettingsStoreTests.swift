@@ -271,7 +271,7 @@ struct SettingsStoreTests {
 
     @Test func defaultFocusOvertimeReminderInterval() {
         let store = makeStore()
-        #expect(store.focusOvertimeReminderInterval == 300)
+        #expect(store.focusOvertimeReminderInterval == 0)
     }
 
     @Test func setFocusOvertimeReminderInterval() {
@@ -282,8 +282,8 @@ struct SettingsStoreTests {
 
     @Test func focusOvertimeReminderIntervalClampsLow() {
         let store = makeStore()
-        store.focusOvertimeReminderInterval = 30
-        #expect(store.focusOvertimeReminderInterval == 60)
+        store.focusOvertimeReminderInterval = -10
+        #expect(store.focusOvertimeReminderInterval == 0)
     }
 
     @Test func focusOvertimeReminderIntervalClampsHigh() {
@@ -307,7 +307,7 @@ struct SettingsStoreTests {
 
     @Test func defaultSliceOvertimeReminderInterval() {
         let store = makeStore()
-        #expect(store.sliceOvertimeReminderInterval == 20)
+        #expect(store.sliceOvertimeReminderInterval == 0)
     }
 
     @Test func setSliceOvertimeReminderInterval() {
@@ -318,8 +318,8 @@ struct SettingsStoreTests {
 
     @Test func sliceOvertimeReminderIntervalClampsLow() {
         let store = makeStore()
-        store.sliceOvertimeReminderInterval = 2
-        #expect(store.sliceOvertimeReminderInterval == 5)
+        store.sliceOvertimeReminderInterval = -3
+        #expect(store.sliceOvertimeReminderInterval == 0)
     }
 
     @Test func sliceOvertimeReminderIntervalClampsHigh() {
@@ -337,5 +337,17 @@ struct SettingsStoreTests {
         let store = makeStore()
         store.sliceOvertimeReminderSound = "Glass"
         #expect(store.sliceOvertimeReminderSound == "Glass")
+    }
+
+    @Test func focusOvertimeReminderIntervalAllowsZero() {
+        let store = makeStore()
+        store.focusOvertimeReminderInterval = 0
+        #expect(store.focusOvertimeReminderInterval == 0)
+    }
+
+    @Test func sliceOvertimeReminderIntervalAllowsZero() {
+        let store = makeStore()
+        store.sliceOvertimeReminderInterval = 0
+        #expect(store.sliceOvertimeReminderInterval == 0)
     }
 }

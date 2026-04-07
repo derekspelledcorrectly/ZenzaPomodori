@@ -104,7 +104,7 @@ final class SettingsStore {
 
     var focusOvertimeReminderInterval: Int {
         didSet {
-            let validated = max(60, min(1200, focusOvertimeReminderInterval))
+            let validated = max(0, min(1200, focusOvertimeReminderInterval))
             defaults.set(validated, forKey: SettingsKeys.focusOvertimeReminderInterval)
             if focusOvertimeReminderInterval != validated { focusOvertimeReminderInterval = validated }
         }
@@ -116,7 +116,7 @@ final class SettingsStore {
 
     var sliceOvertimeReminderInterval: Int {
         didSet {
-            let validated = max(5, min(60, sliceOvertimeReminderInterval))
+            let validated = max(0, min(60, sliceOvertimeReminderInterval))
             defaults.set(validated, forKey: SettingsKeys.sliceOvertimeReminderInterval)
             if sliceOvertimeReminderInterval != validated { sliceOvertimeReminderInterval = validated }
         }
@@ -228,8 +228,8 @@ final class SettingsStore {
         // Clamped integers
         self.autoDismissSeconds = Self.loadInt(from: defaults, key: SettingsKeys.autoDismissSeconds, default: Defaults.autoDismissSeconds, min: 0, max: 30)
         self.sliceRotationInterval = Self.loadInt(from: defaults, key: SettingsKeys.sliceRotationInterval, default: Defaults.sliceRotationInterval)
-        self.focusOvertimeReminderInterval = Self.loadInt(from: defaults, key: SettingsKeys.focusOvertimeReminderInterval, default: Defaults.focusOvertimeReminderInterval, min: 60, max: 1200)
-        self.sliceOvertimeReminderInterval = Self.loadInt(from: defaults, key: SettingsKeys.sliceOvertimeReminderInterval, default: Defaults.sliceOvertimeReminderInterval, min: 5, max: 60)
+        self.focusOvertimeReminderInterval = Self.loadInt(from: defaults, key: SettingsKeys.focusOvertimeReminderInterval, default: Defaults.focusOvertimeReminderInterval, min: 0, max: 1200)
+        self.sliceOvertimeReminderInterval = Self.loadInt(from: defaults, key: SettingsKeys.sliceOvertimeReminderInterval, default: Defaults.sliceOvertimeReminderInterval, min: 0, max: 60)
 
         self.showSliceTimerInMenuBar = Self.loadBool(from: defaults, key: SettingsKeys.showSliceTimerInMenuBar, default: Defaults.showSliceTimerInMenuBar)
         self.showSliceFocusInMenuBar = Self.loadBool(from: defaults, key: SettingsKeys.showSliceFocusInMenuBar, default: Defaults.showSliceFocusInMenuBar)

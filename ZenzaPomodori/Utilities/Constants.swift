@@ -23,9 +23,9 @@ enum Defaults {
     static let showSessionTimerInMenuBar: Bool = false
     static let showSlicePositionInMenuBar: Bool = false
     static let sliceAutoAdvance: Bool = true
-    static let focusOvertimeReminderInterval: Int = 300
+    static let focusOvertimeReminderInterval: Int = 0
     static let focusOvertimeReminderSound: String = "Glass"
-    static let sliceOvertimeReminderInterval: Int = 20
+    static let sliceOvertimeReminderInterval: Int = 0
     static let sliceOvertimeReminderSound: String = "Sharp"
     static let lastBlockType: BlockType = .focus
     static let globalHotkeyEnabled: Bool = false

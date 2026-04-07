@@ -169,8 +169,7 @@ final class PomodoroTimer {
     func tick() {
         if isOvertime {
             overtimeSeconds += 1
-            let reminderInterval = settings.focusOvertimeReminderEnabled
-                ? settings.focusOvertimeReminderInterval : 0
+            let reminderInterval = settings.focusOvertimeReminderInterval
             if reminderInterval > 0 && overtimeSeconds > 0 && overtimeSeconds % reminderInterval == 0 {
                 onOvertimeReminder?(phase)
             }

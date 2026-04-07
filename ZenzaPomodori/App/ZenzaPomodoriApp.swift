@@ -120,10 +120,10 @@ final class PopoverManager: NSObject {
         }
         timer.onTimerComplete = { [weak self] phase in
             guard let self else { return }
-            if self.settings.soundEnabled {
-                let sound = phase.isFocus
-                    ? self.settings.focusEndSound
-                    : self.settings.breakEndSound
+            let sound = phase.isFocus
+                ? self.settings.focusEndSound
+                : self.settings.breakEndSound
+            if sound != "None" {
                 self.soundService.play(sound)
             }
             if self.settings.popOnComplete {
@@ -435,7 +435,7 @@ final class PopoverManager: NSObject {
     private func handleSliceRotation() {
         guard router.sliceEngine != nil else { return }
 
-        if settings.sliceSoundEnabled {
+        if settings.sliceEndSound != "None" {
             soundService.play(settings.sliceEndSound)
         }
 
@@ -452,7 +452,7 @@ final class PopoverManager: NSObject {
     private func handleSliceOvertimeReminder() {
         guard router.sliceEngine != nil else { return }
 
-        if settings.sliceOvertimeReminderEnabled {
+        if settings.sliceOvertimeReminderInterval > 0 {
             soundService.play(settings.sliceOvertimeReminderSound)
         }
 
@@ -461,7 +461,7 @@ final class PopoverManager: NSObject {
     }
 
     private func handleFocusOvertimeReminder(phase: TimerPhase) {
-        if settings.focusOvertimeReminderEnabled {
+        if settings.focusOvertimeReminderInterval > 0 {
             soundService.play(settings.focusOvertimeReminderSound)
         }
 
