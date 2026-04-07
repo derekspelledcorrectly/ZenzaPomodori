@@ -271,7 +271,7 @@ struct SettingsView: View {
                 ))
                 .help("Display the current focus task name in the menu bar")
 
-                if settings.slicesEnabled {
+                if settings.slicesEnabled && settings.showTimerInMenuBar {
                     Picker("Slice menu bar format", selection: $settings.sliceMenuBarFormat) {
                         Text("Slice timer only").tag(SliceMenuBarFormat.sliceOnly)
                         Text("Both timers").tag(SliceMenuBarFormat.dualTimer)
