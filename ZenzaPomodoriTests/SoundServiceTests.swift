@@ -23,6 +23,15 @@ struct SoundServiceTests {
         service.play("nonexistent-sound-that-does-not-exist")
     }
 
+    @Test func playDisabledSentinelIsNoOp() {
+        let service = SoundService()
+        service.play(SoundService.disabled)
+    }
+
+    @Test func disabledSentinelNotInAvailableSounds() {
+        #expect(!SoundService.availableSounds.contains(SoundService.disabled))
+    }
+
     @Test func stopClearsWithoutCrash() {
         let service = SoundService()
         service.stop()

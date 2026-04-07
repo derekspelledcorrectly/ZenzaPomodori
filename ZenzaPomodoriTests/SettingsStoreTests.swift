@@ -271,7 +271,7 @@ struct SettingsStoreTests {
 
     @Test func defaultFocusOvertimeReminderInterval() {
         let store = makeStore()
-        #expect(store.focusOvertimeReminderInterval == 0)
+        #expect(store.focusOvertimeReminderInterval == 300)
     }
 
     @Test func setFocusOvertimeReminderInterval() {
@@ -307,7 +307,7 @@ struct SettingsStoreTests {
 
     @Test func defaultSliceOvertimeReminderInterval() {
         let store = makeStore()
-        #expect(store.sliceOvertimeReminderInterval == 0)
+        #expect(store.sliceOvertimeReminderInterval == 20)
     }
 
     @Test func setSliceOvertimeReminderInterval() {
@@ -349,5 +349,33 @@ struct SettingsStoreTests {
         let store = makeStore()
         store.sliceOvertimeReminderInterval = 0
         #expect(store.sliceOvertimeReminderInterval == 0)
+    }
+
+    @Test func focusOvertimeReminderIntervalZeroPersists() {
+        let defaults = makeTestDefaults()
+        let store1 = SettingsStore(defaults: defaults)
+        store1.focusOvertimeReminderInterval = 300
+        store1.focusOvertimeReminderInterval = 0
+        let store2 = SettingsStore(defaults: defaults)
+        #expect(store2.focusOvertimeReminderInterval == 0)
+    }
+
+    @Test func sliceOvertimeReminderIntervalZeroPersists() {
+        let defaults = makeTestDefaults()
+        let store1 = SettingsStore(defaults: defaults)
+        store1.sliceOvertimeReminderInterval = 20
+        store1.sliceOvertimeReminderInterval = 0
+        let store2 = SettingsStore(defaults: defaults)
+        #expect(store2.sliceOvertimeReminderInterval == 0)
+    }
+
+    @Test func soundNoneIsValidValue() {
+        let store = makeStore()
+        store.focusEndSound = SoundService.disabled
+        #expect(store.focusEndSound == SoundService.disabled)
+        store.breakEndSound = SoundService.disabled
+        #expect(store.breakEndSound == SoundService.disabled)
+        store.sliceEndSound = SoundService.disabled
+        #expect(store.sliceEndSound == SoundService.disabled)
     }
 }

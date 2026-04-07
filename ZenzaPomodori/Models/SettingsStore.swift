@@ -255,11 +255,10 @@ final class SettingsStore {
         min minValue: Int? = nil,
         max maxValue: Int? = nil
     ) -> Int {
-        let raw = defaults.integer(forKey: key)
-        guard raw > 0 || defaults.object(forKey: key) != nil else {
+        guard defaults.object(forKey: key) != nil else {
             return defaultValue
         }
-        var value = raw > 0 ? raw : defaultValue
+        var value = defaults.integer(forKey: key)
         if let minValue { value = Swift.max(minValue, value) }
         if let maxValue { value = Swift.min(maxValue, value) }
         return value

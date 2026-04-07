@@ -12,6 +12,7 @@ struct SettingsView: View {
     var onBack: (() -> Void)?
 
     @State private var selectedTab: SettingsTab = .timer
+    @AppStorage("behaviorAdvancedExpanded") private var advancedExpanded = false
 
     private static let focusOptions = [5, 10, 15, 20, 25, 30, 45, 60, 90, 120]
     private static let shortBreakOptions = [1, 2, 3, 5, 10, 15, 20]
@@ -128,85 +129,89 @@ struct SettingsView: View {
     private var soundsTab: some View {
         Form {
             Section("Completion Sounds") {
-                Toggle("Play sound on complete", isOn: Binding(
-                    get: { settings.soundEnabled },
-                    set: { settings.soundEnabled = $0 }
+                soundPickerWithNone("Focus end", sound: Binding(
+                    get: { settings.focusEndSound },
+                    set: { settings.focusEndSound = $0 }
                 ))
-                .help("Play an audio cue when a focus block or break finishes")
 
-                if settings.soundEnabled {
-                    soundPicker("Focus end", sound: Binding(
-                        get: { settings.focusEndSound },
-                        set: { settings.focusEndSound = $0 }
-                    ))
-                    soundPicker("Break end", sound: Binding(
-                        get: { settings.breakEndSound },
-                        set: { settings.breakEndSound = $0 }
+                soundPickerWithNone("Break end", sound: Binding(
+                    get: { settings.breakEndSound },
+                    set: { settings.breakEndSound = $0 }
+                ))
+
+                if settings.slicesEnabled {
+                    soundPickerWithNone("Slice rotation", sound: Binding(
+                        get: { settings.sliceEndSound },
+                        set: { settings.sliceEndSound = $0 }
                     ))
                 }
+            }
+
+            Section {
+                Picker("Every", selection: focusReminderMinutesBinding) {
+                    Text("Never").tag(0)
+                    Text("1 min").tag(1)
+                    Text("2 min").tag(2)
+                    Text("3 min").tag(3)
+                    Text("5 min").tag(5)
+                    Text("10 min").tag(10)
+                    Text("15 min").tag(15)
+                    Text("20 min").tag(20)
+                }
+                .help("How often the reminder repeats during focus overtime")
+                .disabled(settings.autoAdvance)
+                .opacity(settings.autoAdvance ? 0.4 : 1)
+
+                if settings.autoAdvance {
+                    Text("Turn off Auto-advance blocks in Behavior to use")
+                        .font(.caption)
+                        .foregroundStyle(.primary.opacity(0.9))
+                        .help("Turn off Auto-advance blocks in Behavior to use")
+                }
+
+                if settings.focusOvertimeReminderInterval > 0 && !settings.autoAdvance {
+                    soundPickerWithNone("Reminder sound", sound: Binding(
+                        get: { settings.focusOvertimeReminderSound },
+                        set: { settings.focusOvertimeReminderSound = $0 }
+                    ))
+                }
+            } header: {
+                Text("Focus Overtime Reminder")
+                    .foregroundStyle(settings.autoAdvance ? .tertiary : .primary)
             }
 
             if settings.slicesEnabled {
-                Section("Slice Sounds") {
-                    Toggle("Sound on rotation", isOn: $settings.sliceSoundEnabled)
-                        .help("Play a sound when rotating to the next task in your slice list")
-
-                    if settings.sliceSoundEnabled {
-                        soundPicker("Rotation sound", sound: Binding(
-                            get: { settings.sliceEndSound },
-                            set: { settings.sliceEndSound = $0 }
-                        ))
+                Section {
+                    Picker("Every", selection: $settings.sliceOvertimeReminderInterval) {
+                        Text("Never").tag(0)
+                        Text("5s").tag(5)
+                        Text("10s").tag(10)
+                        Text("15s").tag(15)
+                        Text("20s").tag(20)
+                        Text("30s").tag(30)
+                        Text("45s").tag(45)
+                        Text("60s").tag(60)
                     }
-                }
-            }
+                    .help("How often the reminder repeats during slice overtime")
+                    .disabled(settings.sliceAutoAdvance)
+                    .opacity(settings.sliceAutoAdvance ? 0.4 : 1)
 
-            if !settings.autoAdvance {
-                Section("Focus Overtime Reminder") {
-                    Toggle("Repeat reminder sound", isOn: $settings.focusOvertimeReminderEnabled)
-                        .help("Periodically nudge you with a sound when a focus block runs past its timer")
-
-                    if settings.focusOvertimeReminderEnabled {
-                        Picker("Every", selection: focusReminderMinutesBinding) {
-                            Text("1 min").tag(1)
-                            Text("2 min").tag(2)
-                            Text("3 min").tag(3)
-                            Text("5 min").tag(5)
-                            Text("10 min").tag(10)
-                            Text("15 min").tag(15)
-                            Text("20 min").tag(20)
-                        }
-                        .help("How often the reminder repeats during focus overtime")
-
-                        soundPicker("Reminder sound", sound: Binding(
-                            get: { settings.focusOvertimeReminderSound },
-                            set: { settings.focusOvertimeReminderSound = $0 }
-                        ))
+                    if settings.sliceAutoAdvance {
+                        Text("Turn off Auto-advance slices in Behavior to use")
+                            .font(.caption)
+                            .foregroundStyle(.primary.opacity(0.9))
+                            .help("Turn off Auto-advance slices in Behavior to use")
                     }
-                }
-            }
 
-            if settings.slicesEnabled && !settings.sliceAutoAdvance {
-                Section("Slice Overtime Reminder") {
-                    Toggle("Repeat reminder sound", isOn: $settings.sliceOvertimeReminderEnabled)
-                        .help("Periodically nudge you with a sound when a slice runs past its rotation interval")
-
-                    if settings.sliceOvertimeReminderEnabled {
-                        Picker("Every", selection: $settings.sliceOvertimeReminderInterval) {
-                            Text("5s").tag(5)
-                            Text("10s").tag(10)
-                            Text("15s").tag(15)
-                            Text("20s").tag(20)
-                            Text("30s").tag(30)
-                            Text("45s").tag(45)
-                            Text("60s").tag(60)
-                        }
-                        .help("How often the reminder repeats during slice overtime")
-
-                        soundPicker("Reminder sound", sound: Binding(
+                    if settings.sliceOvertimeReminderInterval > 0 && !settings.sliceAutoAdvance {
+                        soundPickerWithNone("Reminder sound", sound: Binding(
                             get: { settings.sliceOvertimeReminderSound },
                             set: { settings.sliceOvertimeReminderSound = $0 }
                         ))
                     }
+                } header: {
+                    Text("Slice Overtime Reminder")
+                        .foregroundStyle(settings.sliceAutoAdvance ? .tertiary : .primary)
                 }
             }
 
@@ -253,83 +258,85 @@ struct SettingsView: View {
                         helpText: "Automatically close the popover after this many seconds (0 to keep it open)"
                     )
                 }
-
-                Toggle("Steal focus on pop open", isOn: $settings.stealFocusOnPop)
-                    .help("Bring the timer to the front when it pops open, switching away from your current app")
             }
 
-            Section("Menu Bar") {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Focus mode:")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-
-                    Toggle("Show timer", isOn: Binding(
-                        get: { settings.showTimerInMenuBar },
-                        set: { settings.showTimerInMenuBar = $0 }
-                    ))
-                    .help("Display the countdown timer next to the menu bar icon during focus blocks")
-
-                    Toggle("Show focus name", isOn: Binding(
-                        get: { settings.showFocusInMenuBar },
-                        set: { settings.showFocusInMenuBar = $0 }
-                    ))
-                    .help("Display the focus task name in the menu bar during focus blocks")
+            Section(header: advancedHeader) {
+                if advancedExpanded {
+                    Toggle("Steal focus on pop open", isOn: $settings.stealFocusOnPop)
+                        .help("Bring the timer to the front when it pops open, switching away from your current app")
                 }
+            }
 
-                if settings.slicesEnabled {
+            if advancedExpanded {
+                Section("Menu Bar") {
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("Slices mode:")
+                        Text("Focus mode:")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
 
-                        Toggle("Show slice timer", isOn: $settings.showSliceTimerInMenuBar)
-                            .help("Display the slice countdown timer in the menu bar")
+                        Toggle("Show timer", isOn: Binding(
+                            get: { settings.showTimerInMenuBar },
+                            set: { settings.showTimerInMenuBar = $0 }
+                        ))
+                        .help("Display the countdown timer next to the menu bar icon during focus blocks")
 
-                        Toggle("Show focus name", isOn: $settings.showSliceFocusInMenuBar)
-                            .help("Show the current slice item name in the menu bar")
+                        Toggle("Show focus name", isOn: Binding(
+                            get: { settings.showFocusInMenuBar },
+                            set: { settings.showFocusInMenuBar = $0 }
+                        ))
+                        .help("Display the focus task name in the menu bar during focus blocks")
+                    }
 
-                        Toggle("Show slice position", isOn: $settings.showSlicePositionInMenuBar)
-                            .help("Show the current slice position (e.g. 2/5)")
+                    if settings.slicesEnabled {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Slices mode:")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
 
-                        Toggle("Show session timer", isOn: $settings.showSessionTimerInMenuBar)
-                            .help("Show the overall block timer alongside the slice timer")
+                            Toggle("Show slice timer", isOn: $settings.showSliceTimerInMenuBar)
+                                .help("Display the slice countdown timer in the menu bar")
+
+                            Toggle("Show focus name", isOn: $settings.showSliceFocusInMenuBar)
+                                .help("Show the current slice item name in the menu bar")
+
+                            Toggle("Show slice position", isOn: $settings.showSlicePositionInMenuBar)
+                                .help("Show the current slice position (e.g. 2/5)")
+
+                            Toggle("Show session timer", isOn: $settings.showSessionTimerInMenuBar)
+                                .help("Show the overall block timer alongside the slice timer")
+                        }
                     }
                 }
-            }
 
-            Section("Hotkeys") {
-                Toggle("Show/hide timer hotkey", isOn: $settings.globalHotkeyEnabled)
-                    .help("Register a global keyboard shortcut to toggle the timer popover from any app")
+                Section("Global Hotkeys") {
+                    VStack(alignment: .trailing, spacing: 6) {
+                        Toggle("Show/hide timer", isOn: $settings.globalHotkeyEnabled)
+                            .help("Register a global keyboard shortcut to toggle the timer popover from any app")
 
-                if settings.globalHotkeyEnabled {
-                    HStack {
-                        Text("Shortcut")
-                        Spacer()
-                        HotkeyRecorderView(
-                            keyCode: $settings.globalHotkeyKeyCode,
-                            modifiers: $settings.globalHotkeyModifiers
-                        )
-                        .frame(width: 120, height: 24)
-                    }
-                    .help("Click to record a new shortcut. Press Escape to cancel, Delete to clear.")
-                }
-
-                if settings.slicesEnabled {
-                    Toggle("Next slice hotkey", isOn: $settings.rotationHotkeyEnabled)
-                        .help("Register a global keyboard shortcut to advance to the next slice from any app")
-
-                    if settings.rotationHotkeyEnabled {
-                        HStack {
-                            Text("Shortcut")
-                            Spacer()
+                        if settings.globalHotkeyEnabled {
                             HotkeyRecorderView(
-                                keyCode: $settings.rotationHotkeyKeyCode,
-                                modifiers: $settings.rotationHotkeyModifiers
+                                keyCode: $settings.globalHotkeyKeyCode,
+                                modifiers: $settings.globalHotkeyModifiers
                             )
                             .frame(width: 120, height: 24)
+                            .help("Click to record a new shortcut. Press Escape to cancel, Delete to clear.")
                         }
-                        .help("Click to record a new shortcut. Press Escape to cancel, Delete to clear.")
+                    }
+
+                    if settings.slicesEnabled {
+                        VStack(alignment: .trailing, spacing: 6) {
+                            Toggle("Next slice", isOn: $settings.rotationHotkeyEnabled)
+                                .help("Register a global keyboard shortcut to advance to the next slice from any app")
+
+                            if settings.rotationHotkeyEnabled {
+                                HotkeyRecorderView(
+                                    keyCode: $settings.rotationHotkeyKeyCode,
+                                    modifiers: $settings.rotationHotkeyModifiers
+                                )
+                                .frame(width: 120, height: 24)
+                                .help("Click to record a new shortcut. Press Escape to cancel, Delete to clear.")
+                            }
+                        }
                     }
                 }
             }
@@ -354,27 +361,47 @@ struct SettingsView: View {
         )
     }
 
-    private func soundPicker(_ label: String, sound: Binding<String>) -> some View {
+    private func soundPickerWithNone(_ label: String, sound: Binding<String>) -> some View {
         HStack {
             Picker(label, selection: Binding(
                 get: { sound.wrappedValue },
                 set: { newValue in
                     sound.wrappedValue = newValue
-                    soundService.play(newValue)
+                    if newValue != SoundService.disabled {
+                        soundService.play(newValue)
+                    }
                 }
             )) {
+                Text("None").tag(SoundService.disabled)
                 ForEach(SoundService.availableSounds, id: \.self) { name in
                     Text(name).tag(name)
                 }
             }
 
-            Button(action: { soundService.play(sound.wrappedValue) }) {
-                Image(systemName: "play.circle")
+            if sound.wrappedValue != SoundService.disabled {
+                Button(action: { soundService.play(sound.wrappedValue) }) {
+                    Image(systemName: "play.circle")
+                }
+                .buttonStyle(.borderless)
+                .help("Preview sound")
+                .accessibilityLabel("Preview \(sound.wrappedValue) sound")
             }
-            .buttonStyle(.borderless)
-            .help("Preview sound")
-            .accessibilityLabel("Preview \(sound.wrappedValue) sound")
         }
+    }
+
+    private var advancedHeader: some View {
+        Button {
+            withAnimation { advancedExpanded.toggle() }
+        } label: {
+            HStack(spacing: 4) {
+                Text("Advanced")
+                Image(systemName: "chevron.right")
+                    .font(.caption2)
+                    .rotationEffect(.degrees(advancedExpanded ? 90 : 0))
+            }
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(.tertiary)
     }
 
     private func minutesBinding(_ keyPath: ReferenceWritableKeyPath<SettingsStore, Int>) -> Binding<Int> {
