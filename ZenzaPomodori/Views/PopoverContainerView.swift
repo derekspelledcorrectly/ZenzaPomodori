@@ -327,6 +327,7 @@ struct PopoverContainerView: View {
                 rotationStore: rotationStore,
                 focusNameStore: focusNameStore,
                 workingItems: $workingItems,
+                settings: settings,
                 isEditing: isEditingActiveRotation,
                 onStart: { onSliceStart?(workingItems) },
                 onResume: {

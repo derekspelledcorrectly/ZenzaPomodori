@@ -4,6 +4,7 @@ struct SliceSetupView: View {
     @Bindable var rotationStore: RotationStore
     let focusNameStore: FocusNameStore
     @Binding var workingItems: [RotationItem]
+    @Bindable var settings: SettingsStore
     var isEditing: Bool = false
     var onStart: () -> Void
     var onResume: (() -> Void)?
@@ -68,25 +69,37 @@ struct SliceSetupView: View {
                 }
             }
 
-            // Text input
-            TextField("Add focus area...", text: $newItemText)
-                .textFieldStyle(.plain)
-                .font(.system(size: 12))
-                .padding(8)
-                .background(Color.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 6))
-                .focused($isTextFieldFocused)
-                .onSubmit(addNewItem)
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        isTextFieldFocused = true
+            Group {
+                if settings.bulkEditMode {
+                    BulkEditTextEditor(items: $workingItems)
+                        .overlay(alignment: .topTrailing) {
+                            editModeToggle()
+                                .padding(2)
+                        }
+                } else {
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack(spacing: 4) {
+                            TextField("Add focus area...", text: $newItemText)
+                                .textFieldStyle(.plain)
+                                .font(.system(size: 12))
+                                .padding(8)
+                                .background(Color.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 6))
+                                .focused($isTextFieldFocused)
+                                .onSubmit(addNewItem)
+                                .onAppear {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        isTextFieldFocused = true
+                                    }
+                                }
+
+                            editModeToggle()
+                        }
+
+                        RotationListEditor(items: $workingItems)
                     }
                 }
-
-            // Rotation list (fixed height, scrolls)
-            Divider().padding(.vertical, 2)
-
-            RotationListEditor(items: $workingItems)
-                .frame(height: 120)
+            }
+            .frame(height: 162)
 
             // Footer
             HStack {
@@ -95,6 +108,22 @@ struct SliceSetupView: View {
                         items: workingItems,
                         rotationStore: rotationStore
                     )
+                }
+
+                if !workingItems.isEmpty {
+                    Button {
+                        workingItems.removeAll()
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "xmark.circle")
+                                .font(.system(size: 10))
+                            Text("Clear")
+                                .font(.system(size: 11))
+                        }
+                        .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Clear all items from rotation")
                 }
 
                 Spacer()
@@ -123,6 +152,20 @@ struct SliceSetupView: View {
     }
 
     // MARK: - Components
+
+    private func editModeToggle() -> some View {
+        Button {
+            settings.bulkEditMode.toggle()
+        } label: {
+            Image(systemName: settings.bulkEditMode ? "text.alignleft" : "list.bullet")
+                .font(.system(size: 10))
+                .foregroundStyle(.tertiary)
+                .frame(width: 20, height: 20)
+        }
+        .buttonStyle(.borderless)
+        .help(settings.bulkEditMode ? "Switch to list view (⌘T)" : "Switch to text edit (⌘T)")
+        .accessibilityLabel(settings.bulkEditMode ? "Switch to list view" : "Switch to text edit")
+    }
 
     private func sectionLabel(_ text: String) -> some View {
         Text(text)
