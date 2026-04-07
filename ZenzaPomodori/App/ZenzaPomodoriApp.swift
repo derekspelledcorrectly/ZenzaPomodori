@@ -127,8 +127,7 @@ final class PopoverManager: NSObject {
                 self.soundService.play(sound)
             }
             if self.settings.popOnComplete {
-                self.showPanel(activate: self.settings.stealFocusOnPop)
-                self.startAutoDismissTimer()
+                self.popPanel(activate: self.settings.stealFocusOnPop)
             }
             self.notificationService.sendCompletionNotification(for: phase)
         }
@@ -434,16 +433,13 @@ final class PopoverManager: NSObject {
         }
 
         router.activePanel = .sliceActive
-        showPanel(activate: settings.stealFocusOnPop)
-
-        startAutoDismissTimer()
+        popPanel(activate: settings.stealFocusOnPop)
     }
 
     private func handleSliceOvertimeStart() {
         guard router.sliceEngine != nil else { return }
         router.activePanel = .sliceActive
-        showPanel(activate: settings.stealFocusOnPop)
-        startAutoDismissTimer()
+        popPanel(activate: settings.stealFocusOnPop)
     }
 
     private func handleSliceOvertimeReminder() {
@@ -454,8 +450,7 @@ final class PopoverManager: NSObject {
         }
 
         router.activePanel = .sliceActive
-        showPanel(activate: settings.stealFocusOnPop)
-        startAutoDismissTimer()
+        popPanel(activate: settings.stealFocusOnPop)
     }
 
     private func handleFocusOvertimeReminder(phase: TimerPhase) {
@@ -464,8 +459,7 @@ final class PopoverManager: NSObject {
         }
 
         if settings.popOnComplete {
-            showPanel(activate: settings.stealFocusOnPop)
-            startAutoDismissTimer()
+            popPanel(activate: settings.stealFocusOnPop)
         }
     }
 
@@ -499,6 +493,17 @@ final class PopoverManager: NSObject {
             showPanel(activate: true)
         case .hide:
             hidePanel()
+        }
+    }
+
+    /// Shows the panel and starts the auto-dismiss timer only if the panel
+    /// wasn't already visible. If the user already had it open, we don't
+    /// yank it away from them.
+    private func popPanel(activate: Bool) {
+        let wasVisible = panel.isVisible
+        showPanel(activate: activate)
+        if !wasVisible {
+            startAutoDismissTimer()
         }
     }
 
