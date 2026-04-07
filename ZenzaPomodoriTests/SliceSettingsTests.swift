@@ -65,6 +65,19 @@ struct SliceSettingsTests {
         let store2 = SettingsStore(defaults: defaults)
         #expect(store2.stealFocusOnPop == true)
     }
+    @Test func defaultBulkEditMode() {
+        let store = makeStore()
+        #expect(store.bulkEditMode == false)
+    }
+
+    @Test func bulkEditModePersists() {
+        let defaults = makeTestDefaults()
+        let store1 = SettingsStore(defaults: defaults)
+        store1.bulkEditMode = true
+        let store2 = SettingsStore(defaults: defaults)
+        #expect(store2.bulkEditMode == true)
+    }
+
     @Test func sliceSettingsPersist() {
         let defaults = makeTestDefaults()
         let store1 = SettingsStore(defaults: defaults)

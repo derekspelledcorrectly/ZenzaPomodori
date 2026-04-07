@@ -208,6 +208,10 @@ final class SettingsStore {
         }
     }
 
+    var bulkEditMode: Bool {
+        didSet { defaults.set(bulkEditMode, forKey: SettingsKeys.bulkEditMode) }
+    }
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
 
@@ -232,6 +236,7 @@ final class SettingsStore {
         self.sliceOvertimeReminderEnabled = Self.loadBool(from: defaults, key: SettingsKeys.sliceOvertimeReminderEnabled, default: Defaults.sliceOvertimeReminderEnabled)
         self.globalHotkeyEnabled = Self.loadBool(from: defaults, key: SettingsKeys.globalHotkeyEnabled, default: Defaults.globalHotkeyEnabled)
         self.rotationHotkeyEnabled = Self.loadBool(from: defaults, key: SettingsKeys.rotationHotkeyEnabled, default: Defaults.rotationHotkeyEnabled)
+        self.bulkEditMode = Self.loadBool(from: defaults, key: SettingsKeys.bulkEditMode, default: Defaults.bulkEditMode)
 
         // Strings
         self.focusEndSound = Self.loadString(from: defaults, key: SettingsKeys.focusEndSound, default: Defaults.focusEndSound)

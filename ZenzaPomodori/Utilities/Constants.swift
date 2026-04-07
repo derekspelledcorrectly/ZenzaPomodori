@@ -38,6 +38,7 @@ enum Defaults {
     static let rotationHotkeyEnabled: Bool = false
     static let rotationHotkeyKeyCode: UInt32 = 36 // Return
     static let rotationHotkeyModifiers: UInt32 = 4608 // controlKey + shiftKey
+    static let bulkEditMode: Bool = false
 }
 
 enum SettingsKeys {
@@ -81,4 +82,5 @@ enum SettingsKeys {
     static let rotationHotkeyKeyCode = "rotationHotkeyKeyCode"
     static let rotationHotkeyModifiers = "rotationHotkeyModifiers"
     static let lastUsedRotationItems = "lastUsedRotationItems"
+    static let bulkEditMode = "bulkEditMode"
 }
