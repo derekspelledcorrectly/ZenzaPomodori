@@ -11,6 +11,11 @@ struct SliceDisplayInfo {
     let showFocus: Bool
 }
 
+struct SliceFormattedResult {
+    let timerPart: String
+    let focusPart: String?
+}
+
 enum MenuBarFormatting {
     static func truncatedFocusName(_ name: String, maxLength: Int = 20) -> String {
         let trimmed = name.trimmingCharacters(in: .whitespaces)
@@ -20,31 +25,33 @@ enum MenuBarFormatting {
         return String(trimmed.prefix(maxLength)) + "..."
     }
 
-    static func sliceFormatted(_ info: SliceDisplayInfo) -> String {
+    static func sliceFormatted(_ info: SliceDisplayInfo) -> SliceFormattedResult {
+        let focus: String?
+        if info.showFocus, let name = info.focusName, !name.isEmpty {
+            let maxLen = info.showTimer ? 15 : 20
+            focus = truncatedFocusName(name, maxLength: maxLen)
+        } else {
+            focus = nil
+        }
+
         guard info.showTimer else {
-            if info.showFocus, let name = info.focusName {
-                return truncatedFocusName(name, maxLength: 20)
-            }
-            return ""
+            return SliceFormattedResult(timerPart: "", focusPart: focus)
         }
 
         let slice = info.sliceFormattedTime
-        let name: String
-        if info.showFocus, let focusName = info.focusName {
-            name = " [\(truncatedFocusName(focusName, maxLength: 15))]"
-        } else {
-            name = ""
-        }
 
+        let timerPart: String
         switch info.format {
         case .sliceOnly:
-            return "\(slice)\(name)"
+            timerPart = slice
         case .dualTimer:
-            return "\(slice)/\(info.outerFormattedTime)\(name)"
+            timerPart = "\(slice)/\(info.outerFormattedTime)"
         case .slicePosition:
-            return "\(slice) \(info.position)/\(info.total)\(name)"
+            timerPart = "\(slice) \(info.position)/\(info.total)"
         case .compact:
-            return slice
+            return SliceFormattedResult(timerPart: slice, focusPart: nil)
         }
+
+        return SliceFormattedResult(timerPart: timerPart, focusPart: focus)
     }
 }

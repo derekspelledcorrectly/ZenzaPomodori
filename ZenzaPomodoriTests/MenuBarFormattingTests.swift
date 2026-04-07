@@ -55,7 +55,7 @@ struct MenuBarFormattingTests {
         format: SliceMenuBarFormat = .dualTimer,
         showTimer: Bool = true,
         showFocus: Bool = true
-    ) -> String {
+    ) -> SliceFormattedResult {
         MenuBarFormatting.sliceFormatted(SliceDisplayInfo(
             sliceFormattedTime: sliceFormattedTime,
             outerFormattedTime: outerTime,
@@ -69,64 +69,75 @@ struct MenuBarFormattingTests {
     }
 
     @Test func sliceOnlyFormat() {
-        #expect(sliceFormatted(format: .sliceOnly) == "01:47 [API Refactor]")
+        let result = sliceFormatted(format: .sliceOnly)
+        #expect(result.timerPart == "01:47")
+        #expect(result.focusPart == "API Refactor")
     }
 
     @Test func dualTimerFormat() {
-        #expect(sliceFormatted(format: .dualTimer) == "01:47/18:42 [API Refactor]")
+        let result = sliceFormatted(format: .dualTimer)
+        #expect(result.timerPart == "01:47/18:42")
+        #expect(result.focusPart == "API Refactor")
     }
 
     @Test func slicePositionFormat() {
-        #expect(sliceFormatted(format: .slicePosition) == "01:47 3/5 [API Refactor]")
+        let result = sliceFormatted(format: .slicePosition)
+        #expect(result.timerPart == "01:47 3/5")
+        #expect(result.focusPart == "API Refactor")
     }
 
     @Test func compactFormat() {
-        #expect(sliceFormatted(format: .compact) == "01:47")
+        let result = sliceFormatted(format: .compact)
+        #expect(result.timerPart == "01:47")
+        #expect(result.focusPart == nil)
     }
 
     @Test func noFocusNameOmitsName() {
-        #expect(sliceFormatted(focusName: nil, format: .dualTimer) == "01:47/18:42")
+        let result = sliceFormatted(focusName: nil, format: .dualTimer)
+        #expect(result.timerPart == "01:47/18:42")
+        #expect(result.focusPart == nil)
     }
 
     @Test func showFocusFalseOmitsName() {
-        #expect(sliceFormatted(format: .dualTimer, showFocus: false) == "01:47/18:42")
+        let result = sliceFormatted(format: .dualTimer, showFocus: false)
+        #expect(result.timerPart == "01:47/18:42")
+        #expect(result.focusPart == nil)
     }
 
     @Test func showTimerFalseWithFocusReturnsName() {
-        #expect(sliceFormatted(showTimer: false) == "API Refactor")
+        let result = sliceFormatted(showTimer: false)
+        #expect(result.timerPart == "")
+        #expect(result.focusPart == "API Refactor")
     }
 
     @Test func showTimerFalseNoFocusReturnsEmpty() {
-        #expect(sliceFormatted(showTimer: false, showFocus: false) == "")
+        let result = sliceFormatted(showTimer: false, showFocus: false)
+        #expect(result.timerPart == "")
+        #expect(result.focusPart == nil)
     }
 
     @Test func sliceOvertimeShowsPlusPrefix() {
-        let info = SliceDisplayInfo(
+        let result = sliceFormatted(
             sliceFormattedTime: "+00:45",
-            outerFormattedTime: "20:00",
             focusName: "API",
             position: 1,
             total: 3,
-            format: .sliceOnly,
-            showTimer: true,
-            showFocus: true
+            format: .sliceOnly
         )
-        let result = MenuBarFormatting.sliceFormatted(info)
-        #expect(result == "+00:45 [API]")
+        #expect(result.timerPart == "+00:45")
+        #expect(result.focusPart == "API")
     }
 
     @Test func sliceOvertimeDualTimerFormat() {
-        let info = SliceDisplayInfo(
+        let result = sliceFormatted(
             sliceFormattedTime: "+00:45",
-            outerFormattedTime: "20:00",
+            outerTime: "20:00",
             focusName: "API",
             position: 1,
             total: 3,
-            format: .dualTimer,
-            showTimer: true,
-            showFocus: true
+            format: .dualTimer
         )
-        let result = MenuBarFormatting.sliceFormatted(info)
-        #expect(result == "+00:45/20:00 [API]")
+        #expect(result.timerPart == "+00:45/20:00")
+        #expect(result.focusPart == "API")
     }
 }

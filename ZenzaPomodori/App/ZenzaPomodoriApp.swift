@@ -349,6 +349,11 @@ final class PopoverManager: NSObject {
 
         let title = NSMutableAttributedString()
 
+        let monoFont = NSFont.monospacedDigitSystemFont(
+            ofSize: NSFont.systemFontSize, weight: .regular
+        )
+        let sysFont = NSFont.systemFont(ofSize: NSFont.systemFontSize)
+
         if let engine = router.sliceEngine, engine.isActive {
             let formatted = MenuBarFormatting.sliceFormatted(SliceDisplayInfo(
                 sliceFormattedTime: engine.formattedTime,
@@ -360,20 +365,20 @@ final class PopoverManager: NSObject {
                 showTimer: settings.showTimerInMenuBar,
                 showFocus: settings.showFocusInMenuBar
             ))
-            if !formatted.isEmpty {
-                let monoFont = NSFont.monospacedDigitSystemFont(
-                    ofSize: NSFont.systemFontSize, weight: .regular
-                )
+            if !formatted.timerPart.isEmpty {
                 title.append(NSAttributedString(
-                    string: " \(formatted)",
+                    string: " \(formatted.timerPart)",
                     attributes: [.font: monoFont]
+                ))
+            }
+            if let focus = formatted.focusPart {
+                title.append(NSAttributedString(
+                    string: " · \(focus)",
+                    attributes: [.font: sysFont]
                 ))
             }
         } else {
             if timer.settings.showTimerInMenuBar {
-                let monoFont = NSFont.monospacedDigitSystemFont(
-                    ofSize: NSFont.systemFontSize, weight: .regular
-                )
                 title.append(NSAttributedString(
                     string: " \(timer.formattedTime)",
                     attributes: [.font: monoFont]
@@ -385,9 +390,8 @@ final class PopoverManager: NSObject {
                let name = timer.activeFocusName,
                !name.isEmpty {
                 let truncated = MenuBarFormatting.truncatedFocusName(name)
-                let sysFont = NSFont.systemFont(ofSize: NSFont.systemFontSize)
                 title.append(NSAttributedString(
-                    string: " \(truncated)",
+                    string: " · \(truncated)",
                     attributes: [.font: sysFont]
                 ))
             }
