@@ -377,7 +377,7 @@ final class PopoverManager: NSObject {
                     attributes: [.font: sysFont]
                 ))
             }
-        } else {
+        } else if timer.phase != .idle {
             if timer.settings.showTimerInMenuBar {
                 title.append(NSAttributedString(
                     string: " \(timer.formattedTime)",
