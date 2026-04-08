@@ -77,6 +77,9 @@ struct PopoverContainerView: View {
                 router.activePanel = newType == .slices ? .sliceSetup : .timer
             }
         }
+        .onChange(of: workingItems) { _, newItems in
+            rotationStore.lastUsedItems = newItems
+        }
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .onAppear {
