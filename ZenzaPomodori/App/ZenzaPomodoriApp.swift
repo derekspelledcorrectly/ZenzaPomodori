@@ -47,6 +47,7 @@ final class PopoverManager: NSObject {
     private let rotationStore = RotationStore()
     private let hotkeyService: HotkeyService
     private let aboutWindowController = AboutWindowController()
+    private var previousApp: NSRunningApplication?
 
     init(timer: PomodoroTimer, settings: SettingsStore) {
         self.timer = timer
@@ -106,6 +107,7 @@ final class PopoverManager: NSObject {
             self?.notificationService.requestPermission()
         }
         notificationService.onNotificationTapped = { [weak self] in
+            self?.savePreviousApp()
             self?.showPanel(activate: true)
         }
         timer.onPhaseChange = { [weak self] _, newPhase in
@@ -174,6 +176,24 @@ final class PopoverManager: NSObject {
         panel.orderOut(nil)
         removeDismissMonitors()
         handlePanelClose()
+        restorePreviousApp()
+    }
+
+    private func savePreviousApp() {
+        guard !panel.isVisible else { return }
+        let frontmost = NSWorkspace.shared.frontmostApplication
+        if frontmost?.bundleIdentifier != Bundle.main.bundleIdentifier {
+            previousApp = frontmost
+        } else {
+            previousApp = nil
+        }
+    }
+
+    private func restorePreviousApp() {
+        if let app = previousApp, !app.isTerminated {
+            app.activate()
+        }
+        previousApp = nil
     }
 
     private func handlePanelClose() {
@@ -496,6 +516,7 @@ final class PopoverManager: NSObject {
     private func handleHotkey() {
         switch hotkeyToggleAction(panelVisible: panel.isVisible, panelIsKey: panel.isKeyWindow) {
         case .showActivated:
+            savePreviousApp()
             showPanel(activate: true)
         case .activate:
             cancelAutoDismissTimer()
@@ -510,6 +531,7 @@ final class PopoverManager: NSObject {
     /// yank it away from them.
     private func popPanel(activate: Bool) {
         let wasVisible = panel.isVisible
+        savePreviousApp()
         showPanel(activate: activate)
         if !wasVisible {
             startAutoDismissTimer()
