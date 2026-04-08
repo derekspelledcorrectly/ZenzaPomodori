@@ -27,3 +27,6 @@ Package.resolved
 .idea/
 *.swp
 *~
+
+## Local overrides
+Makefile.local

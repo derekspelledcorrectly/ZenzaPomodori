@@ -1,3 +1,5 @@
+-include Makefile.local
+
 .PHONY: generate build test run clean release
 
 generate:
