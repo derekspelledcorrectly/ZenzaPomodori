@@ -241,19 +241,19 @@ final class PomodoroTimer {
     // MARK: - Debug
 
     #if DEBUG
-    func debugSkipToEnd() {
-        guard phase != .idle, !isOvertime else { return }
-        secondsRemaining = phase.isFocus ? 15 : 10
-    }
-
-    func debugAddTime(_ seconds: Int) {
-        guard phase != .idle else { return }
-        if isOvertime {
-            overtimeSeconds += seconds
-        } else {
-            secondsRemaining += seconds
+        func debugSkipToEnd() {
+            guard phase != .idle, !isOvertime else { return }
+            secondsRemaining = phase.isFocus ? 15 : 10
         }
-    }
+
+        func debugAddTime(_ seconds: Int) {
+            guard phase != .idle else { return }
+            if isOvertime {
+                overtimeSeconds += seconds
+            } else {
+                secondsRemaining += seconds
+            }
+        }
     #endif
 
     private func duration(for phase: TimerPhase) -> Int {

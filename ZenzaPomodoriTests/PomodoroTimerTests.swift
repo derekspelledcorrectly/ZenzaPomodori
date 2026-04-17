@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import ZenzaPomodori
 
 @Suite("PomodoroTimer")
@@ -31,7 +32,7 @@ struct PomodoroTimerTests {
     @Test func startWhileRunningIsNoOp() {
         let timer = makeTimer()
         timer.start()
-        timer.start() // should not restart
+        timer.start()  // should not restart
         #expect(timer.phase == .focus(block: 1))
         timer.reset()
     }
@@ -66,8 +67,8 @@ struct PomodoroTimerTests {
     @Test func nextFromShortBreakToReady() {
         let timer = makeTimer()
         timer.start()
-        timer.next() // focus 1 -> short break
-        timer.next() // short break -> ready (idle with pendingBlock)
+        timer.next()  // focus 1 -> short break
+        timer.next()  // short break -> ready (idle with pendingBlock)
         #expect(timer.phase == .idle)
         #expect(timer.pendingBlock == 2)
         #expect(timer.isRunning == false)
@@ -77,9 +78,9 @@ struct PomodoroTimerTests {
     @Test func startFromReadyContinuesSession() {
         let timer = makeTimer()
         timer.start()
-        timer.next() // focus 1 -> short break
-        timer.next() // short break -> ready
-        timer.start() // ready -> focus 2
+        timer.next()  // focus 1 -> short break
+        timer.next()  // short break -> ready
+        timer.start()  // ready -> focus 2
         #expect(timer.phase == .focus(block: 2))
         #expect(timer.secondsRemaining == Defaults.focusDuration)
         #expect(timer.pendingBlock == nil)
@@ -91,13 +92,13 @@ struct PomodoroTimerTests {
         timer.start()
         // Complete all 4 focus blocks
         for _ in 1..<Defaults.blocksBeforeLongBreak {
-            timer.next() // focus -> short break
-            timer.next() // short break -> ready
-            timer.start() // ready -> next focus
+            timer.next()  // focus -> short break
+            timer.next()  // short break -> ready
+            timer.start()  // ready -> next focus
         }
         // Now on focus block 4
         #expect(timer.phase == .focus(block: 4))
-        timer.next() // focus 4 -> long break
+        timer.next()  // focus 4 -> long break
         #expect(timer.phase == .longBreak)
         #expect(timer.secondsRemaining == Defaults.longBreakDuration)
         #expect(timer.completedBlocks == 4)
@@ -108,12 +109,12 @@ struct PomodoroTimerTests {
         let timer = makeTimer()
         timer.start()
         for _ in 1..<Defaults.blocksBeforeLongBreak {
-            timer.next() // focus -> short break
-            timer.next() // short break -> ready
-            timer.start() // ready -> next focus
+            timer.next()  // focus -> short break
+            timer.next()  // short break -> ready
+            timer.start()  // ready -> next focus
         }
-        timer.next() // -> long break
-        timer.next() // -> idle
+        timer.next()  // -> long break
+        timer.next()  // -> idle
         #expect(timer.phase == .idle)
         timer.reset()
     }
@@ -134,7 +135,7 @@ struct PomodoroTimerTests {
     @Test func restartPhaseResetsBreakTimer() {
         let timer = makeTimer { $0.shortBreakDuration = 60 }
         timer.start()
-        timer.next() // -> short break
+        timer.next()  // -> short break
         timer.pause()
         advanceTimer(timer, ticks: 20)
         #expect(timer.secondsRemaining == 40)
@@ -183,11 +184,11 @@ struct PomodoroTimerTests {
 
         timer.start()
         #expect(timer.secondsRemaining == 600)
-        timer.next() // -> short break
+        timer.next()  // -> short break
         #expect(timer.secondsRemaining == 120)
-        timer.next() // -> ready
-        timer.start() // -> focus 2
-        timer.next() // -> long break (after 2 blocks)
+        timer.next()  // -> ready
+        timer.start()  // -> focus 2
+        timer.next()  // -> long break (after 2 blocks)
         #expect(timer.phase == .longBreak)
         #expect(timer.secondsRemaining == 1200)
         timer.reset()
@@ -223,7 +224,7 @@ struct PomodoroTimerTests {
     @Test func nextFromOvertimeClearsOvertime() {
         let timer = makeTimer()
         timer.start()
-        timer.next() // focus -> short break
+        timer.next()  // focus -> short break
         #expect(timer.isOvertime == false)
         #expect(timer.overtimeSeconds == 0)
         timer.reset()
@@ -274,12 +275,12 @@ struct PomodoroTimerTests {
         let store = makeTestSettingsStore()
         let timer = PomodoroTimer(settings: store)
 
-        timer.start() // focus block 1, 25 min
+        timer.start()  // focus block 1, 25 min
         #expect(timer.secondsRemaining == Defaults.focusDuration)
 
         // Change short break duration mid-session
         store.shortBreakDuration = 10 * 60
-        timer.next() // -> short break
+        timer.next()  // -> short break
         #expect(timer.secondsRemaining == 600)
         timer.reset()
     }
@@ -287,7 +288,10 @@ struct PomodoroTimerTests {
     // MARK: - Auto-advance
 
     @Test func autoAdvanceTransitionsToNextPhase() {
-        let timer = makeTimer { $0.autoAdvance = true; $0.focusDuration = 60 }
+        let timer = makeTimer {
+            $0.autoAdvance = true
+            $0.focusDuration = 60
+        }
         timer.start()
         timer.pause()
         #expect(timer.phase == .focus(block: 1))
@@ -304,7 +308,10 @@ struct PomodoroTimerTests {
     }
 
     @Test func autoAdvanceSkipsOvertimeCallback() {
-        let timer = makeTimer { $0.autoAdvance = true; $0.focusDuration = 60 }
+        let timer = makeTimer {
+            $0.autoAdvance = true
+            $0.focusDuration = 60
+        }
         var overtimeStarted = false
         timer.onOvertimeStart = { _ in overtimeStarted = true }
         timer.start()
@@ -319,12 +326,15 @@ struct PomodoroTimerTests {
     }
 
     @Test func autoAdvanceFiresPhaseChangeCallback() {
-        let timer = makeTimer { $0.autoAdvance = true; $0.focusDuration = 60 }
+        let timer = makeTimer {
+            $0.autoAdvance = true
+            $0.focusDuration = 60
+        }
         var transitions: [(TimerPhase, TimerPhase)] = []
         timer.onPhaseChange = { old, new in transitions.append((old, new)) }
         timer.start()
         timer.pause()
-        transitions.removeAll() // clear the start transition
+        transitions.removeAll()  // clear the start transition
 
         for _ in 0..<60 {
             timer.tick()
@@ -337,7 +347,10 @@ struct PomodoroTimerTests {
     }
 
     @Test func autoAdvanceDisabledEntersOvertime() {
-        let timer = makeTimer { $0.autoAdvance = false; $0.focusDuration = 60 }
+        let timer = makeTimer {
+            $0.autoAdvance = false
+            $0.focusDuration = 60
+        }
         timer.start()
         timer.pause()
 
@@ -351,7 +364,12 @@ struct PomodoroTimerTests {
     }
 
     @Test func autoAdvanceFromLongBreakReturnsToIdle() {
-        let timer = makeTimer { $0.autoAdvance = true; $0.focusDuration = 60; $0.blocksBeforeLongBreak = 1; $0.longBreakDuration = 60 }
+        let timer = makeTimer {
+            $0.autoAdvance = true
+            $0.focusDuration = 60
+            $0.blocksBeforeLongBreak = 1
+            $0.longBreakDuration = 60
+        }
         timer.start()
         timer.pause()
 
@@ -368,7 +386,10 @@ struct PomodoroTimerTests {
     // MARK: - onTimerComplete callback
 
     @Test func onTimerCompleteFiresWhenCountdownExpires() {
-        let timer = makeTimer { $0.autoAdvance = false; $0.focusDuration = 60 }
+        let timer = makeTimer {
+            $0.autoAdvance = false
+            $0.focusDuration = 60
+        }
         var completedPhases: [TimerPhase] = []
         timer.onTimerComplete = { phase in completedPhases.append(phase) }
         timer.start()
@@ -382,7 +403,10 @@ struct PomodoroTimerTests {
     }
 
     @Test func onTimerCompleteFiresWithAutoAdvance() {
-        let timer = makeTimer { $0.autoAdvance = true; $0.focusDuration = 60 }
+        let timer = makeTimer {
+            $0.autoAdvance = true
+            $0.focusDuration = 60
+        }
         var completedPhases: [TimerPhase] = []
         timer.onTimerComplete = { phase in completedPhases.append(phase) }
         timer.start()
@@ -396,7 +420,11 @@ struct PomodoroTimerTests {
     }
 
     @Test func onTimerCompleteFiresForBreakPhase() {
-        let timer = makeTimer { $0.autoAdvance = false; $0.focusDuration = 60; $0.shortBreakDuration = 60 }
+        let timer = makeTimer {
+            $0.autoAdvance = false
+            $0.focusDuration = 60
+            $0.shortBreakDuration = 60
+        }
         var completedPhases: [TimerPhase] = []
         timer.onTimerComplete = { phase in completedPhases.append(phase) }
         timer.start()
@@ -494,10 +522,10 @@ struct PomodoroTimerTests {
 
     @Test func abandonBlockPreservesCompletedBlocks() {
         let timer = makeTimer()
-        timer.start() // focus(block: 1)
+        timer.start()  // focus(block: 1)
         timer.next()  // short break
         timer.next()  // idle with pendingBlock = 2
-        timer.start() // focus(block: 2)
+        timer.start()  // focus(block: 2)
         #expect(timer.completedBlocks == 1)
         timer.abandonBlock()
         #expect(timer.phase == .idle)
@@ -515,10 +543,10 @@ struct PomodoroTimerTests {
     @Test func abandonBlockDuringBreakIsNoOp() {
         let timer = makeTimer()
         timer.start()
-        timer.next() // short break
+        timer.next()  // short break
         #expect(timer.phase.isBreak)
         timer.abandonBlock()
-        #expect(timer.phase.isBreak) // unchanged
+        #expect(timer.phase.isBreak)  // unchanged
     }
 
     // MARK: - startBreak
@@ -546,7 +574,7 @@ struct PomodoroTimerTests {
     @Test func startShortBreakUsesPendingBlock() {
         let timer = makeTimer()
         timer.start()
-        timer.abandonBlock() // sets pendingBlock = 1
+        timer.abandonBlock()  // sets pendingBlock = 1
         timer.startBreak(.short)
         #expect(timer.phase == .shortBreak(afterBlock: 1))
         #expect(timer.completedBlocks == 1)
@@ -586,7 +614,7 @@ struct PomodoroTimerTests {
     @Test func startLongBreakClearsPendingBlock() {
         let timer = makeTimer()
         timer.start()
-        timer.abandonBlock() // sets pendingBlock = 1
+        timer.abandonBlock()  // sets pendingBlock = 1
         timer.startBreak(.long)
         #expect(timer.phase == .longBreak)
         #expect(timer.pendingBlock == nil)
@@ -596,9 +624,9 @@ struct PomodoroTimerTests {
 
     @Test func startShortBreakUsesPendingBlockGreaterThanOne() {
         let timer = makeTimer()
-        timer.start()         // focus(block: 1)
-        timer.next()          // short break
-        timer.next()          // idle, pendingBlock = 2
+        timer.start()  // focus(block: 1)
+        timer.next()  // short break
+        timer.next()  // idle, pendingBlock = 2
         timer.startBreak(.short)
         #expect(timer.phase == .shortBreak(afterBlock: 2))
         #expect(timer.completedBlocks == 2)
@@ -624,80 +652,85 @@ struct PomodoroTimerTests {
 
     @Test func focusOvertimeReminderFiresAtInterval() {
         let timer = makeTimer {
-            $0.autoAdvance = false; $0.focusDuration = 60
+            $0.autoAdvance = false
+            $0.focusDuration = 60
             $0.focusOvertimeReminderInterval = 60
         }
         var reminderCount = 0
         timer.onOvertimeReminder = { _ in reminderCount += 1 }
         timer.start()
         timer.pause()
-        advanceTimer(timer, ticks: 60) // enter overtime
-        advanceTimer(timer, ticks: 60) // 60s overtime
+        advanceTimer(timer, ticks: 60)  // enter overtime
+        advanceTimer(timer, ticks: 60)  // 60s overtime
         #expect(reminderCount == 1)
-        advanceTimer(timer, ticks: 60) // 120s overtime
+        advanceTimer(timer, ticks: 60)  // 120s overtime
         #expect(reminderCount == 2)
         timer.reset()
     }
 
     @Test func focusOvertimeReminderDoesNotFireAtZero() {
         let timer = makeTimer {
-            $0.autoAdvance = false; $0.focusDuration = 60
+            $0.autoAdvance = false
+            $0.focusDuration = 60
             $0.focusOvertimeReminderInterval = 60
         }
         var reminderCount = 0
         timer.onOvertimeReminder = { _ in reminderCount += 1 }
         timer.start()
         timer.pause()
-        advanceTimer(timer, ticks: 60) // enter overtime (overtimeSeconds == 0)
+        advanceTimer(timer, ticks: 60)  // enter overtime (overtimeSeconds == 0)
         #expect(reminderCount == 0)
         timer.reset()
     }
 
     @Test func focusOvertimeReminderNotFiredWhenIntervalZero() {
         let timer = makeTimer {
-            $0.autoAdvance = false; $0.focusDuration = 60
+            $0.autoAdvance = false
+            $0.focusDuration = 60
             $0.focusOvertimeReminderInterval = 0
         }
         var reminderCount = 0
         timer.onOvertimeReminder = { _ in reminderCount += 1 }
         timer.start()
         timer.pause()
-        advanceTimer(timer, ticks: 60) // enter overtime
-        advanceTimer(timer, ticks: 120) // 2 full intervals
+        advanceTimer(timer, ticks: 60)  // enter overtime
+        advanceTimer(timer, ticks: 120)  // 2 full intervals
         #expect(reminderCount == 0)
         timer.reset()
     }
 
     @Test func focusOvertimeReminderIncludesPhase() {
         let timer = makeTimer {
-            $0.autoAdvance = false; $0.focusDuration = 60
+            $0.autoAdvance = false
+            $0.focusDuration = 60
             $0.focusOvertimeReminderInterval = 60
         }
         var receivedPhase: TimerPhase?
         timer.onOvertimeReminder = { phase in receivedPhase = phase }
         timer.start()
         timer.pause()
-        advanceTimer(timer, ticks: 60) // enter overtime
-        advanceTimer(timer, ticks: 60) // 60s overtime
+        advanceTimer(timer, ticks: 60)  // enter overtime
+        advanceTimer(timer, ticks: 60)  // 60s overtime
         #expect(receivedPhase == .focus(block: 1))
         timer.reset()
     }
 
     @Test func focusOvertimeReminderRespectsRuntimeChanges() {
         let timer = makeTimer {
-            $0.autoAdvance = false; $0.focusDuration = 60
+            $0.autoAdvance = false
+            $0.focusDuration = 60
             $0.focusOvertimeReminderInterval = 120
         }
         var reminderCount = 0
         timer.onOvertimeReminder = { _ in reminderCount += 1 }
         timer.start()
         timer.pause()
-        advanceTimer(timer, ticks: 60) // enter overtime
-        advanceTimer(timer, ticks: 120) // fires at 120s
+        advanceTimer(timer, ticks: 60)  // enter overtime
+        advanceTimer(timer, ticks: 120)  // fires at 120s
         #expect(reminderCount == 1)
         // Change interval mid-overtime
         timer.settings.focusOvertimeReminderInterval = 60
-        advanceTimer(timer, ticks: 60) // fires at 180s (divisible by new interval 60)
+        advanceTimer(timer, ticks: 60)  // fires at 180s (divisible by new interval 60)
         #expect(reminderCount == 2)
         timer.reset()
     }

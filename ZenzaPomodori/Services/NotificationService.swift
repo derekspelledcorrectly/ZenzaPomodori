@@ -1,5 +1,5 @@
-import os
 import UserNotifications
+import os
 
 @MainActor
 final class NotificationService: NSObject, UNUserNotificationCenterDelegate {

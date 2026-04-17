@@ -31,7 +31,7 @@ final class HotkeyService {
 
         if settings.globalHotkeyEnabled {
             var hotKeyID = EventHotKeyID()
-            hotKeyID.signature = OSType(0x5A50_4D42) // "ZPMB"
+            hotKeyID.signature = OSType(0x5A50_4D42)  // "ZPMB"
             hotKeyID.id = 1
 
             var ref: EventHotKeyRef?
@@ -48,7 +48,8 @@ final class HotkeyService {
                 hotkeyRef = ref
                 isRegistered = true
             } else {
-                registrationError = "Hotkey registration failed (status \(status)). "
+                registrationError =
+                    "Hotkey registration failed (status \(status)). "
                     + "Check System Settings > Privacy & Security > Accessibility."
                 Logger.services.error("Hotkey registration failed (status \(status)). Check Accessibility permissions.")
             }
@@ -56,7 +57,7 @@ final class HotkeyService {
 
         if settings.rotationHotkeyEnabled {
             var rotKeyID = EventHotKeyID()
-            rotKeyID.signature = OSType(0x5A50_4D42) // "ZPMB"
+            rotKeyID.signature = OSType(0x5A50_4D42)  // "ZPMB"
             rotKeyID.id = 2
 
             var ref: EventHotKeyRef?
@@ -144,7 +145,8 @@ final class HotkeyService {
                     &hotKeyID
                 )
                 if hotKeyID.signature == OSType(0x5A50_4D42) {
-                    let name: Notification.Name = hotKeyID.id == 2
+                    let name: Notification.Name =
+                        hotKeyID.id == 2
                         ? .rotationHotkeyPressed : .hotkeyPressed
                     NotificationCenter.default.post(name: name, object: nil)
                 }

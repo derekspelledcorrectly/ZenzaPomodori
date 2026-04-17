@@ -9,7 +9,7 @@ final class SoundService {
         "Alarmed", "Beeper", "Belligerent", "Calm", "Chord",
         "Chord2", "Chord2_Rev", "Cloud", "Enharpment", "Glass",
         "Glisten", "Jinja", "Jinja2", "Polite", "Reverie",
-        "Sharp", "Taptap", "Whistleronic", "Whistleronic-Down"
+        "Sharp", "Taptap", "Whistleronic", "Whistleronic-Down",
     ]
 
     private var currentSound: NSSound?

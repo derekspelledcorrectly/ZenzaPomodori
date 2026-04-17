@@ -12,27 +12,33 @@ struct ShortcutSection {
 
 enum ShortcutData {
     static let sections: [ShortcutSection] = [
-        ShortcutSection(title: "General", shortcuts: [
-            ShortcutEntry(action: "Start timer", keys: "Space / ↩"),
-            ShortcutEntry(action: "Start Short Break", keys: "⌘B"),
-            ShortcutEntry(action: "Start Long Break", keys: "⇧⌘B"),
-            ShortcutEntry(action: "Pause / Resume", keys: "Space / ↩"),
-            ShortcutEntry(action: "Toggle Text Edit", keys: "⌘T"),
-            ShortcutEntry(action: "Settings", keys: "⌘,"),
-            ShortcutEntry(action: "Keyboard Shortcuts", keys: "⌘/"),
-            ShortcutEntry(action: "Switch view / tab", keys: "⌘← / ⌘→"),
-            ShortcutEntry(action: "Dismiss / Go back", keys: "Escape"),
-        ]),
-        ShortcutSection(title: "Timer Running", shortcuts: [
-            ShortcutEntry(action: "Finish Block / Break", keys: "⌘↩"),
-            ShortcutEntry(action: "Restart Timer", keys: "⌘R"),
-            ShortcutEntry(action: "Abandon Block", keys: "⌘⌫"),
-        ]),
-        ShortcutSection(title: "Slices Active", shortcuts: [
-            ShortcutEntry(action: "Edit Rotation List", keys: "⌘E"),
-            ShortcutEntry(action: "Restart Slice", keys: "⌘R"),
-            ShortcutEntry(action: "Restart Block Timer", keys: "⇧⌘R"),
-        ]),
+        ShortcutSection(
+            title: "General",
+            shortcuts: [
+                ShortcutEntry(action: "Start timer", keys: "Space / ↩"),
+                ShortcutEntry(action: "Start Short Break", keys: "⌘B"),
+                ShortcutEntry(action: "Start Long Break", keys: "⇧⌘B"),
+                ShortcutEntry(action: "Pause / Resume", keys: "Space / ↩"),
+                ShortcutEntry(action: "Toggle Text Edit", keys: "⌘T"),
+                ShortcutEntry(action: "Settings", keys: "⌘,"),
+                ShortcutEntry(action: "Keyboard Shortcuts", keys: "⌘/"),
+                ShortcutEntry(action: "Switch view / tab", keys: "⌘← / ⌘→"),
+                ShortcutEntry(action: "Dismiss / Go back", keys: "Escape"),
+            ]),
+        ShortcutSection(
+            title: "Timer Running",
+            shortcuts: [
+                ShortcutEntry(action: "Finish Block / Break", keys: "⌘↩"),
+                ShortcutEntry(action: "Restart Timer", keys: "⌘R"),
+                ShortcutEntry(action: "Abandon Block", keys: "⌘⌫"),
+            ]),
+        ShortcutSection(
+            title: "Slices Active",
+            shortcuts: [
+                ShortcutEntry(action: "Edit Rotation List", keys: "⌘E"),
+                ShortcutEntry(action: "Restart Slice", keys: "⌘R"),
+                ShortcutEntry(action: "Restart Block Timer", keys: "⇧⌘R"),
+            ]),
     ]
 }
 

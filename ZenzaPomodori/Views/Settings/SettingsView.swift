@@ -152,21 +152,27 @@ struct SettingsView: View {
     private var soundsTab: some View {
         Form {
             Section("Completion Sounds") {
-                soundPickerWithNone("Focus end", sound: Binding(
-                    get: { settings.focusEndSound },
-                    set: { settings.focusEndSound = $0 }
-                ))
+                soundPickerWithNone(
+                    "Focus end",
+                    sound: Binding(
+                        get: { settings.focusEndSound },
+                        set: { settings.focusEndSound = $0 }
+                    ))
 
-                soundPickerWithNone("Break end", sound: Binding(
-                    get: { settings.breakEndSound },
-                    set: { settings.breakEndSound = $0 }
-                ))
+                soundPickerWithNone(
+                    "Break end",
+                    sound: Binding(
+                        get: { settings.breakEndSound },
+                        set: { settings.breakEndSound = $0 }
+                    ))
 
                 if settings.slicesEnabled {
-                    soundPickerWithNone("Slice rotation", sound: Binding(
-                        get: { settings.sliceEndSound },
-                        set: { settings.sliceEndSound = $0 }
-                    ))
+                    soundPickerWithNone(
+                        "Slice rotation",
+                        sound: Binding(
+                            get: { settings.sliceEndSound },
+                            set: { settings.sliceEndSound = $0 }
+                        ))
                 }
             }
 
@@ -193,10 +199,12 @@ struct SettingsView: View {
                 }
 
                 if settings.focusOvertimeReminderInterval > 0 && !settings.autoAdvance {
-                    soundPickerWithNone("Reminder sound", sound: Binding(
-                        get: { settings.focusOvertimeReminderSound },
-                        set: { settings.focusOvertimeReminderSound = $0 }
-                    ))
+                    soundPickerWithNone(
+                        "Reminder sound",
+                        sound: Binding(
+                            get: { settings.focusOvertimeReminderSound },
+                            set: { settings.focusOvertimeReminderSound = $0 }
+                        ))
                 }
             } header: {
                 Text("Focus Overtime Reminder")
@@ -227,10 +235,12 @@ struct SettingsView: View {
                     }
 
                     if settings.sliceOvertimeReminderInterval > 0 && !settings.sliceAutoAdvance {
-                        soundPickerWithNone("Reminder sound", sound: Binding(
-                            get: { settings.sliceOvertimeReminderSound },
-                            set: { settings.sliceOvertimeReminderSound = $0 }
-                        ))
+                        soundPickerWithNone(
+                            "Reminder sound",
+                            sound: Binding(
+                                get: { settings.sliceOvertimeReminderSound },
+                                set: { settings.sliceOvertimeReminderSound = $0 }
+                            ))
                     }
                 } header: {
                     Text("Slice Overtime Reminder")
@@ -239,10 +249,13 @@ struct SettingsView: View {
             }
 
             Section("Notifications") {
-                Toggle("Send notifications", isOn: Binding(
-                    get: { settings.notificationsEnabled },
-                    set: { settings.notificationsEnabled = $0 }
-                ))
+                Toggle(
+                    "Send notifications",
+                    isOn: Binding(
+                        get: { settings.notificationsEnabled },
+                        set: { settings.notificationsEnabled = $0 }
+                    )
+                )
                 .help("Show macOS notifications when timers complete")
             }
         }
@@ -255,10 +268,13 @@ struct SettingsView: View {
     private var behaviorTab: some View {
         Form {
             Section("Automation") {
-                Toggle("Auto-advance blocks", isOn: Binding(
-                    get: { settings.autoAdvance },
-                    set: { settings.autoAdvance = $0 }
-                ))
+                Toggle(
+                    "Auto-advance blocks",
+                    isOn: Binding(
+                        get: { settings.autoAdvance },
+                        set: { settings.autoAdvance = $0 }
+                    )
+                )
                 .help("Automatically advance to the next block or break without waiting")
 
                 if settings.slicesEnabled {
@@ -266,10 +282,13 @@ struct SettingsView: View {
                         .help("Automatically rotate to the next task when the slice interval ends")
                 }
 
-                Toggle("Pop open on complete", isOn: Binding(
-                    get: { settings.popOnComplete },
-                    set: { settings.popOnComplete = $0 }
-                ))
+                Toggle(
+                    "Pop open on complete",
+                    isOn: Binding(
+                        get: { settings.popOnComplete },
+                        set: { settings.popOnComplete = $0 }
+                    )
+                )
                 .help("Open the timer popover when a block or break finishes")
 
                 if settings.popOnComplete {
@@ -297,16 +316,22 @@ struct SettingsView: View {
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
 
-                        Toggle("Show timer", isOn: Binding(
-                            get: { settings.showTimerInMenuBar },
-                            set: { settings.showTimerInMenuBar = $0 }
-                        ))
+                        Toggle(
+                            "Show timer",
+                            isOn: Binding(
+                                get: { settings.showTimerInMenuBar },
+                                set: { settings.showTimerInMenuBar = $0 }
+                            )
+                        )
                         .help("Display the countdown timer next to the menu bar icon during focus blocks")
 
-                        Toggle("Show focus name", isOn: Binding(
-                            get: { settings.showFocusInMenuBar },
-                            set: { settings.showFocusInMenuBar = $0 }
-                        ))
+                        Toggle(
+                            "Show focus name",
+                            isOn: Binding(
+                                get: { settings.showFocusInMenuBar },
+                                set: { settings.showFocusInMenuBar = $0 }
+                            )
+                        )
                         .help("Display the focus task name in the menu bar during focus blocks")
                     }
 
@@ -386,15 +411,18 @@ struct SettingsView: View {
 
     private func soundPickerWithNone(_ label: String, sound: Binding<String>) -> some View {
         HStack {
-            Picker(label, selection: Binding(
-                get: { sound.wrappedValue },
-                set: { newValue in
-                    sound.wrappedValue = newValue
-                    if newValue != SoundService.disabled {
-                        soundService.play(newValue)
+            Picker(
+                label,
+                selection: Binding(
+                    get: { sound.wrappedValue },
+                    set: { newValue in
+                        sound.wrappedValue = newValue
+                        if newValue != SoundService.disabled {
+                            soundService.play(newValue)
+                        }
                     }
-                }
-            )) {
+                )
+            ) {
                 Text("None").tag(SoundService.disabled)
                 ForEach(SoundService.availableSounds, id: \.self) { name in
                     Text(name).tag(name)

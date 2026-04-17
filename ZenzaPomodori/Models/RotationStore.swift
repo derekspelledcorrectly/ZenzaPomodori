@@ -55,7 +55,7 @@ final class RotationStore {
 
     private static func load(from defaults: UserDefaults) -> [SavedRotation] {
         guard let data = defaults.data(forKey: SettingsKeys.savedRotations) else {
-            return [] // No data yet, legitimate empty state
+            return []  // No data yet, legitimate empty state
         }
         do {
             return try JSONDecoder().decode([SavedRotation].self, from: data)

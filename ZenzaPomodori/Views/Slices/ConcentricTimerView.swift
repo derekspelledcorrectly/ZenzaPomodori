@@ -10,8 +10,8 @@ struct ConcentricTimerView: View {
     var sliceIsOvertime: Bool = false
     var size: CGFloat = 140
     #if DEBUG
-    var onSliceTap: (() -> Void)?
-    var onBlockTap: (() -> Void)?
+        var onSliceTap: (() -> Void)?
+        var onBlockTap: (() -> Void)?
     #endif
 
     private var scale: CGFloat { size / 140 }
@@ -59,10 +59,10 @@ struct ConcentricTimerView: View {
                     .monospacedDigit()
                     .foregroundStyle(sliceIsOvertime ? Color(red: 0.7, green: 0.18, blue: 0.15) : .primary)
                     #if DEBUG
-                    .onTapGesture {
-                        guard NSEvent.modifierFlags.contains(.option) else { return }
-                        onSliceTap?()
-                    }
+                        .onTapGesture {
+                            guard NSEvent.modifierFlags.contains(.option) else { return }
+                            onSliceTap?()
+                        }
                     #endif
                 Text(outerTimeFormatted)
                     .font(.system(size: subFontSize, weight: .medium))
@@ -70,10 +70,10 @@ struct ConcentricTimerView: View {
                     .padding(.horizontal, 8)
                     .contentShape(Rectangle())
                     #if DEBUG
-                    .onTapGesture {
-                        guard NSEvent.modifierFlags.contains(.option) else { return }
-                        onBlockTap?()
-                    }
+                        .onTapGesture {
+                            guard NSEvent.modifierFlags.contains(.option) else { return }
+                            onBlockTap?()
+                        }
                     #endif
             }
         }

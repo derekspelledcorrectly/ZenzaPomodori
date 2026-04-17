@@ -105,7 +105,8 @@ final class SliceEngine {
 
     func updateItems(_ newItems: [RotationItem]) {
         guard isActive, !newItems.isEmpty else { return }
-        let currentId = rotationItems.indices.contains(currentIndex)
+        let currentId =
+            rotationItems.indices.contains(currentIndex)
             ? rotationItems[currentIndex].id : nil
         rotationItems = newItems
         if let currentId, let idx = newItems.firstIndex(where: { $0.id == currentId }) {
@@ -135,19 +136,19 @@ final class SliceEngine {
     // MARK: - Debug
 
     #if DEBUG
-    func debugSkipToEnd() {
-        guard isActive else { return }
-        sliceSecondsRemaining = 10
-    }
-
-    func debugAddTime(_ seconds: Int) {
-        guard isActive else { return }
-        if isOvertime {
-            overtimeSeconds += seconds
-        } else {
-            sliceSecondsRemaining += seconds
+        func debugSkipToEnd() {
+            guard isActive else { return }
+            sliceSecondsRemaining = 10
         }
-    }
+
+        func debugAddTime(_ seconds: Int) {
+            guard isActive else { return }
+            if isOvertime {
+                overtimeSeconds += seconds
+            } else {
+                sliceSecondsRemaining += seconds
+            }
+        }
     #endif
 
     private func advanceToNext() {

@@ -29,11 +29,11 @@ enum Defaults {
     static let sliceOvertimeReminderSound: String = "Sharp"
     static let lastBlockType: BlockType = .focus
     static let globalHotkeyEnabled: Bool = false
-    static let globalHotkeyKeyCode: UInt32 = 42 // \
-    static let globalHotkeyModifiers: UInt32 = 4608 // controlKey + shiftKey
+    static let globalHotkeyKeyCode: UInt32 = 42  // \
+    static let globalHotkeyModifiers: UInt32 = 4608  // controlKey + shiftKey
     static let rotationHotkeyEnabled: Bool = false
-    static let rotationHotkeyKeyCode: UInt32 = 36 // Return
-    static let rotationHotkeyModifiers: UInt32 = 4608 // controlKey + shiftKey
+    static let rotationHotkeyKeyCode: UInt32 = 36  // Return
+    static let rotationHotkeyModifiers: UInt32 = 4608  // controlKey + shiftKey
     static let bulkEditMode: Bool = false
 }
 

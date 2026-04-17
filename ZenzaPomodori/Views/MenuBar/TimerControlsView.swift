@@ -22,7 +22,9 @@ struct TimerControlsView: View {
                     .frame(width: 20)
             }
             .controlSize(phase == .idle ? .large : .regular)
-            .help(isRunning ? "Pause (Space / Return)" : (phase == .idle ? "Start (Return)" : "Resume (Space / Return)"))
+            .help(
+                isRunning ? "Pause (Space / Return)" : (phase == .idle ? "Start (Return)" : "Resume (Space / Return)")
+            )
             .accessibilityLabel(isRunning ? "Pause" : (phase == .idle ? "Start timer" : "Resume"))
 
             if phase != .idle && !autoAdvance && isOvertime {

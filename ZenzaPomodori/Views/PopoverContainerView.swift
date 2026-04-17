@@ -60,7 +60,8 @@ struct PopoverContainerView: View {
         }
         .onChange(of: timer.phase) { _, newPhase in
             if newPhase == .idle && router.sliceEngine?.isActive != true {
-                router.activePanel = settings.lastBlockType == .slices
+                router.activePanel =
+                    settings.lastBlockType == .slices
                     ? .sliceSetup : .timer
             }
             if router.activePanel == .timer {
@@ -148,16 +149,19 @@ struct PopoverContainerView: View {
                 if timer.phase.isFocus {
                     Divider()
 
-                    Button(role: .destructive, action: {
-                        let wasSlicing = router.sliceEngine?.isActive == true
-                        if let engine = router.sliceEngine, engine.isActive {
-                            rotationStore.lastUsedItems = engine.rotationItems
-                            engine.deactivate()
-                            router.sliceEngine = nil
+                    Button(
+                        role: .destructive,
+                        action: {
+                            let wasSlicing = router.sliceEngine?.isActive == true
+                            if let engine = router.sliceEngine, engine.isActive {
+                                rotationStore.lastUsedItems = engine.rotationItems
+                                engine.deactivate()
+                                router.sliceEngine = nil
+                            }
+                            timer.abandonBlock()
+                            router.activePanel = wasSlicing ? .sliceSetup : .timer
                         }
-                        timer.abandonBlock()
-                        router.activePanel = wasSlicing ? .sliceSetup : .timer
-                    }) {
+                    ) {
                         Label("Abandon Block", systemImage: "xmark.circle")
                     }
                     .keyboardShortcut(.delete, modifiers: .command)

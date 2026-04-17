@@ -19,14 +19,14 @@ struct MenuBarView<GearContent: View>: View {
                 isOvertime: timer.isOvertime
             )
             #if DEBUG
-            .onTapGesture {
-                let flags = NSEvent.modifierFlags
-                if flags.contains(.option), flags.contains(.shift) {
-                    timer.debugAddTime(20)
-                } else if flags.contains(.option) {
-                    timer.debugSkipToEnd()
+                .onTapGesture {
+                    let flags = NSEvent.modifierFlags
+                    if flags.contains(.option), flags.contains(.shift) {
+                        timer.debugAddTime(20)
+                    } else if flags.contains(.option) {
+                        timer.debugSkipToEnd()
+                    }
                 }
-            }
             #endif
 
             if timer.phase == .idle && timer.settings.slicesEnabled {

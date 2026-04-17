@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import ZenzaPomodori
 
 @Suite("PomodoroTimer Focus Name")
@@ -66,9 +67,9 @@ struct PomodoroTimerFocusNameTests {
 
     @Test func draftNamePrePopulatesInReadyState() {
         let timer = makeTimer(focusName: "Deep Work")
-        timer.start()   // focus block 1
-        timer.next()     // -> short break
-        timer.next()     // -> ready (idle with pendingBlock)
+        timer.start()  // focus block 1
+        timer.next()  // -> short break
+        timer.next()  // -> ready (idle with pendingBlock)
         #expect(timer.focusNameStore.draftName == "Deep Work")
         #expect(timer.pendingBlock == 2)
         timer.reset()
@@ -76,11 +77,11 @@ struct PomodoroTimerFocusNameTests {
 
     @Test func startFromReadyCommitsFocusName() {
         let timer = makeTimer(focusName: "Deep Work")
-        timer.start()   // focus block 1
-        timer.next()     // -> short break
-        timer.next()     // -> ready
+        timer.start()  // focus block 1
+        timer.next()  // -> short break
+        timer.next()  // -> ready
         timer.focusNameStore.draftName = "Code Review"
-        timer.start()    // -> focus block 2
+        timer.start()  // -> focus block 2
         #expect(timer.activeFocusName == "Code Review")
         #expect(timer.focusNameStore.entries.count == 2)
         timer.reset()
@@ -89,8 +90,8 @@ struct PomodoroTimerFocusNameTests {
     @Test func resetClearsPendingBlock() {
         let timer = makeTimer(focusName: "Deep Work")
         timer.start()
-        timer.next()     // -> short break
-        timer.next()     // -> ready
+        timer.next()  // -> short break
+        timer.next()  // -> ready
         #expect(timer.pendingBlock == 2)
         timer.reset()
         #expect(timer.pendingBlock == nil)

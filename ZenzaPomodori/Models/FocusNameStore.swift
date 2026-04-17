@@ -72,7 +72,8 @@ final class FocusNameStore {
 
     private static func loadEntries(from defaults: UserDefaults) -> [FocusNameEntry] {
         guard let data = defaults.data(forKey: SettingsKeys.focusNameEntries),
-              let entries = try? JSONDecoder().decode([FocusNameEntry].self, from: data) else {
+            let entries = try? JSONDecoder().decode([FocusNameEntry].self, from: data)
+        else {
             return []
         }
         return entries

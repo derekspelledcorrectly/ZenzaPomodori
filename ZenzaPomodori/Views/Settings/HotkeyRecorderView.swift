@@ -101,10 +101,10 @@ final class HotkeyRecorderNSView: NSView {
         51: "\u{232B}",  // Delete
         53: "\u{238B}",  // Escape
         76: "\u{2324}",  // Enter (numpad)
-        123: "\u{2190}", // Left arrow
-        124: "\u{2192}", // Right arrow
-        125: "\u{2193}", // Down arrow
-        126: "\u{2191}", // Up arrow
+        123: "\u{2190}",  // Left arrow
+        124: "\u{2192}",  // Right arrow
+        125: "\u{2193}",  // Down arrow
+        126: "\u{2191}",  // Up arrow
     ]
 
     private func hotkeyDescription(keyCode: UInt32, modifiers: UInt32) -> String {
@@ -117,17 +117,19 @@ final class HotkeyRecorderNSView: NSView {
         if let special = Self.specialKeyNames[keyCode] {
             parts.append(special)
         } else if let inputSource = TISCopyCurrentKeyboardLayoutInputSource()?.takeRetainedValue(),
-           let layoutPtr = TISGetInputSourceProperty(inputSource, kTISPropertyUnicodeKeyLayoutData) {
+            let layoutPtr = TISGetInputSourceProperty(inputSource, kTISPropertyUnicodeKeyLayoutData)
+        {
             let data = unsafeBitCast(layoutPtr, to: CFData.self) as Data
             var deadKeyState: UInt32 = 0
             var chars = [UniChar](repeating: 0, count: 4)
             var length: Int = 0
             data.withUnsafeBytes { rawBuffer in
                 let ptr = rawBuffer.bindMemory(to: UCKeyboardLayout.self).baseAddress!
-                UCKeyTranslate(ptr, UInt16(keyCode), UInt16(kUCKeyActionDisplay),
-                               0, UInt32(LMGetKbdType()),
-                               UInt32(kUCKeyTranslateNoDeadKeysMask),
-                               &deadKeyState, chars.count, &length, &chars)
+                UCKeyTranslate(
+                    ptr, UInt16(keyCode), UInt16(kUCKeyActionDisplay),
+                    0, UInt32(LMGetKbdType()),
+                    UInt32(kUCKeyTranslateNoDeadKeysMask),
+                    &deadKeyState, chars.count, &length, &chars)
             }
             if length > 0 {
                 parts.append(String(utf16CodeUnits: chars, count: length).uppercased())

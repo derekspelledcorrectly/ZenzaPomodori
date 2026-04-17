@@ -1,4 +1,5 @@
 import Testing
+
 @testable import ZenzaPomodori
 
 @Suite("MenuBarFormatting")
@@ -57,17 +58,18 @@ struct MenuBarFormattingTests {
         showPosition: Bool = false,
         showFocus: Bool = true
     ) -> SliceFormattedResult {
-        MenuBarFormatting.sliceFormatted(SliceDisplayInfo(
-            sliceFormattedTime: sliceFormattedTime,
-            outerFormattedTime: outerTime,
-            focusName: focusName,
-            position: position,
-            total: total,
-            showTimer: showTimer,
-            showSessionTimer: showSessionTimer,
-            showPosition: showPosition,
-            showFocus: showFocus
-        ))
+        MenuBarFormatting.sliceFormatted(
+            SliceDisplayInfo(
+                sliceFormattedTime: sliceFormattedTime,
+                outerFormattedTime: outerTime,
+                focusName: focusName,
+                position: position,
+                total: total,
+                showTimer: showTimer,
+                showSessionTimer: showSessionTimer,
+                showPosition: showPosition,
+                showFocus: showFocus
+            ))
     }
 
     @Test func sliceTimerOnly() {

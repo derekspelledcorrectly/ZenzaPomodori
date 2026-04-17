@@ -94,20 +94,20 @@ struct ActiveRotationView: View {
             sliceIsOvertime: engine.isOvertime
         )
         #if DEBUG
-        view.onSliceTap = {
-            if NSEvent.modifierFlags.contains(.shift) {
-                engine.debugAddTime(10)
-            } else {
-                engine.debugSkipToEnd()
+            view.onSliceTap = {
+                if NSEvent.modifierFlags.contains(.shift) {
+                    engine.debugAddTime(10)
+                } else {
+                    engine.debugSkipToEnd()
+                }
             }
-        }
-        view.onBlockTap = {
-            if NSEvent.modifierFlags.contains(.shift) {
-                timer.debugAddTime(20)
-            } else {
-                timer.debugSkipToEnd()
+            view.onBlockTap = {
+                if NSEvent.modifierFlags.contains(.shift) {
+                    timer.debugAddTime(20)
+                } else {
+                    timer.debugSkipToEnd()
+                }
             }
-        }
         #endif
         return view
     }
@@ -122,4 +122,3 @@ struct ActiveRotationView: View {
     }
 
 }
-

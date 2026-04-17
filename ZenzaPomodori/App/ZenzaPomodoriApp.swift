@@ -122,7 +122,8 @@ final class PopoverManager: NSObject {
         }
         timer.onTimerComplete = { [weak self] phase in
             guard let self else { return }
-            let sound = phase.isFocus
+            let sound =
+                phase.isFocus
                 ? self.settings.focusEndSound
                 : self.settings.breakEndSound
             if sound != SoundService.disabled {
@@ -140,7 +141,8 @@ final class PopoverManager: NSObject {
 
     func showPanel(activate: Bool = false) {
         guard let button = statusItem?.button,
-              let buttonWindow = button.window else { return }
+            let buttonWindow = button.window
+        else { return }
 
         if !panel.isVisible {
             let buttonRect = buttonWindow.convertToScreen(
@@ -205,7 +207,8 @@ final class PopoverManager: NSObject {
 
     private func repositionPanel() {
         guard let button = statusItem?.button,
-              let buttonWindow = button.window else { return }
+            let buttonWindow = button.window
+        else { return }
         let buttonRect = buttonWindow.convertToScreen(
             button.convert(button.bounds, to: nil)
         )
@@ -265,12 +268,14 @@ final class PopoverManager: NSObject {
     private func handlePanelChange(_ popoverPanel: PopoverPanel) {
         DispatchQueue.main.async { [weak self] in
             guard let self,
-                  let contentView = self.hostingView else { return }
+                let contentView = self.hostingView
+            else { return }
             self.panel.recalculateKeyViewLoop()
             switch popoverPanel {
             case .timer:
                 if self.timer.phase == .idle,
-                   let textField = self.firstSubview(of: NSTextField.self, in: contentView, where: \.isEditable) {
+                    let textField = self.firstSubview(of: NSTextField.self, in: contentView, where: \.isEditable)
+                {
                     self.panel.makeFirstResponder(textField)
                     textField.selectText(nil)
                 } else if let button = self.firstSubview(of: NSButton.self, in: contentView, where: \.isBordered) {
@@ -302,7 +307,9 @@ final class PopoverManager: NSObject {
         guard let contentView = hostingView else { return }
         panel.autorecalculatesKeyViewLoop = true
         panel.recalculateKeyViewLoop()
-        if timer.phase == .idle, let textField = firstSubview(of: NSTextField.self, in: contentView, where: \.isEditable) {
+        if timer.phase == .idle,
+            let textField = firstSubview(of: NSTextField.self, in: contentView, where: \.isEditable)
+        {
             panel.makeFirstResponder(textField)
             textField.selectText(nil)
         } else if let button = firstSubview(of: NSButton.self, in: contentView, where: \.isBordered) {
@@ -374,52 +381,59 @@ final class PopoverManager: NSObject {
         let sysFont = NSFont.systemFont(ofSize: NSFont.systemFontSize)
 
         if let engine = router.sliceEngine, engine.isActive {
-            let formatted = MenuBarFormatting.sliceFormatted(SliceDisplayInfo(
-                sliceFormattedTime: engine.formattedTime,
-                outerFormattedTime: timer.formattedTime,
-                focusName: engine.currentItemName,
-                position: engine.currentIndex + 1,
-                total: engine.rotationItems.count,
-                showTimer: settings.showSliceTimerInMenuBar,
-                showSessionTimer: settings.showSessionTimerInMenuBar,
-                showPosition: settings.showSlicePositionInMenuBar,
-                showFocus: settings.showSliceFocusInMenuBar
-            ))
-            if !formatted.timerPart.isEmpty {
-                title.append(NSAttributedString(
-                    string: " \(formatted.timerPart)",
-                    attributes: [.font: monoFont]
+            let formatted = MenuBarFormatting.sliceFormatted(
+                SliceDisplayInfo(
+                    sliceFormattedTime: engine.formattedTime,
+                    outerFormattedTime: timer.formattedTime,
+                    focusName: engine.currentItemName,
+                    position: engine.currentIndex + 1,
+                    total: engine.rotationItems.count,
+                    showTimer: settings.showSliceTimerInMenuBar,
+                    showSessionTimer: settings.showSessionTimerInMenuBar,
+                    showPosition: settings.showSlicePositionInMenuBar,
+                    showFocus: settings.showSliceFocusInMenuBar
                 ))
+            if !formatted.timerPart.isEmpty {
+                title.append(
+                    NSAttributedString(
+                        string: " \(formatted.timerPart)",
+                        attributes: [.font: monoFont]
+                    ))
             }
             if let focus = formatted.focusPart {
-                title.append(NSAttributedString(
-                    string: " · \(focus)",
-                    attributes: [.font: sysFont]
-                ))
+                title.append(
+                    NSAttributedString(
+                        string: " · \(focus)",
+                        attributes: [.font: sysFont]
+                    ))
             }
             if let position = formatted.positionPart {
-                title.append(NSAttributedString(
-                    string: " · \(position)",
-                    attributes: [.font: monoFont]
-                ))
+                title.append(
+                    NSAttributedString(
+                        string: " · \(position)",
+                        attributes: [.font: monoFont]
+                    ))
             }
         } else if timer.phase != .idle {
             if timer.settings.showTimerInMenuBar {
-                title.append(NSAttributedString(
-                    string: " \(timer.formattedTime)",
-                    attributes: [.font: monoFont]
-                ))
+                title.append(
+                    NSAttributedString(
+                        string: " \(timer.formattedTime)",
+                        attributes: [.font: monoFont]
+                    ))
             }
 
             if timer.settings.showFocusInMenuBar,
-               timer.phase.isFocus,
-               let name = timer.activeFocusName,
-               !name.isEmpty {
+                timer.phase.isFocus,
+                let name = timer.activeFocusName,
+                !name.isEmpty
+            {
                 let truncated = MenuBarFormatting.truncatedFocusName(name)
-                title.append(NSAttributedString(
-                    string: " · \(truncated)",
-                    attributes: [.font: sysFont]
-                ))
+                title.append(
+                    NSAttributedString(
+                        string: " · \(truncated)",
+                        attributes: [.font: sysFont]
+                    ))
             }
         }
 
@@ -473,7 +487,8 @@ final class PopoverManager: NSObject {
         guard router.sliceEngine != nil else { return }
 
         if settings.sliceOvertimeReminderInterval > 0
-            && settings.sliceOvertimeReminderSound != SoundService.disabled {
+            && settings.sliceOvertimeReminderSound != SoundService.disabled
+        {
             soundService.play(settings.sliceOvertimeReminderSound)
         }
 
@@ -483,7 +498,8 @@ final class PopoverManager: NSObject {
 
     private func handleFocusOvertimeReminder(phase: TimerPhase) {
         if settings.focusOvertimeReminderInterval > 0
-            && settings.focusOvertimeReminderSound != SoundService.disabled {
+            && settings.focusOvertimeReminderSound != SoundService.disabled
+        {
             soundService.play(settings.focusOvertimeReminderSound)
         }
 
@@ -593,7 +609,8 @@ final class PopoverManager: NSObject {
             DispatchQueue.main.async {
                 guard let self else { return }
                 if event.window !== self.panel,
-                   event.window !== self.statusItem?.button?.window {
+                    event.window !== self.statusItem?.button?.window
+                {
                     if self.router.activePanel != .settings {
                         self.hidePanel()
                     }

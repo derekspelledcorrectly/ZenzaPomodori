@@ -60,7 +60,8 @@ struct AboutView: View {
 
             Text("Made with ") + linkText("Claude", url: "https://claude.ai") + Text(" by Anthropic")
 
-            Text("Thanks to ") + linkText("akx/Notifications", url: "https://github.com/akx/Notifications") + Text(" for the sounds")
+            Text("Thanks to ") + linkText("akx/Notifications", url: "https://github.com/akx/Notifications")
+                + Text(" for the sounds")
 
             Text("Thanks to Francesco Cirillo for inventing the Pomodoro Technique")
         }

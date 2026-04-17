@@ -39,8 +39,10 @@ struct BulkEditTextEditor: View {
     }
 
     private func moveCursorToEnd() {
-        guard let textView = NSApplication.shared.keyWindow?
-            .firstResponder as? NSTextView else { return }
+        guard
+            let textView = NSApplication.shared.keyWindow?
+                .firstResponder as? NSTextView
+        else { return }
         textView.moveToEndOfDocument(nil)
     }
 
@@ -50,7 +52,8 @@ struct BulkEditTextEditor: View {
         text: String,
         existing: [RotationItem]
     ) -> [RotationItem] {
-        let lines = text
+        let lines =
+            text
             .components(separatedBy: "\n")
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }

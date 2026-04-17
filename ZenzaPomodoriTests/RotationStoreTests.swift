@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import ZenzaPomodori
 
 @Suite("RotationStore")
@@ -56,10 +57,12 @@ struct RotationStoreTests {
     @Test func rotationsPersistAcrossInstances() {
         let defaults = makeTestDefaults()
         let store1 = RotationStore(defaults: defaults)
-        store1.saveRotation(name: "Persisted", items: [
-            RotationItem(name: "X"),
-            RotationItem(name: "Y"),
-        ])
+        store1.saveRotation(
+            name: "Persisted",
+            items: [
+                RotationItem(name: "X"),
+                RotationItem(name: "Y"),
+            ])
         let store2 = RotationStore(defaults: defaults)
         #expect(store2.savedRotations.count == 1)
         #expect(store2.savedRotations[0].name == "Persisted")

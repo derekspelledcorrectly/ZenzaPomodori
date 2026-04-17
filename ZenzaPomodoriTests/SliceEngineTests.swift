@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import ZenzaPomodori
 
 @Suite("SliceEngine")
@@ -11,11 +12,12 @@ struct SliceEngineTests {
         autoAdvance: Bool = true,
         settings: SettingsStore? = nil
     ) -> SliceEngine {
-        let defaultItems = items ?? [
-            RotationItem(name: "API"),
-            RotationItem(name: "CI"),
-            RotationItem(name: "Frontend"),
-        ]
+        let defaultItems =
+            items ?? [
+                RotationItem(name: "API"),
+                RotationItem(name: "CI"),
+                RotationItem(name: "Frontend"),
+            ]
         return SliceEngine(
             items: defaultItems,
             interval: interval,
@@ -223,7 +225,7 @@ struct SliceEngineTests {
         ]
         let engine = SliceEngine(items: items, interval: 180, settings: makeTestSettingsStore())
         engine.activate()
-        engine.skip() // now on CI (index 1)
+        engine.skip()  // now on CI (index 1)
         #expect(engine.currentItemName == "CI")
 
         var newItems = items
@@ -242,11 +244,11 @@ struct SliceEngineTests {
         ]
         let engine = SliceEngine(items: items, interval: 180, settings: makeTestSettingsStore())
         engine.activate()
-        engine.skip() // now on CI (index 1)
-        engine.skip() // now on Frontend (index 2)
+        engine.skip()  // now on CI (index 1)
+        engine.skip()  // now on Frontend (index 2)
         #expect(engine.currentItemName == "Frontend")
 
-        let newItems = [items[0]] // only API remains
+        let newItems = [items[0]]  // only API remains
         engine.updateItems(newItems)
 
         #expect(engine.currentIndex == 0)
@@ -275,7 +277,7 @@ struct SliceEngineTests {
     @Test func updateItemsWhileInactiveIsNoOp() {
         let engine = makeEngine()
         engine.updateItems([RotationItem(name: "New")])
-        #expect(engine.rotationItems.count == 3) // unchanged
+        #expect(engine.rotationItems.count == 3)  // unchanged
     }
 
     @Test func updateItemsEmptyListIsNoOp() {
@@ -289,7 +291,7 @@ struct SliceEngineTests {
     @Test func restartSliceDuringOvertimeClearsOvertime() {
         let engine = makeEngine(interval: 2, autoAdvance: false)
         engine.activate()
-        advanceEngine(engine, ticks: 2) // enter overtime
+        advanceEngine(engine, ticks: 2)  // enter overtime
         #expect(engine.isOvertime == true)
         engine.restartSlice()
         #expect(engine.isOvertime == false)
@@ -309,15 +311,15 @@ struct SliceEngineTests {
         advanceEngine(engine, ticks: 3)
         #expect(engine.isOvertime == true)
         #expect(engine.overtimeSeconds == 0)
-        #expect(engine.currentIndex == 0) // did NOT advance
+        #expect(engine.currentIndex == 0)  // did NOT advance
         engine.deactivate()
     }
 
     @Test func overtimeCountsUp() {
         let engine = makeEngine(interval: 2, autoAdvance: false)
         engine.activate()
-        advanceEngine(engine, ticks: 2) // reach zero, enter overtime
-        advanceEngine(engine, ticks: 3) // 3 overtime ticks
+        advanceEngine(engine, ticks: 2)  // reach zero, enter overtime
+        advanceEngine(engine, ticks: 3)  // 3 overtime ticks
         #expect(engine.overtimeSeconds == 3)
         #expect(engine.isOvertime == true)
         engine.deactivate()
@@ -328,8 +330,8 @@ struct SliceEngineTests {
         var completeCount = 0
         engine.onRotationComplete = { completeCount += 1 }
         engine.activate()
-        advanceEngine(engine, ticks: 2) // enter overtime
-        advanceEngine(engine, ticks: 3) // keep ticking in overtime
+        advanceEngine(engine, ticks: 2)  // enter overtime
+        advanceEngine(engine, ticks: 3)  // keep ticking in overtime
         #expect(completeCount == 1)
         engine.deactivate()
     }
@@ -347,7 +349,7 @@ struct SliceEngineTests {
     @Test func skipDuringOvertimeAdvancesAndClearsOvertime() {
         let engine = makeEngine(interval: 2, autoAdvance: false)
         engine.activate()
-        advanceEngine(engine, ticks: 2) // enter overtime
+        advanceEngine(engine, ticks: 2)  // enter overtime
         #expect(engine.isOvertime == true)
         engine.skip()
         #expect(engine.isOvertime == false)
@@ -388,8 +390,8 @@ struct SliceEngineTests {
     @Test func formattedOvertimeTime() {
         let engine = makeEngine(interval: 2, autoAdvance: false)
         engine.activate()
-        advanceEngine(engine, ticks: 2) // enter overtime
-        advanceEngine(engine, ticks: 65) // 65 seconds overtime
+        advanceEngine(engine, ticks: 2)  // enter overtime
+        advanceEngine(engine, ticks: 65)  // 65 seconds overtime
         #expect(engine.overtimeSeconds == 65)
         engine.deactivate()
     }
@@ -406,8 +408,8 @@ struct SliceEngineTests {
     @Test func formattedTimeShowsOvertimePrefix() {
         let engine = makeEngine(interval: 2, autoAdvance: false)
         engine.activate()
-        advanceEngine(engine, ticks: 2) // enter overtime
-        advanceEngine(engine, ticks: 65) // 65s overtime
+        advanceEngine(engine, ticks: 2)  // enter overtime
+        advanceEngine(engine, ticks: 65)  // 65s overtime
         #expect(engine.formattedTime == "+01:05")
         engine.deactivate()
     }
@@ -420,7 +422,7 @@ struct SliceEngineTests {
     @Test func formattedTimeAtOvertimeBoundary() {
         let engine = makeEngine(interval: 2, autoAdvance: false)
         engine.activate()
-        advanceEngine(engine, ticks: 2) // enter overtime, overtimeSeconds == 0
+        advanceEngine(engine, ticks: 2)  // enter overtime, overtimeSeconds == 0
         #expect(engine.formattedTime == "+00:00")
         engine.deactivate()
     }
@@ -435,10 +437,10 @@ struct SliceEngineTests {
         var reminderCount = 0
         engine.onOvertimeReminder = { reminderCount += 1 }
         engine.activate()
-        advanceEngine(engine, ticks: 2) // enter overtime
-        advanceEngine(engine, ticks: 5) // 5 seconds overtime
+        advanceEngine(engine, ticks: 2)  // enter overtime
+        advanceEngine(engine, ticks: 5)  // 5 seconds overtime
         #expect(reminderCount == 1)
-        advanceEngine(engine, ticks: 5) // 10 seconds overtime
+        advanceEngine(engine, ticks: 5)  // 10 seconds overtime
         #expect(reminderCount == 2)
         engine.deactivate()
     }
@@ -451,7 +453,7 @@ struct SliceEngineTests {
         var reminderCount = 0
         engine.onOvertimeReminder = { reminderCount += 1 }
         engine.activate()
-        advanceEngine(engine, ticks: 2) // enter overtime (overtimeSeconds == 0)
+        advanceEngine(engine, ticks: 2)  // enter overtime (overtimeSeconds == 0)
         #expect(reminderCount == 0)
         engine.deactivate()
     }
@@ -483,12 +485,12 @@ struct SliceEngineTests {
         var reminderCount = 0
         engine.onOvertimeReminder = { reminderCount += 1 }
         engine.activate()
-        advanceEngine(engine, ticks: 2) // enter overtime
-        advanceEngine(engine, ticks: 5) // 5s overtime, fires at 5
+        advanceEngine(engine, ticks: 2)  // enter overtime
+        advanceEngine(engine, ticks: 5)  // 5s overtime, fires at 5
         #expect(reminderCount == 1)
         // Change interval mid-overtime (min valid value is 5, so use 10)
         settings.sliceOvertimeReminderInterval = 10
-        advanceEngine(engine, ticks: 5) // 10s overtime (divisible by 10)
+        advanceEngine(engine, ticks: 5)  // 10s overtime (divisible by 10)
         #expect(reminderCount == 2)
         engine.deactivate()
     }
@@ -506,11 +508,11 @@ struct SliceEngineTests {
         var reminderCount = 0
         engine.onOvertimeReminder = { reminderCount += 1 }
         engine.activate()
-        advanceEngine(engine, ticks: 2) // enter overtime
-        advanceEngine(engine, ticks: 5) // fires
+        advanceEngine(engine, ticks: 2)  // enter overtime
+        advanceEngine(engine, ticks: 5)  // fires
         #expect(reminderCount == 1)
         settings.sliceOvertimeReminderInterval = 0
-        advanceEngine(engine, ticks: 5) // should NOT fire
+        advanceEngine(engine, ticks: 5)  // should NOT fire
         #expect(reminderCount == 1)
         engine.deactivate()
     }
@@ -526,11 +528,11 @@ struct SliceEngineTests {
         var reminderCount = 0
         engine.onOvertimeReminder = { reminderCount += 1 }
         engine.activate()
-        advanceEngine(engine, ticks: 2) // enter overtime
-        advanceEngine(engine, ticks: 5) // no reminders (interval is 0)
+        advanceEngine(engine, ticks: 2)  // enter overtime
+        advanceEngine(engine, ticks: 5)  // no reminders (interval is 0)
         #expect(reminderCount == 0)
         settings.sliceOvertimeReminderInterval = 5
-        advanceEngine(engine, ticks: 5) // 10s overtime, divisible by 5
+        advanceEngine(engine, ticks: 5)  // 10s overtime, divisible by 5
         #expect(reminderCount == 1)
         engine.deactivate()
     }

@@ -200,50 +200,84 @@ final class SettingsStore {
         self.defaults = defaults
 
         // Durations (must be positive)
-        self.focusDuration = Self.loadInt(from: defaults, key: SettingsKeys.focusDuration, default: Defaults.focusDuration)
-        self.shortBreakDuration = Self.loadInt(from: defaults, key: SettingsKeys.shortBreakDuration, default: Defaults.shortBreakDuration)
-        self.longBreakDuration = Self.loadInt(from: defaults, key: SettingsKeys.longBreakDuration, default: Defaults.longBreakDuration)
-        self.blocksBeforeLongBreak = Self.loadInt(from: defaults, key: SettingsKeys.blocksBeforeLongBreak, default: Defaults.blocksBeforeLongBreak)
+        self.focusDuration = Self.loadInt(
+            from: defaults, key: SettingsKeys.focusDuration, default: Defaults.focusDuration)
+        self.shortBreakDuration = Self.loadInt(
+            from: defaults, key: SettingsKeys.shortBreakDuration, default: Defaults.shortBreakDuration)
+        self.longBreakDuration = Self.loadInt(
+            from: defaults, key: SettingsKeys.longBreakDuration, default: Defaults.longBreakDuration)
+        self.blocksBeforeLongBreak = Self.loadInt(
+            from: defaults, key: SettingsKeys.blocksBeforeLongBreak, default: Defaults.blocksBeforeLongBreak)
 
         // Booleans
         self.autoAdvance = Self.loadBool(from: defaults, key: SettingsKeys.autoAdvance, default: Defaults.autoAdvance)
-        self.showTimerInMenuBar = Self.loadBool(from: defaults, key: SettingsKeys.showTimerInMenuBar, default: Defaults.showTimerInMenuBar)
-        self.popOnComplete = Self.loadBool(from: defaults, key: SettingsKeys.popOnComplete, default: Defaults.popOnComplete)
-        self.showFocusInMenuBar = Self.loadBool(from: defaults, key: SettingsKeys.showFocusInMenuBar, default: Defaults.showFocusInMenuBar)
-        self.notificationsEnabled = Self.loadBool(from: defaults, key: SettingsKeys.notificationsEnabled, default: Defaults.notificationsEnabled)
-        self.slicesEnabled = Self.loadBool(from: defaults, key: SettingsKeys.slicesEnabled, default: Defaults.slicesEnabled)
-        self.stealFocusOnPop = Self.loadBool(from: defaults, key: SettingsKeys.stealFocusOnPop, default: Defaults.stealFocusOnPop)
-        self.sliceAutoAdvance = Self.loadBool(from: defaults, key: SettingsKeys.sliceAutoAdvance, default: Defaults.sliceAutoAdvance)
-        self.globalHotkeyEnabled = Self.loadBool(from: defaults, key: SettingsKeys.globalHotkeyEnabled, default: Defaults.globalHotkeyEnabled)
-        self.rotationHotkeyEnabled = Self.loadBool(from: defaults, key: SettingsKeys.rotationHotkeyEnabled, default: Defaults.rotationHotkeyEnabled)
-        self.bulkEditMode = Self.loadBool(from: defaults, key: SettingsKeys.bulkEditMode, default: Defaults.bulkEditMode)
+        self.showTimerInMenuBar = Self.loadBool(
+            from: defaults, key: SettingsKeys.showTimerInMenuBar, default: Defaults.showTimerInMenuBar)
+        self.popOnComplete = Self.loadBool(
+            from: defaults, key: SettingsKeys.popOnComplete, default: Defaults.popOnComplete)
+        self.showFocusInMenuBar = Self.loadBool(
+            from: defaults, key: SettingsKeys.showFocusInMenuBar, default: Defaults.showFocusInMenuBar)
+        self.notificationsEnabled = Self.loadBool(
+            from: defaults, key: SettingsKeys.notificationsEnabled, default: Defaults.notificationsEnabled)
+        self.slicesEnabled = Self.loadBool(
+            from: defaults, key: SettingsKeys.slicesEnabled, default: Defaults.slicesEnabled)
+        self.stealFocusOnPop = Self.loadBool(
+            from: defaults, key: SettingsKeys.stealFocusOnPop, default: Defaults.stealFocusOnPop)
+        self.sliceAutoAdvance = Self.loadBool(
+            from: defaults, key: SettingsKeys.sliceAutoAdvance, default: Defaults.sliceAutoAdvance)
+        self.globalHotkeyEnabled = Self.loadBool(
+            from: defaults, key: SettingsKeys.globalHotkeyEnabled, default: Defaults.globalHotkeyEnabled)
+        self.rotationHotkeyEnabled = Self.loadBool(
+            from: defaults, key: SettingsKeys.rotationHotkeyEnabled, default: Defaults.rotationHotkeyEnabled)
+        self.bulkEditMode = Self.loadBool(
+            from: defaults, key: SettingsKeys.bulkEditMode, default: Defaults.bulkEditMode)
 
         // Strings
-        self.focusEndSound = Self.loadString(from: defaults, key: SettingsKeys.focusEndSound, default: Defaults.focusEndSound)
-        self.breakEndSound = Self.loadString(from: defaults, key: SettingsKeys.breakEndSound, default: Defaults.breakEndSound)
-        self.sliceEndSound = Self.loadString(from: defaults, key: SettingsKeys.sliceEndSound, default: Defaults.sliceEndSound)
-        self.focusOvertimeReminderSound = Self.loadString(from: defaults, key: SettingsKeys.focusOvertimeReminderSound, default: Defaults.focusOvertimeReminderSound)
-        self.sliceOvertimeReminderSound = Self.loadString(from: defaults, key: SettingsKeys.sliceOvertimeReminderSound, default: Defaults.sliceOvertimeReminderSound)
+        self.focusEndSound = Self.loadString(
+            from: defaults, key: SettingsKeys.focusEndSound, default: Defaults.focusEndSound)
+        self.breakEndSound = Self.loadString(
+            from: defaults, key: SettingsKeys.breakEndSound, default: Defaults.breakEndSound)
+        self.sliceEndSound = Self.loadString(
+            from: defaults, key: SettingsKeys.sliceEndSound, default: Defaults.sliceEndSound)
+        self.focusOvertimeReminderSound = Self.loadString(
+            from: defaults, key: SettingsKeys.focusOvertimeReminderSound, default: Defaults.focusOvertimeReminderSound)
+        self.sliceOvertimeReminderSound = Self.loadString(
+            from: defaults, key: SettingsKeys.sliceOvertimeReminderSound, default: Defaults.sliceOvertimeReminderSound)
 
         // Clamped integers
-        self.autoDismissSeconds = Self.loadInt(from: defaults, key: SettingsKeys.autoDismissSeconds, default: Defaults.autoDismissSeconds, min: 0, max: 30)
-        self.sliceRotationInterval = Self.loadInt(from: defaults, key: SettingsKeys.sliceRotationInterval, default: Defaults.sliceRotationInterval)
-        self.focusOvertimeReminderInterval = Self.loadInt(from: defaults, key: SettingsKeys.focusOvertimeReminderInterval, default: Defaults.focusOvertimeReminderInterval, min: 0, max: 1200)
-        self.sliceOvertimeReminderInterval = Self.loadInt(from: defaults, key: SettingsKeys.sliceOvertimeReminderInterval, default: Defaults.sliceOvertimeReminderInterval, min: 0, max: 60)
+        self.autoDismissSeconds = Self.loadInt(
+            from: defaults, key: SettingsKeys.autoDismissSeconds, default: Defaults.autoDismissSeconds, min: 0, max: 30)
+        self.sliceRotationInterval = Self.loadInt(
+            from: defaults, key: SettingsKeys.sliceRotationInterval, default: Defaults.sliceRotationInterval)
+        self.focusOvertimeReminderInterval = Self.loadInt(
+            from: defaults, key: SettingsKeys.focusOvertimeReminderInterval,
+            default: Defaults.focusOvertimeReminderInterval, min: 0, max: 1200)
+        self.sliceOvertimeReminderInterval = Self.loadInt(
+            from: defaults, key: SettingsKeys.sliceOvertimeReminderInterval,
+            default: Defaults.sliceOvertimeReminderInterval, min: 0, max: 60)
 
-        self.showSliceTimerInMenuBar = Self.loadBool(from: defaults, key: SettingsKeys.showSliceTimerInMenuBar, default: Defaults.showSliceTimerInMenuBar)
-        self.showSliceFocusInMenuBar = Self.loadBool(from: defaults, key: SettingsKeys.showSliceFocusInMenuBar, default: Defaults.showSliceFocusInMenuBar)
-        self.showSessionTimerInMenuBar = Self.loadBool(from: defaults, key: SettingsKeys.showSessionTimerInMenuBar, default: Defaults.showSessionTimerInMenuBar)
-        self.showSlicePositionInMenuBar = Self.loadBool(from: defaults, key: SettingsKeys.showSlicePositionInMenuBar, default: Defaults.showSlicePositionInMenuBar)
+        self.showSliceTimerInMenuBar = Self.loadBool(
+            from: defaults, key: SettingsKeys.showSliceTimerInMenuBar, default: Defaults.showSliceTimerInMenuBar)
+        self.showSliceFocusInMenuBar = Self.loadBool(
+            from: defaults, key: SettingsKeys.showSliceFocusInMenuBar, default: Defaults.showSliceFocusInMenuBar)
+        self.showSessionTimerInMenuBar = Self.loadBool(
+            from: defaults, key: SettingsKeys.showSessionTimerInMenuBar, default: Defaults.showSessionTimerInMenuBar)
+        self.showSlicePositionInMenuBar = Self.loadBool(
+            from: defaults, key: SettingsKeys.showSlicePositionInMenuBar, default: Defaults.showSlicePositionInMenuBar)
 
         // Enum-backed
-        self.lastBlockType = Self.loadRawRepresentable(from: defaults, key: SettingsKeys.lastBlockType, default: Defaults.lastBlockType)
+        self.lastBlockType = Self.loadRawRepresentable(
+            from: defaults, key: SettingsKeys.lastBlockType, default: Defaults.lastBlockType)
 
         // UInt32 (hotkey codes)
-        self.globalHotkeyKeyCode = Self.loadUInt32(from: defaults, key: SettingsKeys.globalHotkeyKeyCode, default: Defaults.globalHotkeyKeyCode)
-        self.globalHotkeyModifiers = Self.loadUInt32(from: defaults, key: SettingsKeys.globalHotkeyModifiers, default: Defaults.globalHotkeyModifiers)
-        self.rotationHotkeyKeyCode = Self.loadUInt32(from: defaults, key: SettingsKeys.rotationHotkeyKeyCode, default: Defaults.rotationHotkeyKeyCode)
-        self.rotationHotkeyModifiers = Self.loadUInt32(from: defaults, key: SettingsKeys.rotationHotkeyModifiers, default: Defaults.rotationHotkeyModifiers)
+        self.globalHotkeyKeyCode = Self.loadUInt32(
+            from: defaults, key: SettingsKeys.globalHotkeyKeyCode, default: Defaults.globalHotkeyKeyCode)
+        self.globalHotkeyModifiers = Self.loadUInt32(
+            from: defaults, key: SettingsKeys.globalHotkeyModifiers, default: Defaults.globalHotkeyModifiers)
+        self.rotationHotkeyKeyCode = Self.loadUInt32(
+            from: defaults, key: SettingsKeys.rotationHotkeyKeyCode, default: Defaults.rotationHotkeyKeyCode)
+        self.rotationHotkeyModifiers = Self.loadUInt32(
+            from: defaults, key: SettingsKeys.rotationHotkeyModifiers, default: Defaults.rotationHotkeyModifiers)
     }
 
     // MARK: - UserDefaults Helpers
@@ -298,7 +332,8 @@ final class SettingsStore {
         default defaultValue: T
     ) -> T where T.RawValue == String {
         if let raw = defaults.string(forKey: key),
-           let value = T(rawValue: raw) {
+            let value = T(rawValue: raw)
+        {
             return value
         }
         return defaultValue

@@ -35,10 +35,12 @@ struct SliceSetupView: View {
                                 rotationStore.deleteRotation(rotation.id)
                             }
                         }
-                        .popover(isPresented: Binding(
-                            get: { renamingRotationId == rotation.id },
-                            set: { if !$0 { renamingRotationId = nil } }
-                        )) {
+                        .popover(
+                            isPresented: Binding(
+                                get: { renamingRotationId == rotation.id },
+                                set: { if !$0 { renamingRotationId = nil } }
+                            )
+                        ) {
                             renamePopover(rotationId: rotation.id)
                         }
                     }
