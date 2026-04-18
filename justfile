@@ -26,3 +26,11 @@ lint-fix:
 # Run the test suite (delegates to make so there's one source of truth)
 test:
     make test
+
+# Install pre-commit git hooks into this repo
+install-hooks:
+    pre-commit install
+
+# Run all pre-commit hooks across all tracked files
+pre-commit:
+    pre-commit run --all-files

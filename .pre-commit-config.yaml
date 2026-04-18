@@ -1,0 +1,20 @@
+# Runs on staged files before each commit. Install with `just install-hooks`.
+# Staged-only by default; use `just pre-commit` to run against all files.
+repos:
+  - repo: local
+    hooks:
+      - id: swift-format
+        name: swift-format (lint)
+        entry: xcrun swift-format lint --strict
+        language: system
+        files: \.swift$
+        exclude: ^\.build/
+        pass_filenames: true
+
+      - id: swiftlint
+        name: swiftlint
+        entry: swiftlint lint --quiet
+        language: system
+        files: \.swift$
+        exclude: ^\.build/
+        pass_filenames: false
