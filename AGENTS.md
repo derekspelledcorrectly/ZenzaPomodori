@@ -39,17 +39,19 @@ which brew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-### 3. XcodeGen
+### 3. XcodeGen, just, and SwiftLint
 
-Generates the `.xcodeproj` from `project.yml`. The Xcode project file is
-gitignored and must be regenerated.
+XcodeGen generates the `.xcodeproj` from `project.yml` (the Xcode project file
+is gitignored). `just` runs the quality-gate recipes (see Quality Gates below).
+SwiftLint enforces style rules. `swift-format` ships with Xcode 6.3+ so needs
+no separate install.
 
 ```bash
 # Check if already installed
-which xcodegen
+which xcodegen just swiftlint
 
-# Install if needed
-brew install xcodegen
+# Install what's missing
+brew install xcodegen just swiftlint
 ```
 
 ### 4. Build and run
@@ -62,6 +64,10 @@ The app appears in the menu bar (not the Dock). Click the icon to open the
 timer popover.
 
 ## Make Targets
+
+The Makefile stays lean: it's a thin wrapper around `xcodebuild` for the
+daily build/run/test loop. Everything else (lint, format, quality gates,
+pre-commit) lives in the `justfile`.
 
 | Target       | Config  | What it does                                        |
 | ------------ | ------- | --------------------------------------------------- |
@@ -106,6 +112,26 @@ open "/Applications/Zenza Pomodori.app"
 open "~/Applications/Zenza Pomodori.app"
 ```
 
+## Quality Gates
+
+Complex recipes live in the `justfile`. Run `just --list` to see everything.
+
+| Recipe              | What it does                                                 |
+| ------------------- | ------------------------------------------------------------ |
+| `just check`        | **Canonical "ready to commit?" signal**: format-check + lint + test |
+| `just format`       | Auto-format all Swift files with swift-format                |
+| `just format-check` | Check formatting without modifying files (strict mode)       |
+| `just lint`         | Run SwiftLint                                                |
+| `just lint-fix`     | Auto-fix SwiftLint violations where possible                 |
+| `just test`         | Run the test suite (delegates to `make test`)                |
+| `just install-hooks`| Install pre-commit git hooks                                 |
+| `just pre-commit`   | Run all pre-commit hooks against all tracked files           |
+
+Configuration lives in:
+- `.swift-format` - swift-format rules (4-space indent, 120 col lines)
+- `.swiftlint.yml` - SwiftLint rules (permissive baseline, tighten over time)
+- `.pre-commit-config.yaml` - pre-commit wiring for swift-format and swiftlint
+
 ## Architecture
 
 **Raw NSApplication + AppDelegate (no SwiftUI App lifecycle)**
@@ -137,9 +163,10 @@ open "~/Applications/Zenza Pomodori.app"
 
 ## Testing
 
-214 tests across 17 suites. Run with `make test`.
+299 tests across 19 suites. Run with `make test` (or `just test`).
 
-Always run `make test` after changes to verify nothing is broken.
+Always run `just check` after changes to verify nothing is broken and the
+code meets the project's formatting and lint standards.
 
 ## File Layout
 
