@@ -1,0 +1,50 @@
+# Permissive baseline. Tighten incrementally as the codebase warms up.
+# Formatting concerns (indent, spacing, line length) are handled by
+# swift-format; keep them disabled here to avoid duplicate noise.
+
+included:
+  - ZenzaPomodori
+  - ZenzaPomodoriTests
+
+excluded:
+  - .build
+  - ZenzaPomodori.xcodeproj
+  - docs
+
+disabled_rules:
+  - line_length                 # swift-format owns this
+  - trailing_whitespace         # swift-format owns this
+  - trailing_newline            # swift-format owns this
+  - opening_brace               # swift-format owns this
+  - colon                       # swift-format owns this
+  - comma                       # swift-format owns this
+  - trailing_comma              # swift-format adds them via multiElementCollectionTrailingCommas
+  - todo                        # TODOs are fine for a hobby project
+  - type_body_length            # SwiftUI views get big; not worth fighting
+  - file_length                 # same
+  - function_body_length        # same
+
+opt_in_rules:
+  - empty_count
+  - empty_string
+  - explicit_init
+  - first_where
+  - last_where
+  - redundant_nil_coalescing
+  - toggle_bool
+
+# unused_import is an analyzer rule (run via `swiftlint analyze`, not `lint`)
+analyzer_rules:
+  - unused_import
+
+identifier_name:
+  min_length: 2                 # allow 2-char names (e.g. id, kv, up)
+  excluded:
+    - i
+    - id
+    - on
+    - to
+    - x
+    - y
+
+reporter: "xcode"

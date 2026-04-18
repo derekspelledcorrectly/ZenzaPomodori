@@ -5,7 +5,7 @@ default:
     @just --list
 
 # Run all quality gates. THE "ready to commit?" command.
-check: format-check test
+check: format-check lint test
 
 # Format all Swift files in-place
 format:
@@ -14,6 +14,14 @@ format:
 # Check formatting without modifying files (fails on any deviation)
 format-check:
     xcrun swift-format lint --recursive --strict ZenzaPomodori ZenzaPomodoriTests
+
+# Run SwiftLint
+lint:
+    swiftlint lint --quiet
+
+# Auto-fix SwiftLint violations where possible
+lint-fix:
+    swiftlint --fix
 
 # Run the test suite (delegates to make so there's one source of truth)
 test:
