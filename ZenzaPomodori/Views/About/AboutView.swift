@@ -58,10 +58,9 @@ struct AboutView: View {
                 .textCase(.uppercase)
                 .tracking(0.5)
 
-            Text("Made with ") + linkText("Claude", url: "https://claude.ai") + Text(" by Anthropic")
+            Text(.init("Made with [Claude](https://claude.ai) by Anthropic"))
 
-            Text("Thanks to ") + linkText("akx/Notifications", url: "https://github.com/akx/Notifications")
-                + Text(" for the sounds")
+            Text(.init("Thanks to [akx/Notifications](https://github.com/akx/Notifications) for the sounds"))
 
             Text("Thanks to Francesco Cirillo for inventing the Pomodoro Technique")
         }
@@ -71,9 +70,5 @@ struct AboutView: View {
         .padding(14)
         .background(.quaternary.opacity(0.5))
         .clipShape(RoundedRectangle(cornerRadius: 8))
-    }
-
-    private func linkText(_ text: String, url: String) -> Text {
-        Text(.init("[\(text)](\(url))"))
     }
 }
